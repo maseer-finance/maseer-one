@@ -12,7 +12,7 @@ contract CounterScript is Script {
     function run() public {
         vm.startBroadcast();
 
-        maseerOne = new MaseerOne();
+        maseerOne = new MaseerOne("Test Token", "MTEST");
 
         vm.stopBroadcast();
     }
