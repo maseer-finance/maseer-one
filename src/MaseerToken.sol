@@ -107,14 +107,20 @@ abstract contract MaseerToken {
     }
 
     function _mint(address guy, uint wad) internal {
-        balanceOf[guy] += wad;
         totalSupply += wad;
+        // Cannot overflow
+        unchecked {
+            balanceOf[guy] += wad;
+        }
         emit Transfer(address(0), guy, wad);
     }
 
     function _burn(address guy, uint wad) internal {
         balanceOf[guy] -= wad;
-        totalSupply -= wad;
+        // Cannot overflow
+        unchecked {
+            totalSupply -= wad;
+        }
         emit Transfer(guy, address(0), wad);
     }
 
