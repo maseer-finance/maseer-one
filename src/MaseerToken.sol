@@ -4,16 +4,17 @@ pragma solidity ^0.8.24;
 abstract contract MaseerToken {
 
     // ERC-20
-    uint256                                           public  totalSupply;
-    mapping (address => uint256)                      public  balanceOf;
-    mapping (address => mapping (address => uint256)) public  allowance;
-    string                                            public  name;
-    string                                            public  symbol;
-    uint8                                    constant public  decimals = 18; // standard token precision.
+    uint256                                           public totalSupply;
+    mapping (address => uint256)                      public balanceOf;
+    mapping (address => mapping (address => uint256)) public allowance;
+    string                                            public name;
+    string                                            public symbol;
+    uint8                                    constant public decimals = 18; // standard token precision.
+
     // EIP-2612
     bytes32 immutable           public DOMAIN_SEPARATOR;
     mapping(address => uint256) public nonces;
-    uint256 immutable         internal CHAIN_ID; // token is linked to deployment chain id. Forked tokens are not supported.
+    uint256 immutable         internal CHAIN_ID; // token is linked to deployment chain id. Forked chains are not supported.
 
     constructor(string memory name_, string memory symbol_) {
         name   = name_;
@@ -26,11 +27,11 @@ abstract contract MaseerToken {
     event Approval(address indexed src, address indexed guy, uint wad);
     event Transfer(address indexed src, address indexed dst, uint wad);
 
-    function approve(address guy) external returns (bool) {
+    function approve(address guy) external virtual returns (bool) {
         return approve(guy, type(uint256).max);
     }
 
-    function approve(address guy, uint wad) public returns (bool) {
+    function approve(address guy, uint wad) public virtual returns (bool) {
         allowance[msg.sender][guy] = wad;
 
         emit Approval(msg.sender, guy, wad);
@@ -38,12 +39,12 @@ abstract contract MaseerToken {
         return true;
     }
 
-    function transfer(address dst, uint wad) external returns (bool) {
+    function transfer(address dst, uint wad) external virtual returns (bool) {
         return transferFrom(msg.sender, dst, wad);
     }
 
     function transferFrom(address src, address dst, uint wad)
-        public
+        public virtual
         returns (bool)
     {
         uint256 _allowance = allowance[src][msg.sender];
@@ -68,6 +69,7 @@ abstract contract MaseerToken {
         bytes32 r,
         bytes32 s
     ) public virtual {
+        require(block.chainid == CHAIN_ID,   "INVALID_CHAIN");
         require(deadline >= block.timestamp, "PERMIT_DEADLINE_EXPIRED");
 
         // Unchecked because the owner's nonce which cannot realistically overflow.

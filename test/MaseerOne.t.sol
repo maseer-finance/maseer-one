@@ -4,42 +4,60 @@ pragma solidity ^0.8.13;
 import {Test, console} from "forge-std/Test.sol";
 import {MaseerOne} from "../src/MaseerOne.sol";
 
+// TODO: Use real contracts once available
+import {MockPip} from "./Mocks/MockPip.sol";
+import {MockCop} from "./Mocks/MockCop.sol";
+
 contract CounterTest is Test {
+
+    string public NAME = "MaseerOne";
+    string public SYMBOL = "M1";
+
+    // Mainnet
+    address public constant USDT = 0xdAC17F958D2ee523a2206206994597C13D831ec7;
+
+    address public cop;
+    address public pip;
+
     MaseerOne public maseerOne;
 
     function setUp() public {
-        maseerOne = new MaseerOne("MaseerOne", "M1");
+
+        pip = address(new MockPip());
+        cop = address(new MockCop());
+
+        maseerOne = new MaseerOne(USDT, pip, cop, NAME, SYMBOL);
     }
 
-    function testName() public {
-        assertEq(maseerOne.name(), "MaseerOne");
+    function testName() public view {
+        assertEq(maseerOne.name(), NAME);
     }
 
-    function testSymbol() public {
-        assertEq(maseerOne.symbol(), "M1");
+    function testSymbol() public view {
+        assertEq(maseerOne.symbol(), SYMBOL);
     }
 
-    function testDecimals() public {
+    function testDecimals() public view {
         assertEq(maseerOne.decimals(), 18);
     }
 
-    function testTotalSupply() public {
+    function testTotalSupply() public view {
         assertEq(maseerOne.totalSupply(), 0);
     }
 
-    function testBalanceOf() public {
+    function testBalanceOf() public view {
         assertEq(maseerOne.balanceOf(address(this)), 0);
     }
 
-    function testAllowance() public {
+    function testAllowance() public view {
         assertEq(maseerOne.allowance(address(this), address(this)), 0);
     }
 
-    function testDomainSeparator() public {
-        assertEq(maseerOne.DOMAIN_SEPARATOR(), bytes32(0x5ab14e15c20450fbc9d7535f051e9e913e03b79d61309455cc299c496fecb73b));
+    function testDomainSeparator() public view {
+        assertEq(maseerOne.DOMAIN_SEPARATOR(), bytes32(0x773143d08813a4e7fa1a3c9395c3eddaeef465493893f95fd36a4b15bd080c6d));
     }
 
-    function testNonces() public {
+    function testNonces() public view {
         assertEq(maseerOne.nonces(address(this)), 0);
     }
 }
