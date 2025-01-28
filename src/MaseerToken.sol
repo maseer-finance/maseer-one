@@ -72,7 +72,7 @@ abstract contract MaseerToken {
         require(block.chainid == CHAIN_ID,   "INVALID_CHAIN");
         require(deadline >= block.timestamp, "PERMIT_DEADLINE_EXPIRED");
 
-        // Unchecked because the owner's nonce which cannot realistically overflow.
+        // Unchecked because the owner's nonce is uint256 which cannot realistically overflow.
         unchecked {
             address recoveredAddress = ecrecover(
                 keccak256(
