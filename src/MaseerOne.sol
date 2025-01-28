@@ -3,6 +3,7 @@ pragma solidity ^0.8.28;
 
 interface Gem {
     function transferFrom(address src, address dst, uint wad) external returns (bool);
+    function balanceOf(address account) external view returns (uint256);
 }
 
 interface Cop {
@@ -25,7 +26,27 @@ contract MaseerOne is MaseerToken {
     mapping (address => uint256) public pendingClaim;
     mapping (address => uint256) public pendingTime;
 
+    event ContractCreated(
+        address indexed creator,
+        uint256 indexed price,
+        uint256 indexed amount
+    );
+    event ContractRedeemed(
+        address indexed redeemer,
+        uint256 indexed price,
+        uint256 indexed amount
+    );
+    event ClaimProcessed(
+        address indexed claimer,
+        uint256 indexed amount
+    );
+    event Settled(
+        uint256 indexed amount
+    );
+
     error Unavailable();
+    error ClaimableAfter(uint256 time);
+    error DustThreshold(uint256 min);
 
     constructor(
         address gem_,
@@ -47,79 +68,105 @@ contract MaseerOne is MaseerToken {
     }
 
     function mint(uint256 amt_) external pass {
-        // TODO: Oracle price check
-        // pip.read
+        // Oracle price check
+        uint256 _price = Pip(pip).read();
 
-        // TODO: Minimum one unit to prevent dust?
-        // require amt_ > pip.read
+        // Assert minimum purchase amount of one unit
+        // TODO: Is this a valid assumption? Maybe don't need this.
+        if (amt_ < _price) {
+            revert DustThreshold(_price);
+        }
 
-        // TODO: Calculate the mint amount
-        // amt = amt_ / price
+        // Calculate the mint amount
+        // TODO: divdown
+        uint256 _out = amt_ / _price;
 
-        // TODO: Transfer tokens in
+        // Transfer tokens in
         Gem(gem).transferFrom(msg.sender, address(this), amt_);
 
-        // TODO: Mint the tokens
-        // _mint(msg.sender, amt_);
+        // Mint the tokens
+        _mint(msg.sender, _out);
 
-        // TODO: Emit contract event
+        // Emit contract event
+        emit ContractCreated(msg.sender, _price, _out);
     }
 
     function redeem(uint256 amt_) external pass {
-        // TODO: Check if the burn is allowed
-        // modifier cop.pass
 
-        // TODO: Oracle price check
-        // pip.read
+        // Oracle price check
+        uint256 _price = Pip(pip).read();
 
-        // TODO: Add user to the pending redemptions
-        // pendingClaim[msg.sender] += amt_
+        // Calculate the redemption amount
+        // TODO: round down
+        uint256 _out = amt_ * _price;
+
+        // Add to the total pending redemptions
+        totalPending += _out;
+
+        // Add to the user's pending redemptions
+        pendingClaim[msg.sender] += _out;
+
+        // Bump the redemption time
         // TODO: Consider whether to allow multiple redemption periods. Increases complexity and cost
-        // pendingTime[msg.sender] = block.timestamp + 1 days
+        // TODO: Consider whether redemption delay needs to be configurable. Increases complexity and cost
+        pendingTime[msg.sender] = block.timestamp + 5 days;
 
-        // TODO: Transfer tokens in
-        transferFrom(msg.sender, address(this), amt_);
+        // Burn the tokens
+        _burn(msg.sender, amt_);
 
-        // TODO: Burn the tokens
-        // _burn(msg.sender, amt_);
-
-        // TODO: Emit contract event
-
+        // Emit contract event
+        emit ContractRedeemed(msg.sender, _price, _out);
     }
 
     function claim() external pass {
-        // TODO: check if the claim is allowed
-        // modifier cop.pass
 
-        // TODO: Check if the claim is past the redemption period
-        // require block.timestamp > pendingTime[msg.sender]
+        uint256 _time = pendingTime[msg.sender];
 
-        // TODO: Check claimable amount
-        uint256 amt = pendingClaim[msg.sender];
+        // Check if the claim is past the redemption period
+        if (_time > block.timestamp) {
+            revert ClaimableAfter(pendingTime[msg.sender]);
+        }
+        if (_time == 0) {
+            revert Unavailable();
+        }
 
-        // TODO: Check internal balance
-        // require balanceOf(address.this) > amt --> revert "Insufficient Balance Available"
+        // Check claimable amounts
+        uint256 _amt = pendingClaim[msg.sender];
+        uint256 _bal = Gem(gem).balanceOf(address(this));
 
-        // TODO: Decrement the pending redemptions
-        // pendingClaim[msg.sender] -= amt;
+        // Check internal balance
+        uint256 _out = _min(_amt, _bal);
 
-        // TODO: Transfer the tokens
-        Gem(gem).transferFrom(address(this), msg.sender, amt);
+        // Decrement the user's pending redemptions
+        pendingClaim[msg.sender] -= _out;
 
-        // TODO: Emit claim
+        // Transfer the tokens
+        Gem(gem).transferFrom(address(this), msg.sender, _out);
 
+        // Emit claim
+        emit ClaimProcessed(msg.sender, _out);
     }
 
     function settle() external {
         // TODO: Can probably be called by anyone?
 
-        // TODO: get the gem balance and subtract the pending redemptions
-        // uint256 amt = Gem(gem).balanceOf(address(this)) - totalPending;
+        // Get the gem balance and subtract the pending redemptions
+        uint256 _bal = Gem(gem).balanceOf(address(this));
 
-        // TODO: send the remaining balance to the output conduit
-        // IERC20(gem).transferFrom(address(this), outputConduit, amt);
+        // Revert if the balance is reserved for pending claims
+        if (_bal < totalPending) {
+            revert Unavailable();
+        }
 
-        // TODO: Emit settle
+        // Calculate the balance after pending redemptions
+        uint256 _out = _bal - totalPending;
+
+        // Send the remaining balance to the output conduit
+        // TODO: Create output conduit
+        Gem(gem).transferFrom(address(this), address(1337), _out);
+
+        // Emit settle
+        emit Settled(_out);
     }
 
 
@@ -152,5 +199,11 @@ contract MaseerOne is MaseerToken {
     ) public override pass {
         // TODO: Check if the transfer is allowed
         super.permit(owner, spender, value, deadline, v, r, s);
+    }
+
+    // Internal utility functions
+
+    function _min(uint256 x, uint256 y) internal pure returns (uint256 z) {
+        if (x > y) { z = y; } else { z = x; }
     }
 }
