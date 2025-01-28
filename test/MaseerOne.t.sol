@@ -60,4 +60,12 @@ contract CounterTest is Test {
     function testNonces() public view {
         assertEq(maseerOne.nonces(address(this)), 0);
     }
+
+    function testPip() public view {
+        assertEq(maseerOne.pip(), pip);
+    }
+
+    function testCop() public view {
+        assertEq(maseerOne.cop(), cop);
+    }
 }
