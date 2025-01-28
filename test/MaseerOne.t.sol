@@ -4,13 +4,15 @@ pragma solidity ^0.8.28;
 import {Test, console} from "forge-std/Test.sol";
 import {MaseerOne} from "../src/MaseerOne.sol";
 
+import {IERC20} from "forge-std/interfaces/IERC20.sol";
+
 // TODO: Use real contracts once available
 import {MockPip} from "./Mocks/MockPip.sol";
 import {MockCop} from "./Mocks/MockCop.sol";
 
 contract CounterTest is Test {
 
-    string public NAME = "MaseerOne";
+    string public NAME   = "MaseerOne";
     string public SYMBOL = "M1";
 
     // Mainnet
@@ -67,5 +69,11 @@ contract CounterTest is Test {
 
     function testCop() public view {
         assertEq(maseerOne.cop(), cop);
+    }
+
+    function testUSDTOnline() public view {
+        assertEq(IERC20(maseerOne.gem()).name(), "Tether USD");
+        assertEq(IERC20(maseerOne.gem()).symbol(), "USDT");
+        assertEq(IERC20(maseerOne.gem()).decimals(), 6);
     }
 }
