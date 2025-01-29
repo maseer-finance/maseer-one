@@ -33,7 +33,7 @@ contract MaseerTestBase is Test {
 
     MaseerOne public maseerOne;
 
-    function testUSDTMintHelper() public {
+    function testUSDTMintHelper() internal {
         address alice = makeAddr("alice");
         _mintUSDT(alice, 1000);
         assertEq(IERC20(USDT).balanceOf(alice), 1000);
