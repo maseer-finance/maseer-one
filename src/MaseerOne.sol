@@ -14,12 +14,17 @@ interface Pip {
     function read() external returns (uint256);
 }
 
+interface Act {
+    function live() external returns (bool);
+}
+
 import {MaseerToken} from "./MaseerToken.sol";
 
 contract MaseerOne is MaseerToken {
 
     address immutable public gem;  // Purchase token
     address immutable public pip;  // Oracle price feed
+    address immutable public act;  // Market timing feed
     address immutable public cop;  // Compliance feed
 
     uint256                      public totalPending;
@@ -44,35 +49,41 @@ contract MaseerOne is MaseerToken {
         uint256 indexed amount
     );
 
-    error Unavailable();
+    error UnauthorizedUser();
+    error MarketClosed();
     error ClaimableAfter(uint256 time);
+    error NoPendingClaim();
     error DustThreshold(uint256 min);
 
     constructor(
         address gem_,
         address pip_,
+        address act_,
         address cop_,
         string memory name_,
         string memory symbol_
     ) MaseerToken(name_, symbol_) {
         gem = gem_;
         pip = pip_;
+        act = act_;
         cop = cop_;
     }
 
     modifier pass() {
-        if (!Cop(cop).pass()) {
-            revert Unavailable();
-        }
+        if (!Cop(cop).pass()) { revert UnauthorizedUser(); }
         _;
     }
 
-    function mint(uint256 amt_) external pass {
+    modifier live() {
+        if (!Act(act).live()) { revert MarketClosed(); }
+        _;
+    }
+
+    function mint(uint256 amt_) external live {
         // Oracle price check
         uint256 _price = Pip(pip).read();
 
-        // Assert minimum purchase amount of one unit
-        // TODO: Is this a valid assumption? Maybe don't need this.
+        // Assert minimum purchase amount of one unit to avoid dust
         if (amt_ < _price) {
             revert DustThreshold(_price);
         }
@@ -91,7 +102,7 @@ contract MaseerOne is MaseerToken {
         emit ContractCreated(msg.sender, _price, _out);
     }
 
-    function redeem(uint256 amt_) external pass {
+    function redeem(uint256 amt_) external live pass {
 
         // Oracle price check
         uint256 _price = Pip(pip).read();
@@ -127,7 +138,7 @@ contract MaseerOne is MaseerToken {
             revert ClaimableAfter(pendingTime[msg.sender]);
         }
         if (_time == 0) {
-            revert Unavailable();
+            revert NoPendingClaim();
         }
 
         // Check claimable amounts
@@ -147,16 +158,14 @@ contract MaseerOne is MaseerToken {
         emit ClaimProcessed(msg.sender, _out);
     }
 
-    function settle() external {
+    function settle() external returns (uint256 amt) {
         // TODO: Can probably be called by anyone?
 
         // Get the gem balance and subtract the pending redemptions
         uint256 _bal = Gem(gem).balanceOf(address(this));
 
-        // Revert if the balance is reserved for pending claims
-        if (_bal < totalPending) {
-            revert Unavailable();
-        }
+        // Return 0 if the balance is reserved for pending claims
+        if (_bal < totalPending) { return 0; }
 
         // Calculate the balance after pending redemptions
         uint256 _out = _bal - totalPending;
