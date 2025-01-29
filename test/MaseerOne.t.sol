@@ -14,7 +14,7 @@ contract MaseerOneTest is MaseerTestBase {
 
         pip = address(new MockPip());
         act = address(new MaseerGate());
-        cop = address(new MockCop());
+        cop = address(new MaseerGuard(USDT));
 
         maseerOne = new MaseerOne(USDT, pip, act, cop, NAME, SYMBOL);
     }
