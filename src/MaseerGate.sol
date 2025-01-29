@@ -14,12 +14,16 @@ contract MaseerGate {
     uint256 public open;
     uint256 public halt;
 
+    constructor() {
+        wards[msg.sender] = 1;
+    }
+
     function setOpen(uint256 open_) external auth {
         require(open_ < block.timestamp + 365 days, "MaseerGate/open-too-far");
         open = open_;
     }
 
-    function setClose(uint256 halt_) external auth {
+    function setHalt(uint256 halt_) external auth {
         require(halt_ < block.timestamp + 365 days, "MaseerGate/halt-too-far");
         halt = halt_;
     }
