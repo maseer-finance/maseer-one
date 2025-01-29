@@ -1,34 +1,22 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {Test, console} from "forge-std/Test.sol";
-import {MaseerOne} from "../src/MaseerOne.sol";
-
-import {IERC20} from "forge-std/interfaces/IERC20.sol";
+//import {console} from "forge-std/Test.sol";
+import "./MaseerTestBase.t.sol";
 
 // TODO: Use real contracts once available
 import {MockPip} from "./Mocks/MockPip.sol";
 import {MockCop} from "./Mocks/MockCop.sol";
 
-contract CounterTest is Test {
-
-    string public NAME   = "MaseerOne";
-    string public SYMBOL = "M1";
-
-    // Mainnet
-    address public constant USDT = 0xdAC17F958D2ee523a2206206994597C13D831ec7;
-
-    address public cop;
-    address public pip;
-
-    MaseerOne public maseerOne;
+contract MaseerOneTest is MaseerTestBase {
 
     function setUp() public {
 
         pip = address(new MockPip());
+        act = address(new MaseerGate());
         cop = address(new MockCop());
 
-        maseerOne = new MaseerOne(USDT, pip, cop, NAME, SYMBOL);
+        maseerOne = new MaseerOne(USDT, pip, act, cop, NAME, SYMBOL);
     }
 
     function testName() public view {
@@ -56,7 +44,8 @@ contract CounterTest is Test {
     }
 
     function testDomainSeparator() public view {
-        assertEq(maseerOne.DOMAIN_SEPARATOR(), bytes32(0x773143d08813a4e7fa1a3c9395c3eddaeef465493893f95fd36a4b15bd080c6d));
+        assertEq(maseerOne.DOMAIN_SEPARATOR(),
+                 _calculateDomainSeparator(NAME, block.chainid, address(maseerOne)));
     }
 
     function testNonces() public view {
@@ -65,6 +54,10 @@ contract CounterTest is Test {
 
     function testPip() public view {
         assertEq(maseerOne.pip(), pip);
+    }
+
+    function testAct() public view {
+        assertEq(maseerOne.act(), act);
     }
 
     function testCop() public view {
@@ -76,4 +69,5 @@ contract CounterTest is Test {
         assertEq(IERC20(maseerOne.gem()).symbol(), "USDT");
         assertEq(IERC20(maseerOne.gem()).decimals(), 6);
     }
+
 }
