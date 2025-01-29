@@ -2,12 +2,14 @@
 pragma solidity ^0.8.28;
 
 import {Test, console} from "forge-std/Test.sol";
+import {IERC20}        from "forge-std/interfaces/IERC20.sol";
 
-import {MaseerOne} from "../src/MaseerOne.sol";
-import {MaseerGuard} from "../src/MaseerGuard.sol";
-import {MaseerGate} from "../src/MaseerGate.sol";
+import {MaseerOne}     from "../src/MaseerOne.sol";
+import {MaseerPrice}   from "../src/MaseerPrice.sol";
+import {MaseerGuard}   from "../src/MaseerGuard.sol";
+import {MaseerGate}    from "../src/MaseerGate.sol";
+import {MaseerProxy}   from "../src/MaseerProxy.sol";
 
-import {IERC20} from "forge-std/interfaces/IERC20.sol";
 
 interface IUSDT {
     function transferFrom(address from, address to, uint256 amount) external; // non-standard
