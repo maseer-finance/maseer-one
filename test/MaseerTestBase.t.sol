@@ -30,8 +30,11 @@ contract MaseerTestBase is Test {
     string public SYMBOL = "M1";
 
     address public pip;
+    address public pipProxy;
     address public act;
+    address public actProxy;
     address public cop;
+    address public copProxy;
 
     MaseerOne public maseerOne;
 
