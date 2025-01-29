@@ -7,15 +7,17 @@ interface Gem {
 }
 
 interface Cop {
-    function pass() external returns (bool);
+    function pass(address usr) external view returns (bool);
 }
 
 interface Pip {
-    function read() external returns (uint256);
+    function read() external view returns (uint256);
 }
 
 interface Act {
-    function live() external returns (bool);
+    function open() external view returns (uint256);
+    function halt() external view returns (uint256);
+    function live() external view returns (bool);
 }
 
 import {MaseerToken} from "./MaseerToken.sol";
@@ -70,7 +72,7 @@ contract MaseerOne is MaseerToken {
     }
 
     modifier pass() {
-        if (!Cop(cop).pass()) { revert UnauthorizedUser(); }
+        if (!Cop(cop).pass(msg.sender)) { revert UnauthorizedUser(); }
         _;
     }
 
@@ -177,6 +179,23 @@ contract MaseerOne is MaseerToken {
         emit Settled(_out);
     }
 
+    // View functions
+
+    function open() external view returns (bool) {
+        return Act(act).live();
+    }
+
+    function nextOpen() external view returns (uint256) {
+        return Act(act).live() ? 0 : Act(act).open();
+    }
+
+    function nextHalt() external view returns (uint256) {
+        return Act(act).live() ? 0 : Act(act).halt();
+    }
+
+    function canPass(address _usr) external view returns (bool) {
+        return Cop(cop).pass(_usr);
+    }
 
     // Token overrides for compliance
 
