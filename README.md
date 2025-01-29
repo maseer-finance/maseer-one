@@ -19,8 +19,8 @@ Prototype
 - **totalSupply()**: `uint256`
 
 ### Writable Functions (Non-Pure/Non-View)
-- **approve(address guy, uint256 wad)**: `bool`
-- **approve(address guy)**: `bool`
+- **approve(address usr, uint256 wad)**: `bool`
+- **approve(address usr)**: `bool`
 - **claim()**: ``
 - **mint(uint256 amt_)**: ``
 - **permit(address owner, address spender, uint256 value, uint256 deadline, uint8 v, bytes32 r, bytes32 s)**: ``

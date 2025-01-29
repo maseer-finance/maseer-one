@@ -159,7 +159,6 @@ contract MaseerOne is MaseerToken {
     }
 
     function settle() external returns (uint256 amt) {
-        // TODO: Can probably be called by anyone?
 
         // Get the gem balance and subtract the pending redemptions
         uint256 _bal = Gem(gem).balanceOf(address(this));
@@ -181,12 +180,12 @@ contract MaseerOne is MaseerToken {
 
     // Token overrides for compliance
 
-    function approve(address guy) external override pass returns (bool) {
-        return super.approve(guy, type(uint256).max);
+    function approve(address usr) external override pass returns (bool) {
+        return super.approve(usr, type(uint256).max);
     }
 
-    function approve(address guy, uint wad) public override pass returns (bool) {
-        return super.approve(guy, wad);
+    function approve(address usr, uint wad) public override pass returns (bool) {
+        return super.approve(usr, wad);
     }
 
     function transfer(address dst, uint wad) external override pass returns (bool) {

@@ -24,17 +24,17 @@ abstract contract MaseerToken {
         DOMAIN_SEPARATOR = _domainSeparator();
     }
 
-    event Approval(address indexed src, address indexed guy, uint wad);
+    event Approval(address indexed src, address indexed usr, uint wad);
     event Transfer(address indexed src, address indexed dst, uint wad);
 
-    function approve(address guy) external virtual returns (bool) {
-        return approve(guy, type(uint256).max);
+    function approve(address usr) external virtual returns (bool) {
+        return approve(usr, type(uint256).max);
     }
 
-    function approve(address guy, uint wad) public virtual returns (bool) {
-        allowance[msg.sender][guy] = wad;
+    function approve(address usr, uint wad) public virtual returns (bool) {
+        allowance[msg.sender][usr] = wad;
 
-        emit Approval(msg.sender, guy, wad);
+        emit Approval(msg.sender, usr, wad);
 
         return true;
     }
@@ -106,22 +106,22 @@ abstract contract MaseerToken {
         emit Approval(owner, spender, value);
     }
 
-    function _mint(address guy, uint wad) internal {
+    function _mint(address usr, uint wad) internal {
         totalSupply += wad;
         // Cannot overflow
         unchecked {
-            balanceOf[guy] += wad;
+            balanceOf[usr] += wad;
         }
-        emit Transfer(address(0), guy, wad);
+        emit Transfer(address(0), usr, wad);
     }
 
-    function _burn(address guy, uint wad) internal {
-        balanceOf[guy] -= wad;
+    function _burn(address usr, uint wad) internal {
+        balanceOf[usr] -= wad;
         // Cannot overflow
         unchecked {
             totalSupply -= wad;
         }
-        emit Transfer(guy, address(0), wad);
+        emit Transfer(usr, address(0), wad);
     }
 
     function _domainSeparator() internal view returns (bytes32) {

@@ -23,6 +23,4 @@ contract MaseerOneTest is MaseerTestBase {
     function testBadActor() public view{
         assertEq(maseerGuard.pass(badActor), false);
     }
-
-
 }
