@@ -3,6 +3,7 @@ pragma solidity ^0.8.13;
 
 import {Script, console} from "forge-std/Script.sol";
 import {MaseerOne} from "../src/MaseerOne.sol";
+import {MaseerGate} from "../src/MaseerGate.sol";
 
 import {MockPip} from "../test/Mocks/MockPip.sol";
 import {MockCop} from "../test/Mocks/MockCop.sol";
@@ -19,6 +20,9 @@ contract CounterScript is Script {
     // TODO: Use Maseer Oracle proxy
     address public MASEER_ORACLE;
 
+    // TODO: Use Maseer Market proxy
+    address public MASEER_MARKET;
+
     // TODO: Use Maseer Compliance proxy
     address public MASEER_COMPLIANCE;
 
@@ -30,9 +34,10 @@ contract CounterScript is Script {
 
         // TODO - Use real contracts once available
         MASEER_ORACLE = address(new MockPip());
+        MASEER_MARKET = address(new MaseerGate());
         MASEER_COMPLIANCE = address(new MockCop());
 
-        maseerOne = new MaseerOne(USDT, MASEER_ORACLE, MASEER_COMPLIANCE, NAME, SYMBOL);
+        maseerOne = new MaseerOne(USDT, MASEER_ORACLE, MASEER_MARKET, MASEER_COMPLIANCE, NAME, SYMBOL);
 
         vm.stopBroadcast();
 
