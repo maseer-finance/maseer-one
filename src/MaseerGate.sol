@@ -2,10 +2,9 @@
 pragma solidity ^0.8.28;
 
 contract MaseerGate {
-
     mapping (address => uint256) public wards;
-    function rely(address guy) external auth { wards[guy] = 1; }
-    function deny(address guy) external auth { wards[guy] = 0; }
+    function rely(address usr) external auth { wards[usr] = 1; }
+    function deny(address usr) external auth { wards[usr] = 0; }
     modifier auth() {
         require (wards[msg.sender] == 1, "MaseerGate/not-authorized");
         _;
