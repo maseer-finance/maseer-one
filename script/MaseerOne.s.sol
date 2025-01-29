@@ -10,39 +10,42 @@ import {MaseerProxy} from "../src/MaseerProxy.sol";
 import {MockPip} from "../test/Mocks/MockPip.sol";
 import {MockCop} from "../test/Mocks/MockCop.sol";
 
-contract CounterScript is Script {
+contract MaseerOneScript is Script {
     MaseerOne public maseerOne;
 
-    string public NAME = "MaseerOne";
-    string public SYMBOL = "M1";
+    string public constant NAME = "Cana";
+    string public constant SYMBOL = "CANA";
 
     // Mainnet
     address public constant USDT = 0xdAC17F958D2ee523a2206206994597C13D831ec7;
 
-    // TODO: Use Maseer Oracle proxy
     address public MASEER_ORACLE;
+    address public MASEER_ORACLE_PROXY;
 
-    // TODO: Use Maseer Market proxy
     address public MASEER_MARKET;
+    address public MASEER_MARKET_PROXY;
 
-    // TODO: Use Maseer Compliance proxy
     address public MASEER_COMPLIANCE;
-
-    function setUp() public {
-    }
+    address public MASEER_COMPLIANCE_PROXY;
 
     function run() public {
         vm.startBroadcast();
 
         // TODO - Use real contracts once available
         MASEER_ORACLE = address(new MockPip());
+        MASEER_ORACLE_PROXY = address(new MaseerProxy(MASEER_ORACLE));
         MASEER_MARKET = address(new MaseerGate());
+        MASEER_MARKET_PROXY = address(new MaseerProxy(MASEER_MARKET));
         MASEER_COMPLIANCE = address(new MockCop());
+        MASEER_COMPLIANCE_PROXY = address(new MaseerProxy(MASEER_COMPLIANCE));
 
-        address marketProxy = address(new MaseerProxy(MASEER_MARKET));
-        address complianceProxy = address(new MaseerProxy(MASEER_COMPLIANCE));
-
-        maseerOne = new MaseerOne(USDT, MASEER_ORACLE, marketProxy, complianceProxy, NAME, SYMBOL);
+        maseerOne = new MaseerOne(
+            USDT,
+            MASEER_ORACLE,
+            MASEER_MARKET_PROXY,
+            MASEER_COMPLIANCE_PROXY,
+            NAME,
+            SYMBOL);
 
         vm.stopBroadcast();
 
