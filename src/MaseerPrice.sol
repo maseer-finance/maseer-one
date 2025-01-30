@@ -3,6 +3,7 @@ pragma solidity ^0.8.28;
 
 contract MaseerPrice {
 
+    // Slot 0
     mapping (address => uint256) public wards;
     function rely(address usr) external auth { wards[usr] = 1; }
     function deny(address usr) external auth { wards[usr] = 0; }
