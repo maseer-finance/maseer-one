@@ -3,8 +3,8 @@ pragma solidity ^0.8.28;
 
 contract MaseerProxy {
 
-    bytes32 private constant _IMPLEMENTATION_SLOT = keccak256("maseer.proxy.implementation");
-    bytes32 private constant _WARDS_SLOT = keccak256("maseer.proxy.wards");
+    bytes32 private constant _IMPL_SLOT = keccak256("maseer.proxy.implementation");
+    bytes32 private constant _WARD_SLOT = keccak256("maseer.proxy.wards");
 
     function wards(address usr) external view returns (uint256) {
         return _getAuth(usr);
@@ -47,14 +47,14 @@ contract MaseerProxy {
 
     function _setImpl(address _impl) internal {
         require(_impl != address(0), "MaseerProxy/no-implementation");
-        bytes32 _slot = _IMPLEMENTATION_SLOT;
+        bytes32 _slot = _IMPL_SLOT;
         assembly {
             sstore(_slot, _impl)
         }
     }
 
     function _getImpl() internal view returns (address) {
-        bytes32 slot = _IMPLEMENTATION_SLOT;
+        bytes32 slot = _IMPL_SLOT;
         address _impl;
         assembly {
             _impl := sload(slot)
@@ -63,14 +63,14 @@ contract MaseerProxy {
     }
 
     function _setAuth(address usr, uint256 val) internal {
-        bytes32 _slot = keccak256(abi.encodePacked(_WARDS_SLOT, usr));
+        bytes32 _slot = keccak256(abi.encodePacked(_WARD_SLOT, usr));
         assembly {
             sstore(_slot, val)
         }
     }
 
     function _getAuth(address usr) internal view returns (uint256) {
-        bytes32 _slot = keccak256(abi.encodePacked(_WARDS_SLOT, usr));
+        bytes32 _slot = keccak256(abi.encodePacked(_WARD_SLOT, usr));
         uint256 _val;
         assembly {
             _val := sload(_slot)
