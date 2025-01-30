@@ -3,7 +3,7 @@ pragma solidity ^0.8.28;
 
 import "./MaseerTestBase.t.sol";
 
-contract MaseerOneTest is MaseerTestBase {
+contract MaseerGuardTest is MaseerTestBase {
 
     MaseerGuard public maseerGuard;
 

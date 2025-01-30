@@ -8,6 +8,7 @@ import {MaseerOne}     from "../src/MaseerOne.sol";
 import {MaseerPrice}   from "../src/MaseerPrice.sol";
 import {MaseerGuard}   from "../src/MaseerGuard.sol";
 import {MaseerGate}    from "../src/MaseerGate.sol";
+import {MaseerConduit} from "../src/MaseerConduit.sol";
 import {MaseerProxy}   from "../src/MaseerProxy.sol";
 
 
@@ -35,15 +36,23 @@ contract MaseerTestBase is Test {
     address public actProxy;
     address public cop;
     address public copProxy;
+    address public flo;
+    address public floProxy;
+
+    address public alice;
+    address public bob;
 
     MaseerOne public maseerOne;
 
+    constructor() {
+        alice = makeAddr("alice");
+        bob = makeAddr("bob");
+    }
+
     function testUSDTMintHelper() internal {
-        address alice = makeAddr("alice");
         _mintUSDT(alice, 1000);
         assertEq(IERC20(USDT).balanceOf(alice), 1000);
     }
-
 
     function _mintUSDT(address to, uint256 amount) internal {
         address _owner = IUSDT(USDT).owner();

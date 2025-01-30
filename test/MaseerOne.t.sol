@@ -14,8 +14,10 @@ contract MaseerOneTest is MaseerTestBase {
         actProxy = address(new MaseerProxy(act));
         cop = address(new MaseerGuard(USDT));
         copProxy = address(new MaseerProxy(cop));
+        flo = address(new MaseerConduit());
+        floProxy = address(new MaseerProxy(flo));
 
-        maseerOne = new MaseerOne(USDT, pipProxy, actProxy, copProxy, NAME, SYMBOL);
+        maseerOne = new MaseerOne(USDT, pipProxy, actProxy, copProxy, floProxy, NAME, SYMBOL);
     }
 
     function testName() public view {
@@ -64,6 +66,11 @@ contract MaseerOneTest is MaseerTestBase {
     function testCop() public view {
         assertEq(maseerOne.cop(), copProxy);
         assertEq(MaseerProxy(maseerOne.cop()).impl(), cop);
+    }
+
+    function testFlo() public view {
+        assertEq(maseerOne.flo(), floProxy);
+        assertEq(MaseerProxy(maseerOne.flo()).impl(), flo);
     }
 
     function testUSDTOnline() public view {
