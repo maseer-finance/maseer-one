@@ -9,8 +9,12 @@ contract MaseerGate {
     uint256 public open;
     // Slot 2
     uint256 public halt;
-    // Allocate slots 3-49
-    uint256[48] private __gap;
+    // Slot 3
+    uint256 public bpsin;
+    // Slot 4
+    uint256 public bpsout;
+    // Allocate slots 5-49
+    uint256[46] private __gap;
 
     function rely(address usr) external auth { wards[usr] = 1; }
     function deny(address usr) external auth { wards[usr] = 0; }
@@ -31,6 +35,16 @@ contract MaseerGate {
     function setHalt(uint256 halt_) external auth {
         require(halt_ < block.timestamp + 365 days, "MaseerGate/halt-too-far");
         halt = halt_;
+    }
+
+    function setBpsin(uint256 bpsin_) external auth {
+        require(bpsin_ <= 10000, "MaseerGate/bpsin-too-high");
+        bpsin = bpsin_;
+    }
+
+    function setBpsout(uint256 bpsout_) external auth {
+        require(bpsout_ <= 10000, "MaseerGate/bpsout-too-high");
+        bpsout = bpsout_;
     }
 
     function pauseMarket() external auth {

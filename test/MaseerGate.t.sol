@@ -39,4 +39,18 @@ contract MaseerOneTest is MaseerTestBase {
         assertEq(maseerGate.halt(), 0);
         assertEq(maseerGate.live(), false);
     }
+
+    function testBpsin() public {
+        assertEq(maseerGate.bpsin(), 0);
+
+        maseerGate.setBpsin(10000);
+        assertEq(maseerGate.bpsin(), 10000);
+    }
+
+    function testBpsout() public {
+        assertEq(maseerGate.bpsout(), 0);
+
+        maseerGate.setBpsout(10000);
+        assertEq(maseerGate.bpsout(), 10000);
+    }
 }
