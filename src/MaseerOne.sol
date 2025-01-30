@@ -28,6 +28,7 @@ contract MaseerOne is MaseerToken {
     address immutable public pip;  // Oracle price feed
     address immutable public act;  // Market timing feed
     address immutable public cop;  // Compliance feed
+    address immutable public flo;  // Output conduit
 
     uint256                      public totalPending;
     mapping (address => uint256) public pendingClaim;
@@ -48,6 +49,7 @@ contract MaseerOne is MaseerToken {
         uint256 indexed amount
     );
     event Settled(
+        address indexed conduit,
         uint256 indexed amount
     );
 
@@ -62,6 +64,7 @@ contract MaseerOne is MaseerToken {
         address pip_,
         address act_,
         address cop_,
+        address flo_,
         string memory name_,
         string memory symbol_
     ) MaseerToken(name_, symbol_) {
@@ -69,6 +72,7 @@ contract MaseerOne is MaseerToken {
         pip = pip_;
         act = act_;
         cop = cop_;
+        flo = flo_;
     }
 
     modifier pass() {
@@ -81,7 +85,7 @@ contract MaseerOne is MaseerToken {
         _;
     }
 
-    function mint(uint256 amt_) external live {
+    function mint(uint256 amt_) external live returns (uint256 _out) {
         // Oracle price check
         uint256 _price = Pip(pip).read();
 
@@ -92,10 +96,10 @@ contract MaseerOne is MaseerToken {
 
         // Calculate the mint amount
         // TODO: divdown
-        uint256 _out = amt_ / _price;
+        _out = amt_ / _price;
 
         // Transfer tokens in
-        Gem(gem).transferFrom(msg.sender, address(this), amt_);
+        _safeTransferFrom(gem, msg.sender, address(this), amt_);
 
         // Mint the tokens
         _mint(msg.sender, _out);
@@ -104,20 +108,20 @@ contract MaseerOne is MaseerToken {
         emit ContractCreated(msg.sender, _price, _out);
     }
 
-    function redeem(uint256 amt_) external live pass {
+    function redeem(uint256 amt_) external live pass returns (uint256 _claim) {
 
         // Oracle price check
         uint256 _price = Pip(pip).read();
 
         // Calculate the redemption amount
         // TODO: round down
-        uint256 _out = amt_ * _price;
+        _claim = amt_ * _price;
 
         // Add to the total pending redemptions
-        totalPending += _out;
+        totalPending += _claim;
 
         // Add to the user's pending redemptions
-        pendingClaim[msg.sender] += _out;
+        pendingClaim[msg.sender] += _claim;
 
         // Bump the redemption time
         // TODO: Consider whether to allow multiple redemption periods. Increases complexity and cost
@@ -128,10 +132,10 @@ contract MaseerOne is MaseerToken {
         _burn(msg.sender, amt_);
 
         // Emit contract event
-        emit ContractRedeemed(msg.sender, _price, _out);
+        emit ContractRedeemed(msg.sender, _price, _claim);
     }
 
-    function claim() external pass {
+    function claim() external pass returns (uint256 _out) {
 
         uint256 _time = pendingTime[msg.sender];
 
@@ -145,19 +149,21 @@ contract MaseerOne is MaseerToken {
 
         // Check claimable amounts
         uint256 _amt = pendingClaim[msg.sender];
-        uint256 _bal = Gem(gem).balanceOf(address(this));
 
         // Check internal balance
-        uint256 _out = _min(_amt, _bal);
+        uint256 _bal = Gem(gem).balanceOf(address(this));
+
+        // User can claim the amount owed or current available balance
+        _out = _min(_amt, _bal);
 
         // Decrement the user's pending redemptions
         pendingClaim[msg.sender] -= _out;
 
-        // Transfer the tokens
-        Gem(gem).transferFrom(address(this), msg.sender, _out);
-
         // Emit claim
         emit ClaimProcessed(msg.sender, _out);
+
+        // Transfer the tokens
+        _safeTransferFrom(gem, address(this), msg.sender, _out);
     }
 
     function settle() external returns (uint256 amt) {
@@ -172,11 +178,10 @@ contract MaseerOne is MaseerToken {
         uint256 _out = _bal - totalPending;
 
         // Send the remaining balance to the output conduit
-        // TODO: Create output conduit
-        Gem(gem).transferFrom(address(this), address(1337), _out);
+        _safeTransferFrom(gem, address(this), flo, _out);
 
         // Emit settle
-        emit Settled(_out);
+        emit Settled(flo, _out);
     }
 
     // View functions
@@ -232,5 +237,10 @@ contract MaseerOne is MaseerToken {
 
     function _min(uint256 x, uint256 y) internal pure returns (uint256 z) {
         if (x > y) { z = y; } else { z = x; }
+    }
+
+    function _safeTransferFrom(address _token, address _from, address _to, uint256 _amt) internal {
+        (bool success, bytes memory data) = _token.call(abi.encodeWithSelector(Gem.transferFrom.selector, _from, _to, _amt));
+        require(success && (data.length == 0 || abi.decode(data, (bool))), "MaserrConduit/transfer-failed");
     }
 }
