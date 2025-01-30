@@ -15,6 +15,7 @@ import {MaseerProxy}   from "../src/MaseerProxy.sol";
 interface IUSDT {
     function transferFrom(address from, address to, uint256 amount) external; // non-standard
     function transfer(address to, uint256 amount) external; // non-standard
+    function approve(address spender, uint256 amount) external;
     function owner() external view returns (address);
     function issue(uint256 amount) external;
     function balanceOf(address account) external view returns (uint256);
@@ -26,6 +27,8 @@ contract MaseerTestBase is Test {
 
     // Mainnet
     address public constant USDT = 0xdAC17F958D2ee523a2206206994597C13D831ec7;
+    address public constant WETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
+    address public constant DAI  = 0x6B175474E89094C44Da98b954EedeAC495271d0F;
 
     string public NAME = "MaseerOne";
     string public SYMBOL = "M1";
@@ -41,12 +44,16 @@ contract MaseerTestBase is Test {
 
     address public alice;
     address public bob;
+    address public carol;
+    address public david;
 
     MaseerOne public maseerOne;
 
     constructor() {
         alice = makeAddr("alice");
         bob   = makeAddr("bob");
+        carol = makeAddr("carol");
+        david = makeAddr("david");
 
         pip = address(new MaseerPrice());
         pipProxy = address(new MaseerProxy(pip));
@@ -66,8 +73,10 @@ contract MaseerTestBase is Test {
     function _mintUSDT(address to, uint256 amount) internal {
         address _owner = IUSDT(USDT).owner();
         uint256 _balance = IUSDT(USDT).balanceOf(to);
+
         vm.prank(_owner);
         IUSDT(USDT).issue(amount);
+        vm.prank(_owner);
         IUSDT(USDT).transfer(to, amount);
         vm.stopPrank();
         assertEq(IUSDT(USDT).balanceOf(to), _balance + amount, "Mint failed");
