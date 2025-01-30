@@ -15,9 +15,10 @@ interface Pip {
 }
 
 interface Act {
-    function open() external view returns (uint256);
-    function halt() external view returns (uint256);
-    function live() external view returns (bool);
+    function open()  external view returns (uint256);
+    function halt()  external view returns (uint256);
+    function live()  external view returns (bool);
+    function delay() external view returns (uint256);
 }
 
 import {MaseerToken} from "./MaseerToken.sol";
@@ -125,8 +126,7 @@ contract MaseerOne is MaseerToken {
 
         // Bump the redemption time
         // TODO: Consider whether to allow multiple redemption periods. Increases complexity and cost
-        // TODO: Consider whether redemption delay needs to be configurable. Increases complexity and cost
-        pendingTime[msg.sender] = block.timestamp + 5 days;
+        pendingTime[msg.sender] = block.timestamp + Act(act).delay();
 
         // Burn the tokens
         _burn(msg.sender, amt_);
@@ -200,6 +200,10 @@ contract MaseerOne is MaseerToken {
 
     function canPass(address _usr) external view returns (bool) {
         return Cop(cop).pass(_usr);
+    }
+
+    function claimDelay() external view returns (uint256) {
+        return Act(act).delay();
     }
 
     // Token overrides for compliance
