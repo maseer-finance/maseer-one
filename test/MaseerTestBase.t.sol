@@ -46,7 +46,16 @@ contract MaseerTestBase is Test {
 
     constructor() {
         alice = makeAddr("alice");
-        bob = makeAddr("bob");
+        bob   = makeAddr("bob");
+
+        pip = address(new MaseerPrice());
+        pipProxy = address(new MaseerProxy(pip));
+        act = address(new MaseerGate());
+        actProxy = address(new MaseerProxy(act));
+        cop = address(new MaseerGuard(USDT));
+        copProxy = address(new MaseerProxy(cop));
+        flo = address(new MaseerConduit());
+        floProxy = address(new MaseerProxy(flo));
     }
 
     function testUSDTMintHelper() internal {
@@ -56,14 +65,11 @@ contract MaseerTestBase is Test {
 
     function _mintUSDT(address to, uint256 amount) internal {
         address _owner = IUSDT(USDT).owner();
-
         uint256 _balance = IUSDT(USDT).balanceOf(to);
-
         vm.prank(_owner);
         IUSDT(USDT).issue(amount);
         IUSDT(USDT).transfer(to, amount);
         vm.stopPrank();
-
         assertEq(IUSDT(USDT).balanceOf(to), _balance + amount, "Mint failed");
     }
 
