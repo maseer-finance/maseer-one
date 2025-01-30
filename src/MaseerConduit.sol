@@ -2,7 +2,7 @@
 pragma solidity ^0.8.28;
 
 interface Gem {
-    function transferFrom(address src, address dst, uint wad) external returns (bool);
+    function transfer(address dst, uint wad) external returns (bool);
     function balanceOf(address account) external view returns (uint256);
 }
 
@@ -46,15 +46,15 @@ contract MaseerConduit {
         wards[msg.sender] = 1;
     }
 
-    function move(address _token, address _to) external operator buds(_to) {
+    function move(address _token, address _to) external operator buds(_to) returns (uint256 _amt) {
         require(_token != address(0), "MaseerConduit/no-token");
-        uint256 _bal = Gem(_token).balanceOf(address(this));
-        _safeTransferFrom(_token, address(this), _to, _bal);
-        emit Move(_token, _to, _bal);
+        _amt = Gem(_token).balanceOf(address(this));
+        _safeTransfer(_token, _to, _amt);
+        emit Move(_token, _to, _amt);
     }
 
-    function _safeTransferFrom(address token, address _from, address _to, uint256 _amt) internal {
-        (bool success, bytes memory data) = token.call(abi.encodeWithSelector(Gem.transferFrom.selector, _from, _to, _amt));
-        require(success && (data.length == 0 || abi.decode(data, (bool))), "MaserrConduit/transfer-failed");
+    function _safeTransfer(address _token, address _to, uint256 _amt) internal {
+        (bool success, bytes memory data) = _token.call(abi.encodeWithSelector(Gem.transfer.selector, _to, _amt));
+        require(success && (data.length == 0 || (data.length == 32 && abi.decode(data, (bool)))), "MaseerConduit/transfer-failed");
     }
 }
