@@ -1,0 +1,53 @@
+// SPDX-License-Identifier: BUSL-1.1
+pragma solidity ^0.8.28;
+
+interface Gem {
+    function transferFrom(address src, address dst, uint wad) external returns (bool);
+    function balanceOf(address account) external view returns (uint256);
+}
+
+contract MaseerConduit {
+
+    // Slot 0
+    mapping (address => uint256) public wards;
+    // Slot 1
+    mapping (address => uint256) public can;
+    // Slot 2
+    address public to;
+
+    function rely(address usr) external auth { wards[usr] = 1; }
+    function deny(address usr) external auth { wards[usr] = 0; }
+    modifier auth() {
+        require (wards[msg.sender] == 1, "MaseerConduit/not-authorized");
+        _;
+    }
+    function hope(address usr) external auth { can[usr] = 1; }
+    function nope(address usr) external auth { can[usr] = 0; }
+    modifier operator() {
+        require (can[msg.sender] == 1, "MaseerConduit/not-operator");
+        _;
+    }
+
+    event Move(
+        address indexed token,
+        address indexed to,
+        uint256 indexed amount
+    );
+
+    constructor() {
+        wards[msg.sender] = 1;
+        can[msg.sender] = 1;
+    }
+
+    function move(address _token) external operator {
+        require(_token != address(0), "MaseerConduit/no-token");
+        uint256 _bal = Gem(_token).balanceOf(address(this));
+        emit Move(_token, to, _bal);
+        _safeTransferFrom(_token, address(this), to, _bal);
+    }
+
+    function _safeTransferFrom(address token, address _from, address _to, uint256 _amt) internal {
+        (bool success, bytes memory data) = token.call(abi.encodeWithSelector(Gem.transferFrom.selector, _from, _to, _amt));
+        require(success && (data.length == 0 || abi.decode(data, (bool))), "MaserrConduit/transfer-failed");
+    }
+}
