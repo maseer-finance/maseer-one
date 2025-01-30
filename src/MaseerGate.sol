@@ -9,7 +9,7 @@ contract MaseerGate {
     uint256 public open;
     // Slot 2
     uint256 public halt;
-    // Allocate slots 3-50
+    // Allocate slots 3-49
     uint256[48] private __gap;
 
     function rely(address usr) external auth { wards[usr] = 1; }

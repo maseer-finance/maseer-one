@@ -14,7 +14,7 @@ contract MaseerConduit {
     mapping (address => uint256) public can;
     // Slot 2
     mapping (address => uint256) public bud;
-    // Allocate Slots 3-50
+    // Allocate Slots 3-49
     uint256[48] private __gap;
 
     function rely(address usr) external auth { wards[usr] = 1; }

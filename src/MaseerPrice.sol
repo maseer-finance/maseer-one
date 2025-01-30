@@ -5,7 +5,7 @@ contract MaseerPrice {
 
     // Slot 0
     mapping (address => uint256) public wards;
-    // Allocate slots 1-50
+    // Allocate slots 1-49
     uint256[49] private __gap;
 
     function rely(address usr) external auth { wards[usr] = 1; }
