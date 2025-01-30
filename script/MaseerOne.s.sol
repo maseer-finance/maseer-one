@@ -3,9 +3,11 @@ pragma solidity ^0.8.13;
 
 import {Script, console} from "forge-std/Script.sol";
 import {MaseerOne} from "../src/MaseerOne.sol";
+import {MaseerPrice} from "../src/MaseerPrice.sol";
 import {MaseerGate} from "../src/MaseerGate.sol";
 import {MaseerGuard} from "../src/MaseerGuard.sol";
 import {MaseerProxy} from "../src/MaseerProxy.sol";
+import {MaseerConduit} from "../src/MaseerConduit.sol";
 
 import {MockPip} from "../test/Mocks/MockPip.sol";
 import {MockCop} from "../test/Mocks/MockCop.sol";
@@ -28,24 +30,37 @@ contract MaseerOneScript is Script {
     address public MASEER_COMPLIANCE;
     address public MASEER_COMPLIANCE_PROXY;
 
+    address public MASEER_CONDUIT;
+    address public MASEER_CONDUIT_PROXY;
+
     function run() public {
         vm.startBroadcast();
 
-        // TODO - Use real contracts once available
-        MASEER_ORACLE = address(new MockPip());
+        MASEER_ORACLE = address(new MaseerPrice());
         MASEER_ORACLE_PROXY = address(new MaseerProxy(MASEER_ORACLE));
         MASEER_MARKET = address(new MaseerGate());
         MASEER_MARKET_PROXY = address(new MaseerProxy(MASEER_MARKET));
-        MASEER_COMPLIANCE = address(new MockCop());
+        MASEER_COMPLIANCE = address(new MaseerGuard(USDT));
         MASEER_COMPLIANCE_PROXY = address(new MaseerProxy(MASEER_COMPLIANCE));
+        MASEER_CONDUIT = address(new MaseerConduit());
+        MASEER_CONDUIT_PROXY = address(new MaseerProxy(MASEER_CONDUIT));
 
         maseerOne = new MaseerOne(
             USDT,
             MASEER_ORACLE,
             MASEER_MARKET_PROXY,
             MASEER_COMPLIANCE_PROXY,
+            MASEER_CONDUIT_PROXY,
             NAME,
-            SYMBOL);
+            SYMBOL
+        );
+
+
+        // TODO: Configure Authorizations on proxies
+        // MASEER_ORACLE_PROXY set wards and initial config
+        // MASEER_MARKET_PROXY set wards and initial config
+        // MASEER_COMPLIANCE_PROXY set wards
+        // MASEER_CONDUIT_PROXY set wards and buds
 
         vm.stopBroadcast();
 
