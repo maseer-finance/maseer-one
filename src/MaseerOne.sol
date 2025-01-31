@@ -81,12 +81,12 @@ contract MaseerOne is MaseerToken {
         _;
     }
 
-    modifier live() {
+    modifier bell() {
         if (!Act(act).live()) { revert MarketClosed(); }
         _;
     }
 
-    function mint(uint256 amt_) external live returns (uint256 _out) {
+    function mint(uint256 amt_) external bell returns (uint256 _out) {
         // Oracle price check
         uint256 _price = Pip(pip).read();
 
@@ -96,7 +96,7 @@ contract MaseerOne is MaseerToken {
         }
 
         // Calculate the mint amount
-        // TODO: divdown
+        // TODO: divdown for USDT
         _out = amt_ / _price;
 
         // Transfer tokens in
@@ -109,13 +109,13 @@ contract MaseerOne is MaseerToken {
         emit ContractCreated(msg.sender, _price, _out);
     }
 
-    function redeem(uint256 amt_) external live pass returns (uint256 _claim) {
+    function redeem(uint256 amt_) external bell pass returns (uint256 _claim) {
 
         // Oracle price check
         uint256 _price = Pip(pip).read();
 
         // Calculate the redemption amount
-        // TODO: round down
+        // TODO: round decimals for USDT
         _claim = amt_ * _price;
 
         // Add to the total pending redemptions
