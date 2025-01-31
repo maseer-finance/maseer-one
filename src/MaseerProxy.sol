@@ -6,11 +6,11 @@ contract MaseerProxy {
     bytes32 private constant _IMPL_SLOT = keccak256("maseer.proxy.implementation");
     bytes32 private constant _WARD_SLOT = keccak256("maseer.proxy.wards");
 
-    function wards(address usr) external view returns (uint256) {
+    function wardsProxy(address usr) external view returns (uint256) {
         return _getAuth(usr);
     }
-    function rely(address usr) external auth { _setAuth(usr, 1); }
-    function deny(address usr) external auth { _setAuth(usr, 0); }
+    function relyProxy(address usr) external auth { _setAuth(usr, 1); }
+    function denyProxy(address usr) external auth { _setAuth(usr, 0); }
 
     modifier auth() {
         require(_getAuth(msg.sender) == 1, "MaseerProxy/not-authorized");
