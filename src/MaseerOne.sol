@@ -245,6 +245,6 @@ contract MaseerOne is MaseerToken {
 
     function _safeTransferFrom(address _token, address _from, address _to, uint256 _amt) internal {
         (bool success, bytes memory data) = _token.call(abi.encodeWithSelector(Gem.transferFrom.selector, _from, _to, _amt));
-        require(success && (data.length == 0 || abi.decode(data, (bool))), "MaserrConduit/transfer-failed");
+        require(success && (data.length == 0 || abi.decode(data, (bool))), "MaseerOne/transfer-failed");
     }
 }

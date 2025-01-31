@@ -55,6 +55,6 @@ contract MaseerConduit {
 
     function _safeTransfer(address _token, address _to, uint256 _amt) internal {
         (bool success, bytes memory data) = _token.call(abi.encodeWithSelector(Gem.transfer.selector, _to, _amt));
-        require(success && (data.length == 0 || (data.length == 32 && abi.decode(data, (bool)))), "MaseerConduit/transfer-failed");
+        require(success && (data.length == 0 || abi.decode(data, (bool))), "MaseerConduit/transfer-failed");
     }
 }
