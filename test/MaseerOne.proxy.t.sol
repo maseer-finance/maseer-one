@@ -6,7 +6,6 @@ import "./MaseerTestBase.t.sol";
 contract MaseerOneProxyTest is MaseerTestBase {
 
     function setUp() public {
-
         maseerOne = new MaseerOne(USDT, pipProxy, actProxy, copProxy, floProxy, NAME, SYMBOL);
     }
 
@@ -29,4 +28,7 @@ contract MaseerOneProxyTest is MaseerTestBase {
         assertEq(maseerOne.flo(), floProxy);
         assertEq(MaseerProxy(maseerOne.flo()).impl(), floImpl);
     }
+
+    // TODO: Test proxy interactions
+    // TODO: Test proxy upgrade
 }
