@@ -33,13 +33,13 @@ contract MaseerTestBase is Test {
     string public NAME = "MaseerOne";
     string public SYMBOL = "M1";
 
-    address public pip;
+    address public pipImpl;
     address public pipProxy;
-    address public act;
+    address public actImpl;
     address public actProxy;
-    address public cop;
+    address public copImpl;
     address public copProxy;
-    address public flo;
+    address public floImpl;
     address public floProxy;
 
     address public alice;
@@ -55,14 +55,14 @@ contract MaseerTestBase is Test {
         carol = makeAddr("carol");
         david = makeAddr("david");
 
-        pip = address(new MaseerPrice());
-        pipProxy = address(new MaseerProxy(pip));
-        act = address(new MaseerGate());
-        actProxy = address(new MaseerProxy(act));
-        cop = address(new MaseerGuard(USDT));
-        copProxy = address(new MaseerProxy(cop));
-        flo = address(new MaseerConduit());
-        floProxy = address(new MaseerProxy(flo));
+        pipImpl = address(new MaseerPrice());
+        pipProxy = address(new MaseerProxy(pipImpl));
+        actImpl = address(new MaseerGate());
+        actProxy = address(new MaseerProxy(actImpl));
+        copImpl = address(new MaseerGuard(USDT));
+        copProxy = address(new MaseerProxy(copImpl));
+        floImpl = address(new MaseerConduit());
+        floProxy = address(new MaseerProxy(floImpl));
     }
 
     function testUSDTMintHelper() internal {

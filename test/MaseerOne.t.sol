@@ -7,16 +7,6 @@ import "./MaseerTestBase.t.sol";
 contract MaseerOneTest is MaseerTestBase {
 
     function setUp() public {
-
-        pip = address(new MaseerPrice());
-        pipProxy = address(new MaseerProxy(pip));
-        act = address(new MaseerGate());
-        actProxy = address(new MaseerProxy(act));
-        cop = address(new MaseerGuard(USDT));
-        copProxy = address(new MaseerProxy(cop));
-        flo = address(new MaseerConduit());
-        floProxy = address(new MaseerProxy(flo));
-
         maseerOne = new MaseerOne(USDT, pipProxy, actProxy, copProxy, floProxy, NAME, SYMBOL);
     }
 
@@ -55,22 +45,22 @@ contract MaseerOneTest is MaseerTestBase {
 
     function testPip() public view {
         assertEq(maseerOne.pip(), pipProxy);
-        assertEq(MaseerProxy(maseerOne.pip()).impl(), pip);
+        assertEq(MaseerProxy(maseerOne.pip()).impl(), pipImpl);
     }
 
     function testAct() public view {
         assertEq(maseerOne.act(), actProxy);
-        assertEq(MaseerProxy(maseerOne.act()).impl(), act);
+        assertEq(MaseerProxy(maseerOne.act()).impl(), actImpl);
     }
 
     function testCop() public view {
         assertEq(maseerOne.cop(), copProxy);
-        assertEq(MaseerProxy(maseerOne.cop()).impl(), cop);
+        assertEq(MaseerProxy(maseerOne.cop()).impl(), copImpl);
     }
 
     function testFlo() public view {
         assertEq(maseerOne.flo(), floProxy);
-        assertEq(MaseerProxy(maseerOne.flo()).impl(), flo);
+        assertEq(MaseerProxy(maseerOne.flo()).impl(), floImpl);
     }
 
     function testUSDTOnline() public view {
