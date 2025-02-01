@@ -39,8 +39,18 @@ abstract contract MaseerToken {
         return true;
     }
 
-    function transfer(address dst, uint wad) external virtual returns (bool) {
-        return transferFrom(msg.sender, dst, wad);
+    function transfer(address dst, uint wad) public virtual returns (bool) {
+        balanceOf[msg.sender] -= wad;
+
+        // Cannot overflow because balance
+        //   can't exceed totalSupply
+        unchecked {
+            balanceOf[dst] += wad;
+        }
+
+        emit Transfer(msg.sender, dst, wad);
+
+        return true;
     }
 
     function transferFrom(address src, address dst, uint wad)
