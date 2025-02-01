@@ -70,6 +70,14 @@ contract MaseerTestBase is Test {
         assertEq(IERC20(USDT).balanceOf(alice), 1000);
     }
 
+    function _mintTokens(address to, uint256 amount) internal {
+        uint256 _bal = maseerOne.balanceOf(to);
+        uint256 _tot = maseerOne.totalSupply();
+        deal(address(maseerOne), to, amount, true);
+        assertEq(maseerOne.balanceOf(to), _bal + amount, "Mint failed - balance");
+        assertEq(maseerOne.totalSupply(), _tot + amount, "Mint failed - totalSupply");
+    }
+
     function _mintUSDT(address to, uint256 amount) internal {
         address _owner = IUSDT(USDT).owner();
         uint256 _balance = IUSDT(USDT).balanceOf(to);
@@ -78,7 +86,7 @@ contract MaseerTestBase is Test {
         IUSDT(USDT).issue(amount);
         vm.prank(_owner);
         IUSDT(USDT).transfer(to, amount);
-        vm.stopPrank();
+
         assertEq(IUSDT(USDT).balanceOf(to), _balance + amount, "Mint failed");
     }
 
