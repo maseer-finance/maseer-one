@@ -18,8 +18,9 @@ contract MaseerProxy {
     }
 
     constructor(address _impl) {
-        _setImpl(_impl);
         _setAuth(msg.sender, 1);
+        _setImpl(_impl);
+        _setImplWard();
     }
 
     function file(address _impl) external auth {
@@ -63,18 +64,26 @@ contract MaseerProxy {
     }
 
     function _setAuth(address usr, uint256 val) internal {
-        bytes32 _slot = keccak256(abi.encodePacked(_WARD_SLOT, usr));
+        bytes32 _slot = keccak256(abi.encode(_WARD_SLOT, usr));
         assembly {
             sstore(_slot, val)
         }
     }
 
     function _getAuth(address usr) internal view returns (uint256) {
-        bytes32 _slot = keccak256(abi.encodePacked(_WARD_SLOT, usr));
+        bytes32 _slot = keccak256(abi.encode(_WARD_SLOT, usr));
         uint256 _val;
         assembly {
             _val := sload(_slot)
         }
         return _val;
+    }
+
+    // Ensure implementation contract has mapping structure for wards
+    function _setImplWard() internal auth {
+        bytes32 slot = keccak256(abi.encode(msg.sender, uint256(0)));
+        assembly {
+            sstore(slot, 1)
+        }
     }
 }
