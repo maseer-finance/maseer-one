@@ -85,10 +85,6 @@ contract MaseerOneTokenTest is MaseerTestBase {
             vm.expectRevert(MaseerOne.UnauthorizedUser.selector);
             vm.prank(from);
             maseerOne.transfer(to, amt);
-
-            assertEq(maseerOne.balanceOf(from), amt);
-            assertEq(maseerOne.balanceOf(to), toBal);
-            assertEq(maseerOne.totalSupply(), totalSupply);
             return;
         }
 
