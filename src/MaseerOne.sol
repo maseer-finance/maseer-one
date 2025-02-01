@@ -55,6 +55,7 @@ contract MaseerOne is MaseerToken {
     );
 
     error UnauthorizedUser();
+    error TransferToContract();
     error MarketClosed();
     error ClaimableAfter(uint256 time);
     error NoPendingClaim();
@@ -76,17 +77,18 @@ contract MaseerOne is MaseerToken {
         flo = flo_;
     }
 
-    modifier pass() {
-        if (!Cop(cop).pass(msg.sender)) { revert UnauthorizedUser(); }
+    modifier pass(address usr) {
+        if (!_canPass(usr)) { revert UnauthorizedUser(); }
         _;
     }
 
     modifier bell() {
-        if (!Act(act).live()) { revert MarketClosed(); }
+        if (!_isLive()) { revert MarketClosed(); }
         _;
     }
 
-    function mint(uint256 amt_) external bell returns (uint256 _out) {
+    function mint(uint256 amt_) external bell pass(msg.sender) returns (uint256 _out) {
+
         // Oracle price check
         uint256 _price = Pip(pip).read();
 
@@ -109,7 +111,7 @@ contract MaseerOne is MaseerToken {
         emit ContractCreated(msg.sender, _price, _out);
     }
 
-    function redeem(uint256 amt_) external bell pass returns (uint256 _claim) {
+    function redeem(uint256 amt_) external bell pass(msg.sender) returns (uint256 _claim) {
 
         // Oracle price check
         uint256 _price = Pip(pip).read();
@@ -135,7 +137,7 @@ contract MaseerOne is MaseerToken {
         emit ContractRedeemed(msg.sender, _price, _claim);
     }
 
-    function claim() external pass returns (uint256 _out) {
+    function claim() external pass(msg.sender) returns (uint256 _out) {
 
         uint256 _time = pendingTime[msg.sender];
 
@@ -166,7 +168,7 @@ contract MaseerOne is MaseerToken {
         _safeTransferFrom(gem, address(this), msg.sender, _out);
     }
 
-    function settle() external returns (uint256 amt) {
+    function settle() external pass(msg.sender) returns (uint256 amt) {
 
         // Get the gem balance and subtract the pending redemptions
         uint256 _bal = Gem(gem).balanceOf(address(this));
@@ -187,19 +189,21 @@ contract MaseerOne is MaseerToken {
     // View functions
 
     function open() external view returns (bool) {
-        return Act(act).live();
+        return _isLive();
     }
 
     function nextOpen() external view returns (uint256) {
-        return Act(act).live() ? 0 : Act(act).open();
+        uint256 _open = Act(act).open();
+        return _open >= block.timestamp ? _open : 0;
     }
 
     function nextHalt() external view returns (uint256) {
-        return Act(act).live() ? 0 : Act(act).halt();
+        uint256 _halt = Act(act).halt();
+        return _halt >= block.timestamp ? _halt : 0;
     }
 
     function canPass(address _usr) external view returns (bool) {
-        return Cop(cop).pass(_usr);
+        return _canPass(_usr);
     }
 
     function claimDelay() external view returns (uint256) {
@@ -208,19 +212,21 @@ contract MaseerOne is MaseerToken {
 
     // Token overrides for compliance
 
-    function approve(address usr) external override pass returns (bool) {
+    function approve(address usr) external override pass(msg.sender) pass(usr) returns (bool) {
         return super.approve(usr, type(uint256).max);
     }
 
-    function approve(address usr, uint wad) public override pass returns (bool) {
+    function approve(address usr, uint wad) public override pass(msg.sender) pass(usr) returns (bool) {
         return super.approve(usr, wad);
     }
 
-    function transfer(address dst, uint wad) external override pass returns (bool) {
-        return super.transferFrom(msg.sender, dst, wad);
+    function transfer(address dst, uint wad) public override pass(msg.sender) pass(dst) returns (bool) {
+        if (dst == address(this)) { revert TransferToContract(); }
+        return super.transfer(dst, wad);
     }
 
-    function transferFrom(address src, address dst, uint wad) public override pass returns (bool) {
+    function transferFrom(address src, address dst, uint wad) public override pass(msg.sender) pass(src) pass(dst) returns (bool) {
+        if (dst == address(this)) { revert TransferToContract(); }
         return super.transferFrom(src, dst, wad);
     }
 
@@ -229,15 +235,22 @@ contract MaseerOne is MaseerToken {
         address spender,
         uint256 value,
         uint256 deadline,
-        uint8 v,
+        uint8   v,
         bytes32 r,
         bytes32 s
-    ) public override pass {
-        // TODO: Check if the transfer is allowed
+    ) public override pass(msg.sender) pass(owner) pass(spender) {
         super.permit(owner, spender, value, deadline, v, r, s);
     }
 
     // Internal utility functions
+
+    function _canPass(address _usr) internal view returns (bool) {
+        return Cop(cop).pass(_usr);
+    }
+
+    function _isLive() internal view returns (bool) {
+        return Act(act).live();
+    }
 
     function _min(uint256 x, uint256 y) internal pure returns (uint256 z) {
         if (x > y) { z = y; } else { z = x; }
