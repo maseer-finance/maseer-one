@@ -210,6 +210,10 @@ contract MaseerOne is MaseerToken {
         return Act(act).delay();
     }
 
+    function price() external view returns (uint256) {
+        return Pip(pip).read();
+    }
+
     // Token overrides for compliance
 
     function approve(address usr) external override pass(msg.sender) pass(usr) returns (bool) {
