@@ -9,8 +9,10 @@ contract MaseerGuard {
 
     address public immutable source;
 
-    // Allocating 50 slots
-    uint256[50] private __gap;
+    // Slot 0 reserved for `wards` mapping
+    mapping (address => uint256) public wards;
+    // Allocating slots 1-49
+    uint256[49] private __gap;
 
     constructor(address source_) {
         source = source_;
