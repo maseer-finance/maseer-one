@@ -42,12 +42,22 @@ contract MaseerTestBase is Test {
     address public floImpl;
     address public floProxy;
 
+    MaseerPrice   public pip;
+    MaseerGate    public act;
+    MaseerGuard   public cop;
+    MaseerConduit public flo;
+
     address public alice;
     address public bob;
     address public carol;
     address public david;
 
+    IUSDT  public usdt = IUSDT(USDT);
+    IERC20 public weth = IERC20(WETH);
+    IERC20 public dai  = IERC20(DAI);
+
     MaseerOne public maseerOne;
+    address   public maseerOneAddr;
 
     constructor() {
         alice = makeAddr("alice");
@@ -56,18 +66,28 @@ contract MaseerTestBase is Test {
         david = makeAddr("david");
 
         pipImpl = address(new MaseerPrice());
-        pipProxy = address(new MaseerProxy(pipImpl));
+        pip = MaseerPrice(address(new MaseerProxy(pipImpl)));
+        pipProxy = address(pip);
+
         actImpl = address(new MaseerGate());
-        actProxy = address(new MaseerProxy(actImpl));
+        act = MaseerGate(address(new MaseerProxy(actImpl)));
+        actProxy = address(act);
+
         copImpl = address(new MaseerGuard(USDT));
-        copProxy = address(new MaseerProxy(copImpl));
+        cop = MaseerGuard(address(new MaseerProxy(copImpl)));
+        copProxy = address(cop);
+
         floImpl = address(new MaseerConduit());
-        floProxy = address(new MaseerProxy(floImpl));
+        flo = MaseerConduit(address(new MaseerProxy(floImpl)));
+        floProxy = address(flo);
+
+        maseerOne = new MaseerOne(USDT, pipProxy, actProxy, copProxy, floProxy, NAME, SYMBOL);
+        maseerOneAddr = address(maseerOne);
     }
 
     function testUSDTMintHelper() internal {
         _mintUSDT(alice, 1000);
-        assertEq(IERC20(USDT).balanceOf(alice), 1000);
+        assertEq(usdt.balanceOf(alice), 1000);
     }
 
     function _mintTokens(address to, uint256 amount) internal {
@@ -79,15 +99,15 @@ contract MaseerTestBase is Test {
     }
 
     function _mintUSDT(address to, uint256 amount) internal {
-        address _owner = IUSDT(USDT).owner();
-        uint256 _balance = IUSDT(USDT).balanceOf(to);
+        address _owner = usdt.owner();
+        uint256 _balance = usdt.balanceOf(to);
 
         vm.prank(_owner);
-        IUSDT(USDT).issue(amount);
+        usdt.issue(amount);
         vm.prank(_owner);
-        IUSDT(USDT).transfer(to, amount);
+        usdt.transfer(to, amount);
 
-        assertEq(IUSDT(USDT).balanceOf(to), _balance + amount, "Mint failed");
+        assertEq(usdt.balanceOf(to), _balance + amount, "Mint failed");
     }
 
     function _calculateDomainSeparator(string memory name, uint256 chainid, address token) internal pure returns (bytes32) {
