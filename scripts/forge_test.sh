@@ -17,7 +17,7 @@ done
 
 TEST_ARGS=''
 
-vstr="-vv"
+vstr="-vvv"
 if [ -n "$v" ]; then
     vstr=""
     for (( i=0; i<$v; i++ ))
