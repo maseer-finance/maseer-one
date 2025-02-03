@@ -47,7 +47,7 @@ contract MaseerOneScript is Script {
 
         maseerOne = new MaseerOne(
             USDT,
-            MASEER_ORACLE,
+            MASEER_ORACLE_PROXY,
             MASEER_MARKET_PROXY,
             MASEER_COMPLIANCE_PROXY,
             MASEER_CONDUIT_PROXY,
