@@ -15,11 +15,13 @@ interface Pip {
 }
 
 interface Act {
-    function open()  external view returns (uint256);
-    function halt()  external view returns (uint256);
-    function live()  external view returns (bool);
-    function delay() external view returns (uint256);
-    function cap()   external view returns (uint256);
+    function open()   external view returns (uint256);
+    function halt()   external view returns (uint256);
+    function bpsin()  external view returns (uint256);
+    function bpsout() external view returns (uint256);
+    function delay()  external view returns (uint256);
+    function cap()    external view returns (uint256);
+    function live()   external view returns (bool);
 }
 
 import {MaseerToken} from "./MaseerToken.sol";
@@ -33,7 +35,7 @@ contract MaseerOne is MaseerToken {
     address immutable public flo;  // Output conduit
 
     uint256                      public totalPending;
-    mapping (address => uint256) public pendingClaim;
+    mapping (address => uint256) public pendingExit;
     mapping (address => uint256) public pendingTime;
 
     event ContractCreated(
@@ -58,6 +60,8 @@ contract MaseerOne is MaseerToken {
     error UnauthorizedUser();
     error TransferToContract();
     error MarketClosed();
+    error InvalidPrice();
+    error ExceedCap();
     error ClaimableAfter(uint256 time);
     error NoPendingClaim();
     error DustThreshold(uint256 min);
@@ -79,33 +83,37 @@ contract MaseerOne is MaseerToken {
     }
 
     modifier pass(address usr) {
-        if (!_canPass(usr)) { revert UnauthorizedUser(); }
+        if (!_canPass(usr)) revert UnauthorizedUser();
         _;
     }
 
     modifier bell() {
-        if (!_isLive()) { revert MarketClosed(); }
+        if (!_isLive()) revert MarketClosed();
         _;
     }
 
     function mint(uint256 amt_) external bell pass(msg.sender) returns (uint256 _out) {
 
         // Oracle price check
-        uint256 _price = Pip(pip).read();
+        uint256 _unit = _read();
+
+        // Revert if the price is zero
+        if (_unit == 0) revert InvalidPrice();
+
+        // Adjust the price for minting
+        _unit = _adjustMintPrice(_unit, _bpsin());
 
         // Assert minimum purchase amount of one unit to avoid dust
-        if (amt_ < _price) {
-            revert DustThreshold(_price);
+        if (amt_ < _unit) {
+            revert DustThreshold(_unit);
         }
 
         // Calculate the mint amount
-        // TODO: divdown for USDT
-        // TODO: factor bpsin
-        _out = amt_ / _price;
+        _out = amt_ / _unit;
 
         // Revert if the total supply after mint exceeds the cap
-        if (totalSupply + _out > Act(act).cap()) {
-            revert DustThreshold(_price);
+        if (totalSupply + _out > _cap()) {
+            revert ExceedCap();
         }
 
         // Transfer tokens in
@@ -115,52 +123,49 @@ contract MaseerOne is MaseerToken {
         _mint(msg.sender, _out);
 
         // Emit contract event
-        emit ContractCreated(msg.sender, _price, _out);
+        emit ContractCreated(msg.sender, _unit, _out);
     }
 
-    function redeem(uint256 amt_) external bell pass(msg.sender) returns (uint256 _claim) {
+    function burn(uint256 amt_) external bell pass(msg.sender) returns (uint256 _exit) {
 
         // Oracle price check
-        uint256 _price = Pip(pip).read();
+        uint256 _unit = _read();
+
+        // Revert if the price is zero
+        if (_unit == 0) revert InvalidPrice();
+
+        // Adjust the price for redemption
+        _unit = _adjustBurnPrice(_unit, _bpsout());
 
         // Calculate the redemption amount
-        // TODO: round decimals for USDT
-        // TODO: factor bpsout
-        _claim = amt_ * _price;
+        _exit = amt_ * _unit;
 
         // Add to the total pending redemptions
-        totalPending += _claim;
+        totalPending += _exit;
 
         // Add to the user's pending redemptions
-        pendingClaim[msg.sender] += _claim;
+        pendingExit[msg.sender] += _exit;
 
         // Bump the redemption time
-        // TODO: Consider whether to allow multiple redemption periods.
-        //   Increases complexity and cost
-        //   Also consider griefing
-        pendingTime[msg.sender] = block.timestamp + Act(act).delay();
+        pendingTime[msg.sender] = block.timestamp + _delay();
 
         // Burn the tokens
         _burn(msg.sender, amt_);
 
         // Emit contract event
-        emit ContractRedeemed(msg.sender, _price, _claim);
+        emit ContractRedeemed(msg.sender, _unit, _exit);
     }
 
-    function claim() external pass(msg.sender) returns (uint256 _out) {
+    function exit() external pass(msg.sender) returns (uint256 _out) {
 
         uint256 _time = pendingTime[msg.sender];
 
         // Check if the claim is past the redemption period
-        if (_time > block.timestamp) {
-            revert ClaimableAfter(pendingTime[msg.sender]);
-        }
-        if (_time == 0) {
-            revert NoPendingClaim();
-        }
+        if (_time > block.timestamp) revert ClaimableAfter(pendingTime[msg.sender]);
+        if (_time == 0) revert NoPendingClaim();
 
         // Check claimable amounts
-        uint256 _amt = pendingClaim[msg.sender];
+        uint256 _amt = pendingExit[msg.sender];
 
         // Check internal balance
         uint256 _bal = Gem(gem).balanceOf(address(this));
@@ -169,13 +174,13 @@ contract MaseerOne is MaseerToken {
         _out = _min(_amt, _bal);
 
         // Decrement the user's pending redemptions
-        pendingClaim[msg.sender] -= _out;
-
-        // Emit claim
-        emit ClaimProcessed(msg.sender, _out);
+        pendingExit[msg.sender] -= _out;
 
         // Transfer the tokens
         _safeTransferFrom(gem, address(this), msg.sender, _out);
+
+        // Emit claim
+        emit ClaimProcessed(msg.sender, _out);
     }
 
     function settle() external pass(msg.sender) returns (uint256 amt) {
@@ -184,7 +189,7 @@ contract MaseerOne is MaseerToken {
         uint256 _bal = Gem(gem).balanceOf(address(this));
 
         // Return 0 if the balance is reserved for pending claims
-        if (_bal < totalPending) { return 0; }
+        if (_bal < totalPending) return 0;
 
         // Calculate the balance after pending redemptions
         uint256 _out = _bal - totalPending;
@@ -217,11 +222,23 @@ contract MaseerOne is MaseerToken {
     }
 
     function claimDelay() external view returns (uint256) {
-        return Act(act).delay();
+        return _delay();
     }
 
     function price() external view returns (uint256) {
-        return Pip(pip).read();
+        return _read();
+    }
+
+    function mintUnit() external view returns (uint256) {
+        return _adjustMintPrice(_read(), _bpsin());
+    }
+
+    function burnUnit() external view returns (uint256) {
+        return _adjustBurnPrice(_read(), _bpsout());
+    }
+
+    function cap() external view returns (uint256) {
+        return _cap();
     }
 
     // Token overrides for compliance
@@ -266,8 +283,36 @@ contract MaseerOne is MaseerToken {
         return Act(act).live();
     }
 
+    function _delay() internal view returns (uint256) {
+        return Act(act).delay();
+    }
+
+    function _bpsin() internal view returns (uint256) {
+        return Act(act).bpsin();
+    }
+
+    function _bpsout() internal view returns (uint256) {
+        return Act(act).bpsout();
+    }
+
+    function _cap() internal view returns (uint256) {
+        return Act(act).cap();
+    }
+
+    function _read() internal view returns (uint256) {
+        return Pip(pip).read();
+    }
+
     function _min(uint256 x, uint256 y) internal pure returns (uint256 z) {
         if (x > y) { z = y; } else { z = x; }
+    }
+
+    function _adjustMintPrice(uint256 _price, uint256 _bps) internal pure returns (uint256) {
+        return (_price * (10_000 + _bps)) / 10_000;
+    }
+
+    function _adjustBurnPrice(uint256 _price, uint256 _bps) internal pure returns (uint256) {
+        return (_price * 10_000) / (10_000 + _bps);
     }
 
     function _safeTransferFrom(address _token, address _from, address _to, uint256 _amt) internal {
