@@ -3,6 +3,8 @@ pragma solidity ^0.8.28;
 
 import {Test, console} from "forge-std/Test.sol";
 import {IERC20}        from "forge-std/interfaces/IERC20.sol";
+import {MockPip}       from "./Mocks/MockPip.sol";
+import {MockCop}       from "./Mocks/MockCop.sol";
 
 import {MaseerOne}     from "../src/MaseerOne.sol";
 import {MaseerPrice}   from "../src/MaseerPrice.sol";
@@ -19,6 +21,7 @@ interface IUSDT {
     function owner() external view returns (address);
     function issue(uint256 amount) external;
     function balanceOf(address account) external view returns (uint256);
+    function decimals() external view returns (uint8);
 }
 
 contract MaseerTestBase is Test {
@@ -51,6 +54,11 @@ contract MaseerTestBase is Test {
     address public bob;
     address public carol;
     address public david;
+    address public pipAuth;
+    address public actAuth;
+    address public copAuth;
+    address public floAuth;
+    address public proxyAuth;
 
     IUSDT  public usdt = IUSDT(USDT);
     IERC20 public weth = IERC20(WETH);
@@ -65,21 +73,42 @@ contract MaseerTestBase is Test {
         carol = makeAddr("carol");
         david = makeAddr("david");
 
+        pipAuth = makeAddr("pipAuth");
+        actAuth = makeAddr("actAuth");
+        copAuth = makeAddr("copAuth");
+        floAuth = makeAddr("floAuth");
+        proxyAuth = makeAddr("proxyAuth");
+
         pipImpl = address(new MaseerPrice());
         pip = MaseerPrice(address(new MaseerProxy(pipImpl)));
         pipProxy = address(pip);
+        pip.rely(pipAuth);
+        pip.deny(address(this));
+        MaseerProxy(pipProxy).relyProxy(proxyAuth);
+        MaseerProxy(pipProxy).denyProxy(address(this));
 
         actImpl = address(new MaseerGate());
         act = MaseerGate(address(new MaseerProxy(actImpl)));
         actProxy = address(act);
+        act.rely(actAuth);
+        act.deny(address(this));
+        MaseerProxy(actProxy).relyProxy(proxyAuth);
+        MaseerProxy(actProxy).denyProxy(address(this));
 
         copImpl = address(new MaseerGuard(USDT));
         cop = MaseerGuard(address(new MaseerProxy(copImpl)));
         copProxy = address(cop);
+        // No wards on cop
+        MaseerProxy(copProxy).relyProxy(proxyAuth);
+        MaseerProxy(copProxy).denyProxy(address(this));
 
         floImpl = address(new MaseerConduit());
         flo = MaseerConduit(address(new MaseerProxy(floImpl)));
         floProxy = address(flo);
+        flo.rely(floAuth);
+        flo.deny(address(this));
+        MaseerProxy(floProxy).relyProxy(proxyAuth);
+        MaseerProxy(floProxy).denyProxy(address(this));
 
         maseerOne = new MaseerOne(USDT, pipProxy, actProxy, copProxy, floProxy, NAME, SYMBOL);
         maseerOneAddr = address(maseerOne);
@@ -118,5 +147,19 @@ contract MaseerTestBase is Test {
             chainid,
             token
         ));
+    }
+
+    function _bytes32toString(bytes32 _bytes32) internal pure returns (string memory) {
+        uint256 length = 0;
+        while (length < 32 && _bytes32[length] != 0) {
+            length++;
+        }
+
+        bytes memory bytesArray = new bytes(length);
+        for (uint256 i = 0; i < length; i++) {
+            bytesArray[i] = _bytes32[i];
+        }
+
+        return string(bytesArray);
     }
 }

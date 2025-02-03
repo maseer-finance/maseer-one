@@ -3,6 +3,8 @@ pragma solidity ^0.8.28;
 
 contract MockPip {
 
+    mapping(address => uint256) public wards;
+
     uint256 internal _price;
 
     function setPrice(uint256 price_) external {

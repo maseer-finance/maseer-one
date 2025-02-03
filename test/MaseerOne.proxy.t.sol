@@ -14,8 +14,9 @@ contract MaseerOneProxyTest is MaseerTestBase {
         assertEq(MaseerProxy(maseerOne.pip()).impl(), pipImpl);
     }
 
-    function testUpgradePip() public {
-        address newPipImpl = address(new MaseerPrice());
+    function testPipUpgrade() public {
+        address newPipImpl = address(new MockPip());
+        vm.prank(proxyAuth);
         MaseerProxy(pipProxy).file(newPipImpl);
         assertEq(maseerOne.pip(), pipProxy);
         assertEq(MaseerProxy(maseerOne.pip()).impl(), newPipImpl);
@@ -28,6 +29,7 @@ contract MaseerOneProxyTest is MaseerTestBase {
 
     function testActUpgrade() public {
         address newActImpl = address(new MaseerGate());
+        vm.prank(proxyAuth);
         MaseerProxy(actProxy).file(newActImpl);
         assertEq(maseerOne.act(), actProxy);
         assertEq(MaseerProxy(maseerOne.act()).impl(), newActImpl);
@@ -39,7 +41,8 @@ contract MaseerOneProxyTest is MaseerTestBase {
     }
 
     function testCopUpgrade() public {
-        address newCopImpl = address(new MaseerGuard(USDT));
+        address newCopImpl = address(new MockCop());
+        vm.prank(proxyAuth);
         MaseerProxy(copProxy).file(newCopImpl);
         assertEq(maseerOne.cop(), copProxy);
         assertEq(MaseerProxy(maseerOne.cop()).impl(), newCopImpl);
@@ -52,6 +55,7 @@ contract MaseerOneProxyTest is MaseerTestBase {
 
     function testFloUpgrade() public {
         address newFloImpl = address(new MaseerConduit());
+        vm.prank(proxyAuth);
         MaseerProxy(floProxy).file(newFloImpl);
         assertEq(maseerOne.flo(), floProxy);
         assertEq(MaseerProxy(maseerOne.flo()).impl(), newFloImpl);

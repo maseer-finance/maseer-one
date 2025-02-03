@@ -72,17 +72,17 @@ contract MaseerOneTokenTest is MaseerTestBase {
         uint256 totalSupply = maseerOne.totalSupply();
         assertEq(maseerOne.totalSupply(), amt);
 
-        // Don't send to the contract
-        if (to == address(maseerOne)) {
-            vm.expectRevert(MaseerOne.TransferToContract.selector);
+        // Don't send to unauthorized user
+        if (!maseerOne.canPass(to) || !maseerOne.canPass(from)) {
+            vm.expectRevert(MaseerOne.UnauthorizedUser.selector);
             vm.prank(from);
             maseerOne.transfer(to, amt);
             return;
         }
 
-        // Don't send to unauthorized user
-        if (!maseerOne.canPass(to) || !maseerOne.canPass(from)) {
-            vm.expectRevert(MaseerOne.UnauthorizedUser.selector);
+        // Don't send to the contract
+        if (to == address(maseerOne)) {
+            vm.expectRevert(MaseerOne.TransferToContract.selector);
             vm.prank(from);
             maseerOne.transfer(to, amt);
             return;
@@ -117,11 +117,12 @@ contract MaseerOneTokenTest is MaseerTestBase {
             vm.prank(from);
             maseerOne.approve(from, amt);
 
-            if (to == address(maseerOne)) {
-                vm.expectRevert(MaseerOne.TransferToContract.selector);
-            } else {
-                vm.expectRevert(MaseerOne.UnauthorizedUser.selector);
-            }
+            //if (to == address(maseerOne)) {
+            //    vm.expectRevert(MaseerOne.TransferToContract.selector);
+            //} else {
+            //    vm.expectRevert(MaseerOne.UnauthorizedUser.selector);
+            //}
+            vm.expectRevert(MaseerOne.UnauthorizedUser.selector);
             vm.prank(to);
             maseerOne.transferFrom(from, to, amt);
             return;

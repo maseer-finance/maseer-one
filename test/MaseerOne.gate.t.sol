@@ -9,5 +9,7 @@ contract MaseerOneGateTest is MaseerTestBase {
 
     }
 
-    // TODO: Test market operations
+    function testGate() public view {
+        assertEq(maseerOne.act(), actProxy);
+    }
 }
