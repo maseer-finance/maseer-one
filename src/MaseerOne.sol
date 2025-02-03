@@ -2,8 +2,11 @@
 pragma solidity ^0.8.28;
 
 interface Gem {
+    function transfer(address usr, uint wad) external returns (bool);
     function transferFrom(address src, address dst, uint wad) external returns (bool);
     function balanceOf(address account) external view returns (uint256);
+    function approve(address usr, uint wad) external returns (bool);
+    function decimals() external view returns (uint8);
 }
 
 interface Cop {
@@ -110,7 +113,7 @@ contract MaseerOne is MaseerToken {
         }
 
         // Calculate the mint amount
-        _out = amt / _unit;
+        _out = _wdiv(amt, _unit);
 
         // Revert if the total supply after mint exceeds the cap
         if (totalSupply + _out > _cap()) revert ExceedsCap();
@@ -137,7 +140,7 @@ contract MaseerOne is MaseerToken {
         _unit = _adjustBurnPrice(_unit, _bpsout());
 
         // Calculate the redemption amount
-        _exit = amt * _unit;
+        _exit = _wmul(amt, _unit);
 
         // Add to the total pending redemptions
         totalPending += _exit;
@@ -169,11 +172,14 @@ contract MaseerOne is MaseerToken {
         // User can claim the amount owed or current available balance
         _out = _min(_amt, _gemBalance());
 
+        // Decrement the total pending redemptions
+        totalPending -= _out;
+
         // Decrement the user's pending redemptions
         pendingExit[msg.sender] -= _out;
 
         // Transfer the tokens
-        _safeTransferFrom(gem, address(this), msg.sender, _out);
+        _safeTransfer(gem, msg.sender, _out);
 
         // Emit claim
         emit ClaimProcessed(msg.sender, _out);
@@ -191,7 +197,7 @@ contract MaseerOne is MaseerToken {
         _out = _bal - totalPending;
 
         // Send the remaining balance to the output conduit
-        _safeTransferFrom(gem, address(this), flo, _out);
+        _safeTransfer(gem, flo, _out);
 
         // Emit settle
         emit Settled(flo, _out);
@@ -307,12 +313,25 @@ contract MaseerOne is MaseerToken {
         if (x > y) { z = y; } else { z = x; }
     }
 
+    function _wmul(uint256 x, uint256 y) internal pure returns (uint z) {
+        z = ((x * y) + (WAD / 2)) / WAD;
+    }
+
+    function _wdiv(uint256 x, uint256 y) internal pure returns (uint z) {
+        z = ((x * WAD) + (y / 2)) / y;
+    }
+
     function _adjustMintPrice(uint256 _price, uint256 _bps) internal pure returns (uint256) {
         return (_price * (10_000 + _bps)) / 10_000; // Round up
     }
 
     function _adjustBurnPrice(uint256 _price, uint256 _bps) internal pure returns (uint256) {
         return (_price * 10_000) / (10_000 + _bps) + 1; // Round down
+    }
+
+    function _safeTransfer(address _token, address _to, uint256 _amt) internal {
+        (bool success, bytes memory data) = _token.call(abi.encodeWithSelector(Gem.transfer.selector, _to, _amt));
+        require(success && (data.length == 0 || abi.decode(data, (bool))), "MaseerConduit/transfer-failed");
     }
 
     function _safeTransferFrom(address _token, address _from, address _to, uint256 _amt) internal {

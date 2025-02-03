@@ -11,6 +11,8 @@ abstract contract MaseerToken {
     string                                            public symbol;
     uint8                                    constant public decimals = 18; // standard token precision.
 
+    uint256                                  constant internal WAD = 1e18;
+
     // EIP-2612
     bytes32 immutable           public DOMAIN_SEPARATOR;
     mapping(address => uint256) public nonces;
