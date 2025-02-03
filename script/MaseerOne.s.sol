@@ -15,35 +15,48 @@ import {MockCop} from "../test/Mocks/MockCop.sol";
 contract MaseerOneScript is Script {
     MaseerOne public maseerOne;
 
+    address public proxyAuth;      // TODO
+    address public oracleAuth;     // TODO
+    address public marketAuth;     // TODO
+    address public complianceAuth; // TODO
+    address public conduitAuth;    // TODO
+    address public conduitOut;     // TODO
+
     string public constant NAME = "Cana";
     string public constant SYMBOL = "CANA";
+
+    bytes32 public constant ORACLE_NAME     = "CANAUSDT";
+    bytes32 public constant ORACLE_DECIMALS = bytes32(uint256(6));
+
+    uint256 public constant MARKET_CAP   = 1_000_000e18;
+    uint256 public constant MARKET_DELAY = 5 days;
 
     // Mainnet
     address public constant USDT = 0xdAC17F958D2ee523a2206206994597C13D831ec7;
 
-    address public MASEER_ORACLE;
+    address public MASEER_ORACLE_IMPLEMENTATION;
     address public MASEER_ORACLE_PROXY;
 
-    address public MASEER_MARKET;
+    address public MASEER_MARKET_IMPLEMENTATION;
     address public MASEER_MARKET_PROXY;
 
-    address public MASEER_COMPLIANCE;
+    address public MASEER_COMPLIANCE_IMPLEMENTATION;
     address public MASEER_COMPLIANCE_PROXY;
 
-    address public MASEER_CONDUIT;
+    address public MASEER_CONDUIT_IMPLEMENTATION;
     address public MASEER_CONDUIT_PROXY;
 
     function run() public {
         vm.startBroadcast();
 
-        MASEER_ORACLE = address(new MaseerPrice());
-        MASEER_ORACLE_PROXY = address(new MaseerProxy(MASEER_ORACLE));
-        MASEER_MARKET = address(new MaseerGate());
-        MASEER_MARKET_PROXY = address(new MaseerProxy(MASEER_MARKET));
-        MASEER_COMPLIANCE = address(new MaseerGuard(USDT));
-        MASEER_COMPLIANCE_PROXY = address(new MaseerProxy(MASEER_COMPLIANCE));
-        MASEER_CONDUIT = address(new MaseerConduit());
-        MASEER_CONDUIT_PROXY = address(new MaseerProxy(MASEER_CONDUIT));
+        MASEER_ORACLE_IMPLEMENTATION = address(new MaseerPrice());
+        MASEER_ORACLE_PROXY = address(new MaseerProxy(MASEER_ORACLE_IMPLEMENTATION));
+        MASEER_MARKET_IMPLEMENTATION = address(new MaseerGate());
+        MASEER_MARKET_PROXY = address(new MaseerProxy(MASEER_MARKET_IMPLEMENTATION));
+        MASEER_COMPLIANCE_IMPLEMENTATION = address(new MaseerGuard(USDT));
+        MASEER_COMPLIANCE_PROXY = address(new MaseerProxy(MASEER_COMPLIANCE_IMPLEMENTATION));
+        MASEER_CONDUIT_IMPLEMENTATION = address(new MaseerConduit());
+        MASEER_CONDUIT_PROXY = address(new MaseerProxy(MASEER_CONDUIT_IMPLEMENTATION));
 
         maseerOne = new MaseerOne(
             USDT,
@@ -58,9 +71,34 @@ contract MaseerOneScript is Script {
 
         // TODO: Configure Authorizations on proxies
         // MASEER_ORACLE_PROXY set wards and initial config
+        MaseerPrice(MASEER_ORACLE_PROXY).file("name", ORACLE_NAME);
+        MaseerPrice(MASEER_ORACLE_PROXY).file("decimals", ORACLE_DECIMALS);
+        MaseerPrice(MASEER_ORACLE_PROXY).rely(oracleAuth);
+        MaseerPrice(MASEER_ORACLE_PROXY).deny(msg.sender);
+        MaseerProxy(MASEER_ORACLE_PROXY).relyProxy(proxyAuth);
+        MaseerProxy(MASEER_ORACLE_PROXY).denyProxy(msg.sender);
+
         // MASEER_MARKET_PROXY set wards and initial config
+        MaseerGate(MASEER_MARKET_PROXY).setDelay(MARKET_DELAY);
+        MaseerGate(MASEER_MARKET_PROXY).setCap(MARKET_CAP);
+        MaseerGate(MASEER_MARKET_PROXY).rely(marketAuth);
+        MaseerGate(MASEER_MARKET_PROXY).deny(msg.sender);
+        MaseerProxy(MASEER_MARKET_PROXY).relyProxy(proxyAuth);
+        MaseerProxy(MASEER_MARKET_PROXY).denyProxy(msg.sender);
+
         // MASEER_COMPLIANCE_PROXY set wards
+        MaseerGuard(MASEER_COMPLIANCE_PROXY).rely(complianceAuth);
+        MaseerGuard(MASEER_COMPLIANCE_PROXY).deny(msg.sender);
+        MaseerProxy(MASEER_COMPLIANCE_PROXY).relyProxy(proxyAuth);
+        MaseerProxy(MASEER_COMPLIANCE_PROXY).denyProxy(msg.sender);
+
         // MASEER_CONDUIT_PROXY set wards and buds
+        MaseerConduit(MASEER_CONDUIT_PROXY).hope(conduitAuth);
+        MaseerConduit(MASEER_CONDUIT_PROXY).kiss(conduitOut);
+        MaseerConduit(MASEER_CONDUIT_PROXY).rely(conduitAuth);
+        MaseerConduit(MASEER_CONDUIT_PROXY).deny(msg.sender);
+        MaseerProxy(MASEER_CONDUIT_PROXY).relyProxy(proxyAuth);
+        MaseerProxy(MASEER_CONDUIT_PROXY).denyProxy(msg.sender);
 
         vm.stopBroadcast();
 
