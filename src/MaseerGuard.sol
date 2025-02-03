@@ -14,6 +14,13 @@ contract MaseerGuard {
     // Allocating slots 1-49
     uint256[49] private __gap;
 
+    function rely(address usr) external auth { wards[usr] = 1; }
+    function deny(address usr) external auth { wards[usr] = 0; }
+    modifier auth() {
+        require (wards[msg.sender] == 1, "MaseerGuard/not-authorized");
+        _;
+    }
+
     constructor(address source_) {
         source = source_;
     }
