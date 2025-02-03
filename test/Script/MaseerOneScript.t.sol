@@ -32,21 +32,46 @@ contract MaseerOneScriptTest is MaseerTestBase {
 
         maseerOneScript.run();
 
-        assertTrue(maseerOneScript.MASEER_ORACLE() != address(0), "MASEER_ORACLE is zero");
+        assertTrue(maseerOneScript.MASEER_ORACLE_IMPLEMENTATION() != address(0), "MASEER_ORACLE is zero");
         assertTrue(maseerOneScript.MASEER_ORACLE_PROXY() != address(0), "MASEER_ORACLE_PROXY is zero");
-        assertTrue(maseerOneScript.MASEER_MARKET() != address(0), "MASEER_MARKET is zero");
+        assertTrue(maseerOneScript.MASEER_MARKET_IMPLEMENTATION() != address(0), "MASEER_MARKET is zero");
         assertTrue(maseerOneScript.MASEER_MARKET_PROXY() != address(0), "MASEER_MARKET_PROXY is zero");
-        assertTrue(maseerOneScript.MASEER_COMPLIANCE() != address(0), "MASEER_COMPLIANCE is zero");
+        assertTrue(maseerOneScript.MASEER_COMPLIANCE_IMPLEMENTATION() != address(0), "MASEER_COMPLIANCE is zero");
         assertTrue(maseerOneScript.MASEER_COMPLIANCE_PROXY() != address(0), "MASEER_COMPLIANCE_PROXY is zero");
-        assertTrue(maseerOneScript.MASEER_CONDUIT() != address(0), "MASEER_CONDUIT is zero");
+        assertTrue(maseerOneScript.MASEER_CONDUIT_IMPLEMENTATION() != address(0), "MASEER_CONDUIT is zero");
         assertTrue(maseerOneScript.MASEER_CONDUIT_PROXY() != address(0), "MASEER_CONDUIT_PROXY is zero");
 
         MaseerOne maseerOne = MaseerOne(maseerOneScript.maseerOne());
 
+
         assertEq(maseerOne.name(), "Cana");
         assertEq(maseerOne.symbol(), "CANA");
 
+        assertEq(maseerOne.pip(), maseerOneScript.MASEER_ORACLE_PROXY());
+        assertEq(MaseerProxy(maseerOne.pip()).impl(), maseerOneScript.MASEER_ORACLE_IMPLEMENTATION());
+        assertEq(MaseerPrice(maseerOne.pip()).name(), _bytes32toString(maseerOneScript.ORACLE_NAME()));
+        assertEq(MaseerPrice(maseerOne.pip()).decimals(), uint8(uint256(maseerOneScript.ORACLE_DECIMALS())));
+        assertEq(MaseerPrice(maseerOne.pip()).wards(maseerOneScript.oracleAuth()), 1);
+        assertEq(MaseerProxy(maseerOne.pip()).wardsProxy(maseerOneScript.proxyAuth()), 1);
 
+        assertEq(maseerOne.act(), maseerOneScript.MASEER_MARKET_PROXY());
+        assertEq(MaseerProxy(maseerOne.act()).impl(), maseerOneScript.MASEER_MARKET_IMPLEMENTATION());
+        assertEq(MaseerGate(maseerOne.act()).cap(), maseerOneScript.MARKET_CAP());
+        assertEq(MaseerGate(maseerOne.act()).delay(), maseerOneScript.MARKET_DELAY());
+        assertEq(MaseerGate(maseerOne.act()).wards(maseerOneScript.marketAuth()), 1);
+        assertEq(MaseerProxy(maseerOne.act()).wardsProxy(maseerOneScript.proxyAuth()), 1);
+
+        assertEq(maseerOne.cop(), maseerOneScript.MASEER_COMPLIANCE_PROXY());
+        assertEq(MaseerProxy(maseerOne.cop()).impl(), maseerOneScript.MASEER_COMPLIANCE_IMPLEMENTATION());
+        assertEq(MaseerGuard(maseerOne.cop()).wards(maseerOneScript.complianceAuth()), 1);
+        assertEq(MaseerProxy(maseerOne.cop()).wardsProxy(maseerOneScript.proxyAuth()), 1);
+
+        assertEq(maseerOne.flo(), maseerOneScript.MASEER_CONDUIT_PROXY());
+        assertEq(MaseerProxy(maseerOne.flo()).impl(), maseerOneScript.MASEER_CONDUIT_IMPLEMENTATION());
+        assertEq(MaseerConduit(maseerOne.flo()).wards(maseerOneScript.conduitAuth()), 1);
+        assertEq(MaseerConduit(maseerOne.flo()).can(maseerOneScript.conduitAuth()), 1);
+        assertEq(MaseerConduit(maseerOne.flo()).bud(maseerOneScript.conduitOut()), 1);
+        assertEq(MaseerProxy(maseerOne.flo()).wardsProxy(maseerOneScript.proxyAuth()), 1);
     }
 
 }
