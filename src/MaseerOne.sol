@@ -19,6 +19,7 @@ interface Act {
     function halt()  external view returns (uint256);
     function live()  external view returns (bool);
     function delay() external view returns (uint256);
+    function cap()   external view returns (uint256);
 }
 
 import {MaseerToken} from "./MaseerToken.sol";
@@ -99,7 +100,13 @@ contract MaseerOne is MaseerToken {
 
         // Calculate the mint amount
         // TODO: divdown for USDT
+        // TODO: factor bpsin
         _out = amt_ / _price;
+
+        // Revert if the total supply after mint exceeds the cap
+        if (totalSupply + _out > Act(act).cap()) {
+            revert DustThreshold(_price);
+        }
 
         // Transfer tokens in
         _safeTransferFrom(gem, msg.sender, address(this), amt_);
@@ -118,6 +125,7 @@ contract MaseerOne is MaseerToken {
 
         // Calculate the redemption amount
         // TODO: round decimals for USDT
+        // TODO: factor bpsout
         _claim = amt_ * _price;
 
         // Add to the total pending redemptions
@@ -127,7 +135,9 @@ contract MaseerOne is MaseerToken {
         pendingClaim[msg.sender] += _claim;
 
         // Bump the redemption time
-        // TODO: Consider whether to allow multiple redemption periods. Increases complexity and cost
+        // TODO: Consider whether to allow multiple redemption periods.
+        //   Increases complexity and cost
+        //   Also consider griefing
         pendingTime[msg.sender] = block.timestamp + Act(act).delay();
 
         // Burn the tokens
