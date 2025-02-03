@@ -63,6 +63,58 @@ contract MaseerOneTokenTest is MaseerTestBase {
         assertEq(maseerOne.allowance(alice, bob), 0);
     }
 
+    function testTransferToContractFail() public {
+        uint256 amt = 1000 * 1e18;
+
+        _mintTokens(alice, amt);
+
+        vm.expectRevert(MaseerOne.TransferToContract.selector);
+        vm.prank(alice);
+        maseerOne.transfer(address(maseerOne), amt);
+    }
+
+    function testTransferFromToContractFail() public {
+        uint256 amt = 1000 * 1e18;
+
+        _mintTokens(alice, amt);
+
+        vm.prank(alice);
+        maseerOne.approve(alice, amt);
+
+        vm.expectRevert(MaseerOne.TransferToContract.selector);
+        vm.prank(alice);
+        maseerOne.transferFrom(alice, address(maseerOne), amt);
+    }
+
+    function testTransferToZeroAddressFail() public {
+        uint256 amt = 1000 * 1e18;
+
+        _mintTokens(alice, amt);
+
+        // address(0) fails on the guard check
+        vm.expectRevert(
+            abi.encodeWithSelector(MaseerOne.UnauthorizedUser.selector, address(0))
+        );
+        vm.prank(alice);
+        maseerOne.transfer(address(0), amt);
+    }
+
+    function testTransferFromToZeroAddressFail() public {
+        uint256 amt = 1000 * 1e18;
+
+        _mintTokens(alice, amt);
+
+        vm.prank(alice);
+        maseerOne.approve(alice, amt);
+
+        // address(0) fails on the guard check
+        vm.expectRevert(
+            abi.encodeWithSelector(MaseerOne.UnauthorizedUser.selector, address(0))
+        );
+        vm.prank(alice);
+        maseerOne.transferFrom(alice, address(0), amt);
+    }
+
     function testFuzzTransfer(address to, address from, uint256 amt) public {
         uint256 toBal = maseerOne.balanceOf(to);
         uint256 fromBal = maseerOne.balanceOf(from);
@@ -74,7 +126,7 @@ contract MaseerOneTokenTest is MaseerTestBase {
 
         // Don't send to unauthorized user
         if (!maseerOne.canPass(to) || !maseerOne.canPass(from)) {
-            vm.expectRevert(MaseerOne.UnauthorizedUser.selector);
+            vm.expectPartialRevert(MaseerOne.UnauthorizedUser.selector);
             vm.prank(from);
             maseerOne.transfer(to, amt);
             return;
@@ -113,16 +165,11 @@ contract MaseerOneTokenTest is MaseerTestBase {
 
         if (!maseerOne.canPass(from) || !maseerOne.canPass(to)) {
 
-            if (!maseerOne.canPass(from)) { vm.expectRevert(MaseerOne.UnauthorizedUser.selector); }
+            if (!maseerOne.canPass(from)) vm.expectRevert(abi.encodeWithSelector(MaseerOne.UnauthorizedUser.selector, from));
             vm.prank(from);
             maseerOne.approve(from, amt);
 
-            //if (to == address(maseerOne)) {
-            //    vm.expectRevert(MaseerOne.TransferToContract.selector);
-            //} else {
-            //    vm.expectRevert(MaseerOne.UnauthorizedUser.selector);
-            //}
-            vm.expectRevert(MaseerOne.UnauthorizedUser.selector);
+            vm.expectPartialRevert(MaseerOne.UnauthorizedUser.selector);
             vm.prank(to);
             maseerOne.transferFrom(from, to, amt);
             return;
@@ -153,6 +200,4 @@ contract MaseerOneTokenTest is MaseerTestBase {
     }
 
     // TODO: General ERC20 tests
-    // TODO: Test can't send to zero address
-    // TODO: Test can't send to self
 }

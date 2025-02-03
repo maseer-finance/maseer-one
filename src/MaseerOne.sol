@@ -57,8 +57,9 @@ contract MaseerOne is MaseerToken {
         uint256 indexed amount
     );
 
-    error UnauthorizedUser();
+    error UnauthorizedUser(address usr);
     error TransferToContract();
+    error TransferToZeroAddress();
     error MarketClosed();
     error InvalidPrice();
     error ExceedsCap();
@@ -82,8 +83,8 @@ contract MaseerOne is MaseerToken {
         flo = flo_;
     }
 
-    modifier pass(address usr) {
-        if (!_canPass(usr)) revert UnauthorizedUser();
+    modifier pass(address usr_) {
+        if (!_canPass(usr_)) revert UnauthorizedUser(usr_);
         _;
     }
 
@@ -92,7 +93,7 @@ contract MaseerOne is MaseerToken {
         _;
     }
 
-    function mint(uint256 amt_) external bell pass(msg.sender) returns (uint256 _out) {
+    function mint(uint256 amt) external bell pass(msg.sender) returns (uint256 _out) {
 
         // Oracle price check
         uint256 _unit = _read();
@@ -104,18 +105,18 @@ contract MaseerOne is MaseerToken {
         _unit = _adjustMintPrice(_unit, _bpsin());
 
         // Assert minimum purchase amount of one unit to avoid dust
-        if (amt_ < _unit) {
+        if (amt < _unit) {
             revert DustThreshold(_unit);
         }
 
         // Calculate the mint amount
-        _out = amt_ / _unit;
+        _out = amt / _unit;
 
         // Revert if the total supply after mint exceeds the cap
         if (totalSupply + _out > _cap()) revert ExceedsCap();
 
         // Transfer tokens in
-        _safeTransferFrom(gem, msg.sender, address(this), amt_);
+        _safeTransferFrom(gem, msg.sender, address(this), amt);
 
         // Mint the tokens
         _mint(msg.sender, _out);
@@ -124,7 +125,7 @@ contract MaseerOne is MaseerToken {
         emit ContractCreated(msg.sender, _unit, _out);
     }
 
-    function burn(uint256 amt_) external bell pass(msg.sender) returns (uint256 _exit) {
+    function burn(uint256 amt) external bell pass(msg.sender) returns (uint256 _exit) {
 
         // Oracle price check
         uint256 _unit = _read();
@@ -136,7 +137,7 @@ contract MaseerOne is MaseerToken {
         _unit = _adjustBurnPrice(_unit, _bpsout());
 
         // Calculate the redemption amount
-        _exit = amt_ * _unit;
+        _exit = amt * _unit;
 
         // Add to the total pending redemptions
         totalPending += _exit;
@@ -148,7 +149,7 @@ contract MaseerOne is MaseerToken {
         pendingTime[msg.sender] = block.timestamp + _delay();
 
         // Burn the tokens
-        _burn(msg.sender, amt_);
+        _burn(msg.sender, amt);
 
         // Emit contract event
         emit ContractRedeemed(msg.sender, _unit, _exit);
@@ -165,11 +166,8 @@ contract MaseerOne is MaseerToken {
         // Check claimable amounts
         uint256 _amt = pendingExit[msg.sender];
 
-        // Check internal balance
-        uint256 _bal = _gemBalance();
-
         // User can claim the amount owed or current available balance
-        _out = _min(_amt, _bal);
+        _out = _min(_amt, _gemBalance());
 
         // Decrement the user's pending redemptions
         pendingExit[msg.sender] -= _out;
@@ -181,7 +179,7 @@ contract MaseerOne is MaseerToken {
         emit ClaimProcessed(msg.sender, _out);
     }
 
-    function settle() external pass(msg.sender) returns (uint256 amt) {
+    function settle() external pass(msg.sender) returns (uint256 _out) {
 
         // Get the gem balance
         uint256 _bal = _gemBalance();
@@ -190,7 +188,7 @@ contract MaseerOne is MaseerToken {
         if (_bal < totalPending) return 0;
 
         // Calculate the balance after pending redemptions
-        uint256 _out = _bal - totalPending;
+        _out = _bal - totalPending;
 
         // Send the remaining balance to the output conduit
         _safeTransferFrom(gem, address(this), flo, _out);
@@ -215,8 +213,8 @@ contract MaseerOne is MaseerToken {
         return _halt >= block.timestamp ? _halt : 0;
     }
 
-    function canPass(address _usr) external view returns (bool) {
-        return _canPass(_usr);
+    function canPass(address usr) external view returns (bool) {
+        return _canPass(usr);
     }
 
     function claimDelay() external view returns (uint256) {
@@ -310,11 +308,11 @@ contract MaseerOne is MaseerToken {
     }
 
     function _adjustMintPrice(uint256 _price, uint256 _bps) internal pure returns (uint256) {
-        return (_price * (10_000 + _bps)) / 10_000;
+        return (_price * (10_000 + _bps) + 9_999) / 10_000; // Round up
     }
 
     function _adjustBurnPrice(uint256 _price, uint256 _bps) internal pure returns (uint256) {
-        return (_price * 10_000) / (10_000 + _bps);
+        return (_price * 10_000) / (10_000 + _bps) + 1; // Round down
     }
 
     function _safeTransferFrom(address _token, address _from, address _to, uint256 _amt) internal {

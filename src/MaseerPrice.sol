@@ -38,6 +38,10 @@ contract MaseerPrice {
         return _b32toString(_getVal(_NAME_SLOT));
     }
 
+    function decimals() external view returns (uint8 decimals_) {
+        return uint8(uint256(_getVal(_DECIMALS_SLOT)));
+    }
+
     function file(bytes32 what, bytes32 data) external auth {
         if      (what == "name")     _setVal(_NAME_SLOT, data);
         else if (what == "decimals") _setVal(_DECIMALS_SLOT, data);
