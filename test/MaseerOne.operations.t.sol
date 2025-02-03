@@ -13,16 +13,16 @@ contract MaseerOneOperationsTest is MaseerTestBase {
         vm.prank(actAuth);
         act.setHalt(block.timestamp + 1 days);
         vm.prank(actAuth);
-        act.setBpsin(50);
+        act.setBpsin(50); // 0.5%
         vm.prank(actAuth);
-        act.setBpsout(50);
+        act.setBpsout(50); // 0.5%
         vm.prank(actAuth);
         act.setDelay(5 days);
         vm.prank(actAuth);
-        act.setCap(1_000_000 * 1e18);
+        act.setCap(1_000_000 * 1e18); // 1M Cana total supply
 
         vm.prank(pipAuth);
-        pip.poke(10 * 1e6);
+        pip.poke(10 * 1e6); // 10 USDT per token
 
         _mintUSDT(alice, 1_000_000 * 1e6);
         _mintUSDT(bob, 1_000_000 * 1e6);
@@ -104,6 +104,22 @@ contract MaseerOneOperationsTest is MaseerTestBase {
         assertEq(maseerOne.pendingExit(alice), 0);
         assertEq(maseerOne.pendingTime(alice), _exitTime);
         assertEq(usdt.balanceOf(alice), 900_000 * 1e6 + _claim);
+    }
+
+    function testSettle() public {
+
+        vm.prank(alice);
+        usdt.approve(address(maseerOne), 1_000_000 * 1e6);
+        vm.prank(alice);
+        maseerOne.mint(100_000 * 1e6);
+
+        uint256 _bal = usdt.balanceOf(maseerOneAddr);
+
+        vm.prank(bob);
+        maseerOne.settle();
+
+        assertEq(usdt.balanceOf(maseerOneAddr), 0);
+        assertEq(usdt.balanceOf(maseerOne.flo()), _bal);
     }
 
 }
