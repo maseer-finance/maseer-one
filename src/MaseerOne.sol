@@ -61,7 +61,7 @@ contract MaseerOne is MaseerToken {
     error TransferToContract();
     error MarketClosed();
     error InvalidPrice();
-    error ExceedCap();
+    error ExceedsCap();
     error ClaimableAfter(uint256 time);
     error NoPendingClaim();
     error DustThreshold(uint256 min);
@@ -112,9 +112,7 @@ contract MaseerOne is MaseerToken {
         _out = amt_ / _unit;
 
         // Revert if the total supply after mint exceeds the cap
-        if (totalSupply + _out > _cap()) {
-            revert ExceedCap();
-        }
+        if (totalSupply + _out > _cap()) revert ExceedsCap();
 
         // Transfer tokens in
         _safeTransferFrom(gem, msg.sender, address(this), amt_);
@@ -146,7 +144,7 @@ contract MaseerOne is MaseerToken {
         // Add to the user's pending redemptions
         pendingExit[msg.sender] += _exit;
 
-        // Bump the redemption time
+        // Bump the user's redemption time
         pendingTime[msg.sender] = block.timestamp + _delay();
 
         // Burn the tokens
@@ -168,7 +166,7 @@ contract MaseerOne is MaseerToken {
         uint256 _amt = pendingExit[msg.sender];
 
         // Check internal balance
-        uint256 _bal = Gem(gem).balanceOf(address(this));
+        uint256 _bal = _gemBalance();
 
         // User can claim the amount owed or current available balance
         _out = _min(_amt, _bal);
@@ -185,8 +183,8 @@ contract MaseerOne is MaseerToken {
 
     function settle() external pass(msg.sender) returns (uint256 amt) {
 
-        // Get the gem balance and subtract the pending redemptions
-        uint256 _bal = Gem(gem).balanceOf(address(this));
+        // Get the gem balance
+        uint256 _bal = _gemBalance();
 
         // Return 0 if the balance is reserved for pending claims
         if (_bal < totalPending) return 0;
@@ -252,12 +250,12 @@ contract MaseerOne is MaseerToken {
     }
 
     function transfer(address dst, uint wad) public override pass(msg.sender) pass(dst) returns (bool) {
-        if (dst == address(this)) { revert TransferToContract(); }
+        if (dst == address(this)) revert TransferToContract();
         return super.transfer(dst, wad);
     }
 
     function transferFrom(address src, address dst, uint wad) public override pass(msg.sender) pass(src) pass(dst) returns (bool) {
-        if (dst == address(this)) { revert TransferToContract(); }
+        if (dst == address(this)) revert TransferToContract();
         return super.transferFrom(src, dst, wad);
     }
 
@@ -301,6 +299,10 @@ contract MaseerOne is MaseerToken {
 
     function _read() internal view returns (uint256) {
         return Pip(pip).read();
+    }
+
+    function _gemBalance() internal view returns (uint256) {
+        return Gem(gem).balanceOf(address(this));
     }
 
     function _min(uint256 x, uint256 y) internal pure returns (uint256 z) {
