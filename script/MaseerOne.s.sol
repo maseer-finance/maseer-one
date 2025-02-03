@@ -27,9 +27,12 @@ contract MaseerOneScript is Script {
 
     bytes32 public constant ORACLE_NAME     = "CANAUSDT";
     bytes32 public constant ORACLE_DECIMALS = bytes32(uint256(6));
+    uint256 public constant ORACLE_PRICE    = 1e6; // Temporary initial price
 
-    uint256 public constant MARKET_CAP   = 1_000_000e18;
-    uint256 public constant MARKET_DELAY = 5 days;
+    uint256 public constant MARKET_CAP    = 1_000_000e18;
+    uint256 public constant MARKET_DELAY  = 5 days;
+    uint256 public constant MARKET_BPSIN  = 100;
+    uint256 public constant MARKET_BPSOUT = 100;
 
     // Mainnet
     address public constant USDT = 0xdAC17F958D2ee523a2206206994597C13D831ec7;
@@ -73,6 +76,7 @@ contract MaseerOneScript is Script {
         // MASEER_ORACLE_PROXY set wards and initial config
         MaseerPrice(MASEER_ORACLE_PROXY).file("name", ORACLE_NAME);
         MaseerPrice(MASEER_ORACLE_PROXY).file("decimals", ORACLE_DECIMALS);
+        MaseerPrice(MASEER_ORACLE_PROXY).poke(ORACLE_PRICE);
         MaseerPrice(MASEER_ORACLE_PROXY).rely(oracleAuth);
         MaseerPrice(MASEER_ORACLE_PROXY).deny(msg.sender);
         MaseerProxy(MASEER_ORACLE_PROXY).relyProxy(proxyAuth);
@@ -81,6 +85,8 @@ contract MaseerOneScript is Script {
         // MASEER_MARKET_PROXY set wards and initial config
         MaseerGate(MASEER_MARKET_PROXY).setDelay(MARKET_DELAY);
         MaseerGate(MASEER_MARKET_PROXY).setCap(MARKET_CAP);
+        MaseerGate(MASEER_MARKET_PROXY).setBpsin(MARKET_BPSIN);
+        MaseerGate(MASEER_MARKET_PROXY).setBpsout(MARKET_BPSOUT);
         MaseerGate(MASEER_MARKET_PROXY).rely(marketAuth);
         MaseerGate(MASEER_MARKET_PROXY).deny(msg.sender);
         MaseerProxy(MASEER_MARKET_PROXY).relyProxy(proxyAuth);

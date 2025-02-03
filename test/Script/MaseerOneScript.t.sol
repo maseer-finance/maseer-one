@@ -46,6 +46,22 @@ contract MaseerOneScriptTest is MaseerTestBase {
 
         assertEq(maseerOne.name(), "Cana");
         assertEq(maseerOne.symbol(), "CANA");
+        assertEq(maseerOne.decimals(), 18);
+        assertEq(maseerOne.totalSupply(), 0);
+        assertEq(maseerOne.totalPending(), 0);
+        assertEq(maseerOne.pip(), maseerOneScript.MASEER_ORACLE_PROXY());
+        assertEq(maseerOne.act(), maseerOneScript.MASEER_MARKET_PROXY());
+        assertEq(maseerOne.cop(), maseerOneScript.MASEER_COMPLIANCE_PROXY());
+        assertEq(maseerOne.flo(), maseerOneScript.MASEER_CONDUIT_PROXY());
+        assertEq(maseerOne.open(), false);
+        assertEq(maseerOne.nextOpen(), 0);
+        assertEq(maseerOne.nextHalt(), 0);
+        assertEq(maseerOne.claimDelay(), maseerOneScript.MARKET_DELAY());
+        assertEq(maseerOne.price(),    1_000_000);
+        assertEq(maseerOne.mintUnit(), 1_010_000);
+        assertEq(maseerOne.burnUnit(),   990_100);
+        assertEq(maseerOne.cap(), maseerOneScript.MARKET_CAP());
+
 
         assertEq(maseerOne.pip(), maseerOneScript.MASEER_ORACLE_PROXY());
         assertEq(MaseerProxy(maseerOne.pip()).impl(), maseerOneScript.MASEER_ORACLE_IMPLEMENTATION());

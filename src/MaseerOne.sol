@@ -308,7 +308,7 @@ contract MaseerOne is MaseerToken {
     }
 
     function _adjustMintPrice(uint256 _price, uint256 _bps) internal pure returns (uint256) {
-        return (_price * (10_000 + _bps) + 9_999) / 10_000; // Round up
+        return (_price * (10_000 + _bps)) / 10_000; // Round up
     }
 
     function _adjustBurnPrice(uint256 _price, uint256 _bps) internal pure returns (uint256) {
