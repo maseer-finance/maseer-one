@@ -32,9 +32,9 @@ contract MaseerOnePriceTest is MaseerTestBase {
 
     function testFuzzPriceUpdate(uint256 _price, uint256 _rand) public {
 
-        bool _ok = (_rand % 2 == 0);
-
-        if (!_ok) {
+        // Fail 10% of the time
+        bool _nope = (_rand % 10 == 0);
+        if (_nope) {
             vm.expectRevert("MaseerPrice/not-authorized");
             pip.poke(_price);
             return;
@@ -42,6 +42,11 @@ contract MaseerOnePriceTest is MaseerTestBase {
 
         vm.prank(pipAuth);
         pip.poke(_price);
+
+        assertEq(pip.read(), _price);
+
+        vm.prank(pipAuth);
+        pip.file("price", bytes32(_price));
 
         assertEq(pip.read(), _price);
     }
@@ -52,5 +57,22 @@ contract MaseerOnePriceTest is MaseerTestBase {
         pip.file("name", _name);
 
         assertEq(pip.name(), _bytes32toString(_name));
+    }
+
+    function testFuzzDecimalsUpdate(uint256 _decimals) public {
+
+        _decimals = bound(_decimals, 0, 20);
+
+        if (_decimals > 18) {
+            vm.expectRevert("MaseerPrice/file-unrecognized-param");
+            vm.prank(pipAuth);
+            pip.file("decimals", bytes32(_decimals));
+            return;
+        }
+
+        vm.prank(pipAuth);
+        pip.file("decimals", bytes32(_decimals));
+
+        assertEq(pip.decimals(), _decimals);
     }
 }

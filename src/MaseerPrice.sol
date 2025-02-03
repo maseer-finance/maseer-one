@@ -43,9 +43,9 @@ contract MaseerPrice {
     }
 
     function file(bytes32 what, bytes32 data) external auth {
-        if      (what == "name")     _setVal(_NAME_SLOT, data);
-        else if (what == "decimals") _setVal(_DECIMALS_SLOT, data);
-        else if (what == "price")    _poke(uint256(data));
+        if      (what == "price")    _poke(uint256(data));
+        else if (what == "name")     _setVal(_NAME_SLOT, data);
+        else if (what == "decimals" && uint256(data) <= 18) _setVal(_DECIMALS_SLOT, data);
         else    revert("MaseerPrice/file-unrecognized-param");
         emit    File(what, data);
     }
