@@ -3,27 +3,29 @@ pragma solidity ^0.8.28;
 
 contract MaseerProxy {
 
+    bytes32 private constant _IMPL_WARD = keccak256("maseer.wards");
     bytes32 private constant _IMPL_SLOT = keccak256("maseer.proxy.implementation");
     bytes32 private constant _WARD_SLOT = keccak256("maseer.proxy.wards");
 
     function wardsProxy(address usr) external view returns (uint256) {
         return _getAuth(usr);
     }
-    function relyProxy(address usr) external auth { _setAuth(usr, 1); }
-    function denyProxy(address usr) external auth { _setAuth(usr, 0); }
+    function relyProxy(address usr) external proxyAuth { _setAuth(usr, 1); }
+    function denyProxy(address usr) external proxyAuth { _setAuth(usr, 0); }
 
-    modifier auth() {
+    modifier proxyAuth() {
         require(_getAuth(msg.sender) == 1, "MaseerProxy/not-authorized");
         _;
     }
 
     constructor(address _impl) {
         _setAuth(msg.sender, 1);
+        _rely(msg.sender);
         _setImpl(_impl);
         _setImplWard();
     }
 
-    function file(address _impl) external auth {
+    function file(address _impl) external proxyAuth {
         _setImpl(_impl);
     }
 
@@ -80,8 +82,15 @@ contract MaseerProxy {
     }
 
     // Ensure implementation contract has mapping structure for wards
-    function _setImplWard() internal auth {
+    function _setImplWard() internal {
         bytes32 slot = keccak256(abi.encode(msg.sender, uint256(0)));
+        assembly {
+            sstore(slot, 1)
+        }
+    }
+
+    function _rely(address usr) internal {
+        bytes32 slot = keccak256(abi.encode(_IMPL_WARD, usr));
         assembly {
             sstore(slot, 1)
         }

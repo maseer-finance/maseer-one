@@ -1,25 +1,18 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
+import {MaseerImplementation} from "./MaseerImplementation.sol";
+
 interface GuardSource {
     function getBlackListStatus(address usr) external view returns (bool);
 }
 
-contract MaseerGuard {
+contract MaseerGuard is MaseerImplementation {
 
     address public immutable source;
 
-    // Slot 0 reserved for `wards` mapping
-    mapping (address => uint256) public wards;
-    // Allocating slots 1-49
-    uint256[49] private __gap;
-
-    function rely(address usr) external auth { wards[usr] = 1; }
-    function deny(address usr) external auth { wards[usr] = 0; }
-    modifier auth() {
-        require (wards[msg.sender] == 1, "MaseerGuard/not-authorized");
-        _;
-    }
+    // Allocating slots 0-49
+    uint256[50] private __gap;
 
     constructor(address source_) {
         source = source_;
