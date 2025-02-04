@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-contract MaseerPrice {
+import "./MaseerImplementation.sol";
+
+contract MaseerPrice is MaseerImplementation{
 
     bytes32 internal constant _NAME_SLOT     = keccak256("MaseerPrice.name");
     bytes32 internal constant _PRICE_SLOT    = keccak256("MaseerPrice.price");
