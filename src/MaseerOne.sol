@@ -231,16 +231,20 @@ contract MaseerOne is MaseerToken {
         return _read();
     }
 
-    function mintUnit() external view returns (uint256) {
+    function mintPrice() external view returns (uint256) {
         return _adjustMintPrice(_read(), _bpsin());
     }
 
-    function burnUnit() external view returns (uint256) {
+    function burnPrice() external view returns (uint256) {
         return _adjustBurnPrice(_read(), _bpsout());
     }
 
     function cap() external view returns (uint256) {
         return _cap();
+    }
+
+    function unsettled() external view returns (uint256) {
+        return _gemBalance() - totalPending;
     }
 
     // Token overrides for compliance

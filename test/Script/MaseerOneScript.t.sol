@@ -58,8 +58,8 @@ contract MaseerOneScriptTest is MaseerTestBase {
         assertEq(maseerOne.nextHalt(), 0);
         assertEq(maseerOne.claimDelay(), maseerOneScript.MARKET_DELAY());
         assertEq(maseerOne.price(),    1_000_000);
-        assertEq(maseerOne.mintUnit(), 1_010_000);
-        assertEq(maseerOne.burnUnit(),   990_100);
+        assertEq(maseerOne.mintPrice(), 1_010_000);
+        assertEq(maseerOne.burnPrice(),   990_100);
         assertEq(maseerOne.cap(), maseerOneScript.MARKET_CAP());
 
 
