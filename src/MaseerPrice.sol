@@ -32,7 +32,7 @@ contract MaseerPrice is MaseerImplementation{
     }
 
     function decimals() external view returns (uint8 decimals_) {
-        return uint8(uint256(_getVal(_DECIMALS_SLOT)));
+        return uint8(_u(_DECIMALS_SLOT));
     }
 
     function file(bytes32 what, bytes32 data) external auth {
