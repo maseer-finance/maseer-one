@@ -114,12 +114,40 @@ contract MaseerOneOperationsTest is MaseerTestBase {
         maseerOne.mint(100_000 * 1e6);
 
         uint256 _bal = usdt.balanceOf(maseerOneAddr);
+        assertTrue(_bal > 0);
 
         vm.prank(bob);
         maseerOne.settle();
 
         assertEq(usdt.balanceOf(maseerOneAddr), 0);
         assertEq(usdt.balanceOf(maseerOne.flo()), _bal);
+    }
+
+    function testConduitFlow() public {
+
+        address offramp = makeAddr("offramp");
+        address agent   = makeAddr("agent");
+
+        vm.prank(alice);
+        usdt.approve(address(maseerOne), 1_000_000 * 1e6);
+        vm.prank(alice);
+        maseerOne.mint(100_000 * 1e6);
+        uint256 _bal = usdt.balanceOf(maseerOneAddr);
+        vm.prank(bob);
+        maseerOne.settle();
+
+        vm.prank(floAuth);
+        flo.kiss(offramp);
+        vm.prank(floAuth);
+        flo.hope(agent);
+
+        vm.prank(agent);
+        flo.move(USDT, offramp);
+
+        assertEq(usdt.balanceOf(offramp), _bal);
+        assertEq(usdt.balanceOf(maseerOneAddr), 0);
+        assertEq(usdt.balanceOf(agent), 0);
+        assertEq(usdt.balanceOf(maseerOne.flo()), 0);
     }
 
 }
