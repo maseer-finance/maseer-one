@@ -116,27 +116,27 @@ contract MaseerConduitTest is MaseerTestBase {
 
         // alice is not authorized to modify permissions
 
-        vm.expectRevert(bytes("MaseerConduit/not-authorized"));
+        vm.expectRevert(bytes("MaseerAuth/not-authorized"));
         vm.prank(alice);
         maseerConduit.rely(alice);
 
-        vm.expectRevert(bytes("MaseerConduit/not-authorized"));
+        vm.expectRevert(bytes("MaseerAuth/not-authorized"));
         vm.prank(alice);
         maseerConduit.deny(alice);
 
-        vm.expectRevert(bytes("MaseerConduit/not-authorized"));
+        vm.expectRevert(bytes("MaseerAuth/not-authorized"));
         vm.prank(alice);
         maseerConduit.hope(alice);
 
-        vm.expectRevert(bytes("MaseerConduit/not-authorized"));
+        vm.expectRevert(bytes("MaseerAuth/not-authorized"));
         vm.prank(alice);
         maseerConduit.nope(alice);
 
-        vm.expectRevert(bytes("MaseerConduit/not-authorized"));
+        vm.expectRevert(bytes("MaseerAuth/not-authorized"));
         vm.prank(alice);
         maseerConduit.kiss(alice);
 
-        vm.expectRevert(bytes("MaseerConduit/not-authorized"));
+        vm.expectRevert(bytes("MaseerAuth/not-authorized"));
         vm.prank(alice);
         maseerConduit.diss(alice);
     }

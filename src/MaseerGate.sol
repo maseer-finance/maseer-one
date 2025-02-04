@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import "./MaseerImplementation.sol";
+import {MaseerImplementation} from "./MaseerImplementation.sol";
 
 contract MaseerGate is MaseerImplementation {
 
@@ -114,10 +114,6 @@ contract MaseerGate is MaseerImplementation {
 
     function _setCap(uint256 cap_) internal {
         _setVal(_CAP_SLOT, bytes32(cap_));
-    }
-
-    function _u(bytes32 slot) internal view returns (uint256) {
-        return uint256(_getVal(slot));
     }
 }
 

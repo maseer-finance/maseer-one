@@ -1,15 +1,17 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
+import {MaseerImplementation} from "./MaseerImplementation.sol";
+
 interface Gem {
     function transfer(address dst, uint wad) external returns (bool);
     function balanceOf(address account) external view returns (uint256);
 }
 
-contract MaseerConduit {
+contract MaseerConduit is MaseerImplementation {
 
     // Slot 0
-    mapping (address => uint256) public wards;
+    bytes32 _emptySlot;
     // Slot 1
     mapping (address => uint256) public can;
     // Slot 2
@@ -17,12 +19,6 @@ contract MaseerConduit {
     // Allocate Slots 3-49
     uint256[48] private __gap;
 
-    function rely(address usr) external auth { wards[usr] = 1; }
-    function deny(address usr) external auth { wards[usr] = 0; }
-    modifier auth() {
-        require (wards[msg.sender] == 1, "MaseerConduit/not-authorized");
-        _;
-    }
     function hope(address usr) external auth { can[usr] = 1; }
     function nope(address usr) external auth { can[usr] = 0; }
     modifier operator() {
@@ -43,7 +39,7 @@ contract MaseerConduit {
     );
 
     constructor() {
-        wards[msg.sender] = 1;
+        _rely(msg.sender);
     }
 
     function move(address _token, address _to) external operator buds(_to) returns (uint256 _amt) {

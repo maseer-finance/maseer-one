@@ -35,7 +35,7 @@ contract MaseerOnePriceTest is MaseerTestBase {
         // Fail 10% of the time
         bool _nope = (_rand % 10 == 0);
         if (_nope) {
-            vm.expectRevert("MaseerPrice/not-authorized");
+            vm.expectRevert("MaseerAuth/not-authorized");
             pip.poke(_price);
             return;
         }

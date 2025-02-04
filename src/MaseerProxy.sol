@@ -22,7 +22,6 @@ contract MaseerProxy {
         _setAuth(msg.sender, 1);
         _rely(msg.sender);
         _setImpl(_impl);
-        _setImplWard();
     }
 
     function file(address _impl) external proxyAuth {
@@ -79,14 +78,6 @@ contract MaseerProxy {
             _val := sload(_slot)
         }
         return _val;
-    }
-
-    // Ensure implementation contract has mapping structure for wards
-    function _setImplWard() internal {
-        bytes32 slot = keccak256(abi.encode(msg.sender, uint256(0)));
-        assembly {
-            sstore(slot, 1)
-        }
     }
 
     function _rely(address usr) internal {

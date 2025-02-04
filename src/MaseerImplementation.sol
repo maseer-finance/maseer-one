@@ -41,4 +41,8 @@ abstract contract MaseerImplementation {
             val := sload(slot)
         }
     }
+
+    function _u(bytes32 slot) internal view returns (uint256) {
+        return uint256(_getVal(slot));
+    }
 }
