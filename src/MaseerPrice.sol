@@ -27,12 +27,20 @@ contract MaseerPrice is MaseerImplementation{
         _poke(read_);
     }
 
+    function pause() external auth {
+        _poke(0);
+    }
+
     function name() external view returns (string memory) {
         return _b32toString(_getVal(_NAME_SLOT));
     }
 
     function decimals() external view returns (uint8 decimals_) {
         return uint8(_u(_DECIMALS_SLOT));
+    }
+
+    function paused() external view returns (bool) {
+        return (_u(_PRICE_SLOT) == 0) ? true : false;
     }
 
     function file(bytes32 what, bytes32 data) external auth {

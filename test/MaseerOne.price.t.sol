@@ -9,6 +9,15 @@ contract MaseerOnePriceTest is MaseerTestBase {
 
     }
 
+    function testPause() public {
+        assertTrue(pip.paused());
+
+        vm.prank(pipAuth);
+        pip.poke(1);
+
+        assertTrue(!pip.paused());
+    }
+
     function testPriceName() public {
         assertEq(pip.name(), "");
 
