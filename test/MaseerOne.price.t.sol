@@ -32,6 +32,12 @@ contract MaseerOnePriceTest is MaseerTestBase {
         pip.file("name", "CANAUSDT");
 
         assertEq(pip.name(), "CANAUSDT");
+
+        vm.prank(bob);
+        vm.expectRevert("MaseerAuth/not-authorized");
+        pip.file("name", "URHACKED");
+
+        assertEq(pip.name(), "CANAUSDT");
     }
 
     function testPriceRead() public {
