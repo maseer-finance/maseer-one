@@ -44,8 +44,8 @@ contract MaseerOneScriptTest is MaseerTestBase {
         MaseerOne maseerOne = MaseerOne(maseerOneScript.maseerOne());
 
 
-        assertEq(maseerOne.name(), "Cana");
-        assertEq(maseerOne.symbol(), "CANA");
+        assertEq(maseerOne.name(), maseerOneScript.NAME());
+        assertEq(maseerOne.symbol(), maseerOneScript.SYMBOL());
         assertEq(maseerOne.decimals(), 18);
         assertEq(maseerOne.totalSupply(), 0);
         assertEq(maseerOne.totalPending(), 0);
