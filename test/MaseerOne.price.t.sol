@@ -15,7 +15,14 @@ contract MaseerOnePriceTest is MaseerTestBase {
         vm.prank(pipAuth);
         pip.poke(1);
 
+        // Not paused if price is anything other than 0
         assertTrue(!pip.paused());
+
+        vm.prank(pipAuth);
+        pip.pause();
+
+        assertTrue(pip.paused());
+        assertEq(pip.read(), 0);
     }
 
     function testPriceName() public {
@@ -37,6 +44,18 @@ contract MaseerOnePriceTest is MaseerTestBase {
         pip.poke(30240000);
 
         assertEq(pip.read(), 30240000);
+
+        // bob is not authorized to update the price
+        vm.prank(bob);
+        vm.expectRevert("MaseerAuth/not-authorized");
+        pip.poke(1337);
+        assertEq(pip.read(), 30240000);
+
+        // update price via file
+        vm.prank(pipAuth);
+        pip.file("price", bytes32(uint256(30240001)));
+
+        assertEq(pip.read(), 30240001);
     }
 
     function testFuzzPriceUpdate(uint256 _price, uint256 _rand) public {
