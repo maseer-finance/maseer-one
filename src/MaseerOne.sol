@@ -244,7 +244,9 @@ contract MaseerOne is MaseerToken {
     }
 
     function unsettled() external view returns (uint256) {
-        return _gemBalance() - totalPending;
+        uint256 _bal = _gemBalance();
+        if (_bal < totalPending) return 0;
+        return _bal - totalPending;
     }
 
     // Token overrides for compliance
