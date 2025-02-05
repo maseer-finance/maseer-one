@@ -9,9 +9,13 @@ contract MaseerOneOperationsTest is MaseerTestBase {
     function setUp() public {
 
         vm.prank(actAuth);
-        act.setOpen(block.timestamp);
+        act.setOpenMint(block.timestamp);
         vm.prank(actAuth);
-        act.setHalt(block.timestamp + 1 days);
+        act.setHaltMint(block.timestamp + 1 days);
+        vm.prank(actAuth);
+        act.setOpenBurn(block.timestamp);
+        vm.prank(actAuth);
+        act.setHaltBurn(block.timestamp + 1 days);
         vm.prank(actAuth);
         act.setBpsin(50); // 0.5%
         vm.prank(actAuth);
@@ -29,16 +33,28 @@ contract MaseerOneOperationsTest is MaseerTestBase {
         _mintUSDT(carol, 1_000_000 * 1e6);
     }
 
-    function testOpen() public view {
-        assertEq(maseerOne.open(), true);
+    function testMintable() public view {
+        assertEq(maseerOne.mintable(), true);
     }
 
-    function testNextOpen() public view {
-        assertEq(maseerOne.nextOpen(), block.timestamp);
+    function testBurnable() public view {
+        assertEq(maseerOne.burnable(), true);
     }
 
-    function testNextHalt() public view {
-        assertEq(maseerOne.nextHalt(), block.timestamp + 1 days);
+    function testNextOpenMint() public view {
+        assertEq(maseerOne.nextOpenMint(), block.timestamp);
+    }
+
+    function testNextHaltMint() public view {
+        assertEq(maseerOne.nextHaltMint(), block.timestamp + 1 days);
+    }
+
+    function testNextOpenBurn() public view {
+        assertEq(maseerOne.nextOpenBurn(), block.timestamp);
+    }
+
+    function testNextHaltBurn() public view {
+        assertEq(maseerOne.nextHaltBurn(), block.timestamp + 1 days);
     }
 
     function testMint() public {

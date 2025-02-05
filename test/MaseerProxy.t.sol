@@ -105,14 +105,14 @@ contract MaseerOneProxyTest is MaseerTestBase {
 
         assertEq(_testProxy.impl(), address(_testGate));
 
-        MaseerGate(address(_testProxy)).setOpen(block.timestamp);
+        MaseerGate(address(_testProxy)).setOpenMint(block.timestamp);
 
-        assertEq(MaseerGate(address(_testProxy)).open(), block.timestamp);
+        assertEq(MaseerGate(address(_testProxy)).openMint(), block.timestamp);
 
-        MaseerGate(address(_testProxy)).setHalt(block.timestamp + 1 days);
+        MaseerGate(address(_testProxy)).setHaltMint(block.timestamp + 1 days);
 
-        assertEq(MaseerGate(address(_testProxy)).halt(), block.timestamp + 1 days);
-        assertEq(MaseerGate(address(_testProxy)).live(), true);
+        assertEq(MaseerGate(address(_testProxy)).haltMint(), block.timestamp + 1 days);
+        assertEq(MaseerGate(address(_testProxy)).mintable(), true);
 
         MaseerGate(address(_testProxy)).setBpsin(10000);
 
@@ -128,10 +128,10 @@ contract MaseerOneProxyTest is MaseerTestBase {
 
         MaseerGate(address(_testProxy)).pauseMarket();
 
-        assertEq(MaseerGate(address(_testProxy)).open(), 0);
-        assertEq(MaseerGate(address(_testProxy)).halt(), 0);
+        assertEq(MaseerGate(address(_testProxy)).openMint(), 0);
+        assertEq(MaseerGate(address(_testProxy)).haltMint(), 0);
 
-        assertEq(MaseerGate(address(_testProxy)).live(), false);
+        assertEq(MaseerGate(address(_testProxy)).mintable(), false);
 
         MaseerGate(address(_testProxy)).rely(alice);
         assertEq(MaseerGate(address(_testProxy)).wards(alice), 1);

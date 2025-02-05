@@ -53,11 +53,14 @@ contract MaseerOneScriptTest is MaseerTestBase {
         assertEq(maseerOne.act(), maseerOneScript.MASEER_MARKET_PROXY());
         assertEq(maseerOne.cop(), maseerOneScript.MASEER_COMPLIANCE_PROXY());
         assertEq(maseerOne.flo(), maseerOneScript.MASEER_CONDUIT_PROXY());
-        assertEq(maseerOne.open(), false);
-        assertEq(maseerOne.nextOpen(), 0);
-        assertEq(maseerOne.nextHalt(), 0);
+        assertEq(maseerOne.mintable(), false);
+        assertEq(maseerOne.burnable(), false);
+        assertEq(maseerOne.nextOpenMint(), 0);
+        assertEq(maseerOne.nextHaltMint(), 0);
+        assertEq(maseerOne.nextOpenBurn(), 0);
+        assertEq(maseerOne.nextHaltBurn(), 0);
         assertEq(maseerOne.claimDelay(), maseerOneScript.MARKET_DELAY());
-        assertEq(maseerOne.price(),    1_000_000);
+        assertEq(maseerOne.price(),     1_000_000);
         assertEq(maseerOne.mintPrice(), 1_010_000);
         assertEq(maseerOne.burnPrice(),   990_100);
         assertEq(maseerOne.cap(), maseerOneScript.MARKET_CAP());

@@ -5,12 +5,14 @@ import {MaseerImplementation} from "./MaseerImplementation.sol";
 
 contract MaseerGate is MaseerImplementation {
 
-    bytes32 internal constant _OPEN_SLOT   = keccak256("maseer.gate.open");
-    bytes32 internal constant _HALT_SLOT   = keccak256("maseer.gate.halt");
-    bytes32 internal constant _BPSIN_SLOT  = keccak256("maseer.gate.bpsin");
-    bytes32 internal constant _BPSOUT_SLOT = keccak256("maseer.gate.bpsout");
-    bytes32 internal constant _DELAY_SLOT  = keccak256("maseer.gate.delay");
-    bytes32 internal constant _CAP_SLOT    = keccak256("maseer.gate.cap");
+    bytes32 internal constant _OPEN_MINT_SLOT   = keccak256("maseer.gate.mint.open");
+    bytes32 internal constant _HALT_MINT_SLOT   = keccak256("maseer.gate.mint.halt");
+    bytes32 internal constant _OPEN_BURN_SLOT   = keccak256("maseer.gate.burn.open");
+    bytes32 internal constant _HALT_BURN_SLOT   = keccak256("maseer.gate.burn.halt");
+    bytes32 internal constant _BPSIN_SLOT       = keccak256("maseer.gate.bpsin");
+    bytes32 internal constant _BPSOUT_SLOT      = keccak256("maseer.gate.bpsout");
+    bytes32 internal constant _DELAY_SLOT       = keccak256("maseer.gate.delay");
+    bytes32 internal constant _CAP_SLOT         = keccak256("maseer.gate.cap");
 
     // Allocate slots 0-49
     uint256[50] private __gap;
@@ -19,17 +21,30 @@ contract MaseerGate is MaseerImplementation {
         _rely(msg.sender);
     }
 
-    function live() external view returns (bool) {
-        return block.timestamp >= open() &&
-               block.timestamp <= halt();
+    function mintable() external view returns (bool) {
+        return block.timestamp >= openMint() &&
+               block.timestamp <= haltMint();
     }
 
-    function open() public view returns (uint256) {
-        return _u(_OPEN_SLOT);
+    function burnable() external view returns (bool) {
+        return block.timestamp >= openBurn() &&
+               block.timestamp <= haltBurn();
     }
 
-    function halt() public view returns (uint256) {
-        return _u(_HALT_SLOT);
+    function openMint() public view returns (uint256) {
+        return _u(_OPEN_MINT_SLOT);
+    }
+
+    function haltMint() public view returns (uint256) {
+        return _u(_HALT_MINT_SLOT);
+    }
+
+    function openBurn() public view returns (uint256) {
+        return _u(_OPEN_BURN_SLOT);
+    }
+
+    function haltBurn() public view returns (uint256) {
+        return _u(_HALT_BURN_SLOT);
     }
 
     function bpsin() public view returns (uint256) {
@@ -48,19 +63,31 @@ contract MaseerGate is MaseerImplementation {
         return _u(_CAP_SLOT);
     }
 
-    function setOpen(uint256 open_) external auth {
-        require(open_ < block.timestamp + 365 days, "MaseerGate/open-too-far");
-        _setOpen(open_);
+    function setOpenMint(uint256 open_) external auth {
+        require(open_ < block.timestamp + 365 days, "MaseerGate/open-mint-too-far");
+        _setOpenMint(open_);
     }
 
-    function setHalt(uint256 halt_) external auth {
-        require(halt_ < block.timestamp + 365 days, "MaseerGate/halt-too-far");
-        _setHalt(halt_);
+    function setHaltMint(uint256 halt_) external auth {
+        require(halt_ < block.timestamp + 365 days, "MaseerGate/halt-mint-too-far");
+        _setHaltMint(halt_);
+    }
+
+    function setOpenBurn(uint256 open_) external auth {
+        require(open_ < block.timestamp + 365 days, "MaseerGate/open-burn-too-far");
+        _setOpenBurn(open_);
+    }
+
+    function setHaltBurn(uint256 halt_) external auth {
+        require(halt_ < block.timestamp + 365 days, "MaseerGate/halt-burn-too-far");
+        _setHaltBurn(halt_);
     }
 
     function pauseMarket() external auth {
-        _setOpen(0);
-        _setHalt(0);
+        _setOpenMint(0);
+        _setHaltMint(0);
+        _setOpenBurn(0);
+        _setHaltBurn(0);
     }
 
     function setBpsin(uint256 bpsin_) external auth {
@@ -83,21 +110,31 @@ contract MaseerGate is MaseerImplementation {
     }
 
     function file(bytes32 what, uint256 data) external auth {
-        if      (what == "open")    _setOpen(data);
-        else if (what == "halt")    _setHalt(data);
-        else if (what == "bpsin")   _setBpsin(data);
-        else if (what == "bpsout")  _setBpsout(data);
-        else if (what == "delay")   _setDelay(data);
-        else if (what == "cap")     _setCap(data);
+        if      (what == "openmint") _setOpenMint(data);
+        else if (what == "haltmint") _setHaltMint(data);
+        else if (what == "openburn") _setOpenBurn(data);
+        else if (what == "haltburn") _setHaltBurn(data);
+        else if (what == "bpsin")    _setBpsin(data);
+        else if (what == "bpsout")   _setBpsout(data);
+        else if (what == "delay")    _setDelay(data);
+        else if (what == "cap")      _setCap(data);
         else    revert("MaseerGate/file-unrecognized-param");
     }
 
-    function _setOpen(uint256 open_) internal {
-        _setVal(_OPEN_SLOT, bytes32(open_));
+    function _setOpenMint(uint256 open_) internal {
+        _setVal(_OPEN_MINT_SLOT, bytes32(open_));
     }
 
-    function _setHalt(uint256 halt_) internal {
-        _setVal(_HALT_SLOT, bytes32(halt_));
+    function _setHaltMint(uint256 halt_) internal {
+        _setVal(_HALT_MINT_SLOT, bytes32(halt_));
+    }
+
+    function _setOpenBurn(uint256 open_) internal {
+        _setVal(_OPEN_BURN_SLOT, bytes32(open_));
+    }
+
+    function _setHaltBurn(uint256 halt_) internal {
+        _setVal(_HALT_BURN_SLOT, bytes32(halt_));
     }
 
     function _setBpsin(uint256 bpsin_) internal {

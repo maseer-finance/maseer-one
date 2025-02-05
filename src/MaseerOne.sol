@@ -18,13 +18,16 @@ interface Pip {
 }
 
 interface Act {
-    function open()   external view returns (uint256);
-    function halt()   external view returns (uint256);
-    function bpsin()  external view returns (uint256);
-    function bpsout() external view returns (uint256);
-    function delay()  external view returns (uint256);
-    function cap()    external view returns (uint256);
-    function live()   external view returns (bool);
+    function openMint() external view returns (uint256);
+    function haltMint() external view returns (uint256);
+    function openBurn() external view returns (uint256);
+    function haltBurn() external view returns (uint256);
+    function bpsin()    external view returns (uint256);
+    function bpsout()   external view returns (uint256);
+    function delay()    external view returns (uint256);
+    function cap()      external view returns (uint256);
+    function mintable() external view returns (bool);
+    function burnable() external view returns (bool);
 }
 
 import {MaseerToken} from "./MaseerToken.sol";
@@ -91,12 +94,17 @@ contract MaseerOne is MaseerToken {
         _;
     }
 
-    modifier bell() {
-        if (!_isLive()) revert MarketClosed();
+    modifier mintlive() {
+        if (!mintable()) revert MarketClosed();
         _;
     }
 
-    function mint(uint256 amt) external bell pass(msg.sender) returns (uint256 _out) {
+    modifier burnlive() {
+        if (!burnable()) revert MarketClosed();
+        _;
+    }
+
+    function mint(uint256 amt) external mintlive pass(msg.sender) returns (uint256 _out) {
 
         // Oracle price check
         uint256 _unit = _read();
@@ -128,7 +136,7 @@ contract MaseerOne is MaseerToken {
         emit ContractCreated(msg.sender, _unit, _out);
     }
 
-    function burn(uint256 amt) external bell pass(msg.sender) returns (uint256 _exit) {
+    function burn(uint256 amt) external burnlive pass(msg.sender) returns (uint256 _exit) {
 
         // Oracle price check
         uint256 _unit = _read();
@@ -205,17 +213,31 @@ contract MaseerOne is MaseerToken {
 
     // View functions
 
-    function open() external view returns (bool) {
-        return _isLive();
+    function mintable() public view returns (bool) {
+        return Act(act).mintable();
     }
 
-    function nextOpen() external view returns (uint256) {
-        uint256 _open = Act(act).open();
+    function burnable() public view returns (bool) {
+        return Act(act).burnable();
+    }
+
+    function nextOpenMint() external view returns (uint256) {
+        uint256 _open = Act(act).openMint();
         return _open >= block.timestamp ? _open : 0;
     }
 
-    function nextHalt() external view returns (uint256) {
-        uint256 _halt = Act(act).halt();
+    function nextHaltMint() external view returns (uint256) {
+        uint256 _halt = Act(act).haltMint();
+        return _halt >= block.timestamp ? _halt : 0;
+    }
+
+    function nextOpenBurn() external view returns (uint256) {
+        uint256 _open = Act(act).openBurn();
+        return _open >= block.timestamp ? _open : 0;
+    }
+
+    function nextHaltBurn() external view returns (uint256) {
+        uint256 _halt = Act(act).haltBurn();
         return _halt >= block.timestamp ? _halt : 0;
     }
 
@@ -284,10 +306,6 @@ contract MaseerOne is MaseerToken {
 
     function _canPass(address _usr) internal view returns (bool) {
         return Cop(cop).pass(_usr);
-    }
-
-    function _isLive() internal view returns (bool) {
-        return Act(act).live();
     }
 
     function _delay() internal view returns (uint256) {

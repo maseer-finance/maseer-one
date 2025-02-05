@@ -8,48 +8,82 @@ contract MaseerOneTest is MaseerTestBase {
     MaseerGate public maseerGate;
 
     function setUp() public {
-
-        maseerGate = new MaseerGate();
+        maseerGate = act;
     }
 
-    function testOpen() public {
-        maseerGate.setOpen(block.timestamp + 1 days);
-        assertEq(maseerGate.open(), block.timestamp + 1 days);
+    function testOpenMint() public {
+        vm.prank(actAuth);
+        maseerGate.setOpenMint(block.timestamp + 1 days);
+        assertEq(maseerGate.openMint(), block.timestamp + 1 days);
     }
 
-    function testHalt() public {
-        maseerGate.setHalt(block.timestamp + 1 days);
-        assertEq(maseerGate.halt(), block.timestamp + 1 days);
+    function testHaltMint() public {
+        vm.prank(actAuth);
+        maseerGate.setHaltMint(block.timestamp + 1 days);
+        assertEq(maseerGate.haltMint(), block.timestamp + 1 days);
     }
 
-    function testLive() public {
-        maseerGate.setOpen(block.timestamp - 1 days);
-        maseerGate.setHalt(block.timestamp + 1 days);
-        assertEq(maseerGate.live(), true);
+    function testMintable() public {
+        vm.prank(actAuth);
+        maseerGate.setOpenMint(block.timestamp - 1 days);
+        vm.prank(actAuth);
+        maseerGate.setHaltMint(block.timestamp + 1 days);
+        assertEq(maseerGate.mintable(), true);
+    }
+
+    function testOpenBurn() public {
+        vm.prank(actAuth);
+        maseerGate.setOpenBurn(block.timestamp + 1 days);
+        assertEq(maseerGate.openBurn(), block.timestamp + 1 days);
+    }
+
+    function testHaltBurn() public {
+        vm.prank(actAuth);
+        maseerGate.setHaltBurn(block.timestamp + 1 days);
+        assertEq(maseerGate.haltBurn(), block.timestamp + 1 days);
+    }
+
+    function testBurnable() public {
+        vm.prank(actAuth);
+        maseerGate.setOpenBurn(block.timestamp - 1 days);
+        vm.prank(actAuth);
+        maseerGate.setHaltBurn(block.timestamp + 1 days);
+        assertEq(maseerGate.burnable(), true);
     }
 
     function testPauseMarket() public {
-        maseerGate.setOpen(block.timestamp - 1 days);
-        maseerGate.setHalt(block.timestamp + 1 days);
-        assertEq(maseerGate.live(), true);
+        vm.prank(actAuth);
+        maseerGate.setOpenMint(block.timestamp - 1 days);
+        vm.prank(actAuth);
+        maseerGate.setHaltMint(block.timestamp + 1 days);
+        assertEq(maseerGate.mintable(), true);
+        vm.prank(actAuth);
+        maseerGate.setOpenBurn(block.timestamp - 1 days);
+        vm.prank(actAuth);
+        maseerGate.setHaltBurn(block.timestamp + 1 days);
+        assertEq(maseerGate.burnable(), true);
 
+        vm.prank(actAuth);
         maseerGate.pauseMarket();
 
-        assertEq(maseerGate.open(), 0);
-        assertEq(maseerGate.halt(), 0);
-        assertEq(maseerGate.live(), false);
+        assertEq(maseerGate.openMint(), 0);
+        assertEq(maseerGate.haltMint(), 0);
+        assertEq(maseerGate.mintable(), false);
+        assertEq(maseerGate.openMint(), 0);
+        assertEq(maseerGate.haltMint(), 0);
+        assertEq(maseerGate.burnable(), false);
     }
 
     function testBpsin() public {
         assertEq(maseerGate.bpsin(), 0);
-
+        vm.prank(actAuth);
         maseerGate.setBpsin(10000);
         assertEq(maseerGate.bpsin(), 10000);
     }
 
     function testBpsout() public {
         assertEq(maseerGate.bpsout(), 0);
-
+        vm.prank(actAuth);
         maseerGate.setBpsout(10000);
         assertEq(maseerGate.bpsout(), 10000);
     }
