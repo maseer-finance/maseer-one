@@ -45,7 +45,7 @@ contract MaseerOnePriceTest is MaseerTestBase {
 
         // Example where price is $30.24
         // 1 CANA = 30.24 USDT
-        // 30.24 * 10^6 = 30240000
+        // 30.24 * 10^6 = 30_240000
         vm.prank(pipAuth);
         pip.poke(30240000);
 

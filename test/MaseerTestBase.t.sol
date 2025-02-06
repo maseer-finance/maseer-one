@@ -97,6 +97,8 @@ contract MaseerTestBase is Test {
 
         copImpl = address(new MaseerGuard(USDT));
         cop = MaseerGuard(address(new MaseerProxy(copImpl)));
+        cop.rely(copAuth);
+        cop.deny(address(this));
         copProxy = address(cop);
         // No wards on cop
         MaseerProxy(copProxy).relyProxy(proxyAuth);

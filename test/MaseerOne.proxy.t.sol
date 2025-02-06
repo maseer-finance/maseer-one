@@ -33,6 +33,11 @@ contract MaseerOneProxyTest is MaseerTestBase {
         MaseerProxy(actProxy).file(newActImpl);
         assertEq(maseerOne.act(), actProxy);
         assertEq(MaseerProxy(maseerOne.act()).impl(), newActImpl);
+
+        // Ensure that the new implementation wards are preserved
+        vm.prank(actAuth);
+        act.setOpenMint(block.timestamp - 2 days);
+        assertEq(act.openMint(), block.timestamp - 2 days);
     }
 
     function testCop() public view {
@@ -46,6 +51,17 @@ contract MaseerOneProxyTest is MaseerTestBase {
         MaseerProxy(copProxy).file(newCopImpl);
         assertEq(maseerOne.cop(), copProxy);
         assertEq(MaseerProxy(maseerOne.cop()).impl(), newCopImpl);
+
+        // Ensure that the new implementation wards are preserved
+        vm.prank(copAuth);
+        cop.rely(bob);
+        assertEq(cop.wards(bob), 1);
+
+        // Ensure new functions on the implementation work
+        assertEq(cop.pass(carol), true);
+        vm.prank(bob);
+        MockCop(copProxy).blacklist(carol, true);
+        assertEq(cop.pass(carol), false);
     }
 
     function testFlo() public view {
