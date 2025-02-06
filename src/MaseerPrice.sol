@@ -20,7 +20,7 @@ contract MaseerPrice is MaseerImplementation{
     }
 
     function read() external view returns (uint256) {
-        return _u(_PRICE_SLOT);
+        return _uint256Slot(_PRICE_SLOT);
     }
 
     function poke(uint256 read_) public auth {
@@ -32,15 +32,15 @@ contract MaseerPrice is MaseerImplementation{
     }
 
     function name() external view returns (string memory) {
-        return _b32toString(_getVal(_NAME_SLOT));
+        return _stringSlot(_NAME_SLOT);
     }
 
     function decimals() external view returns (uint8 decimals_) {
-        return uint8(_u(_DECIMALS_SLOT));
+        return uint8(_uint256Slot(_DECIMALS_SLOT));
     }
 
     function paused() external view returns (bool) {
-        return (_u(_PRICE_SLOT) == 0) ? true : false;
+        return (_uint256Slot(_PRICE_SLOT) == 0) ? true : false;
     }
 
     function file(bytes32 what, bytes32 data) external auth {
@@ -54,19 +54,5 @@ contract MaseerPrice is MaseerImplementation{
     function _poke(uint256 read_) internal {
         _setVal(_PRICE_SLOT, bytes32(read_));
         emit PriceUpdate(read_, block.timestamp);
-    }
-
-    function _b32toString(bytes32 _bytes32) internal pure returns (string memory) {
-        uint256 length = 0;
-        while (length < 32 && _bytes32[length] != 0) {
-            length++;
-        }
-
-        bytes memory bytesArray = new bytes(length);
-        for (uint256 i = 0; i < length; i++) {
-            bytesArray[i] = _bytes32[i];
-        }
-
-        return string(bytesArray);
     }
 }

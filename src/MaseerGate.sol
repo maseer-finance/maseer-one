@@ -32,35 +32,35 @@ contract MaseerGate is MaseerImplementation {
     }
 
     function openMint() public view returns (uint256) {
-        return _u(_OPEN_MINT_SLOT);
+        return _uint256Slot(_OPEN_MINT_SLOT);
     }
 
     function haltMint() public view returns (uint256) {
-        return _u(_HALT_MINT_SLOT);
+        return _uint256Slot(_HALT_MINT_SLOT);
     }
 
     function openBurn() public view returns (uint256) {
-        return _u(_OPEN_BURN_SLOT);
+        return _uint256Slot(_OPEN_BURN_SLOT);
     }
 
     function haltBurn() public view returns (uint256) {
-        return _u(_HALT_BURN_SLOT);
+        return _uint256Slot(_HALT_BURN_SLOT);
     }
 
     function bpsin() public view returns (uint256) {
-        return _u(_BPSIN_SLOT);
+        return _uint256Slot(_BPSIN_SLOT);
     }
 
     function bpsout() public view returns (uint256) {
-        return _u(_BPSOUT_SLOT);
+        return _uint256Slot(_BPSOUT_SLOT);
     }
 
     function delay() public view returns (uint256) {
-        return _u(_DELAY_SLOT);
+        return _uint256Slot(_DELAY_SLOT);
     }
 
     function cap() public view returns (uint256) {
-        return _u(_CAP_SLOT);
+        return _uint256Slot(_CAP_SLOT);
     }
 
     function setOpenMint(uint256 open_) external auth {

@@ -36,13 +36,47 @@ abstract contract MaseerImplementation {
         }
     }
 
+    function _setVal(bytes32 slot, uint256 val) internal {
+        assembly {
+            sstore(slot, val)
+        }
+    }
+
+    function _setVal(bytes32 slot, address val) internal {
+        assembly {
+            sstore(slot, val)
+        }
+    }
+
     function _getVal(bytes32 slot) internal view returns (bytes32 val) {
         assembly {
             val := sload(slot)
         }
     }
 
-    function _u(bytes32 slot) internal view returns (uint256) {
+    function _uint256Slot(bytes32 slot) internal view returns (uint256) {
         return uint256(_getVal(slot));
+    }
+
+    function _addressSlot(bytes32 slot) internal view returns (address) {
+        return address(uint160(uint256(_getVal(slot))));
+    }
+
+    function _stringSlot(bytes32 slot) internal view returns (string memory) {
+        return _b32toString(_getVal(slot));
+    }
+
+    function _b32toString(bytes32 _bytes32) internal pure returns (string memory) {
+        uint256 length = 0;
+        while (length < 32 && _bytes32[length] != 0) {
+            length++;
+        }
+
+        bytes memory bytesArray = new bytes(length);
+        for (uint256 i = 0; i < length; i++) {
+            bytesArray[i] = _bytes32[i];
+        }
+
+        return string(bytesArray);
     }
 }
