@@ -199,5 +199,36 @@ contract MaseerOneTokenTest is MaseerTestBase {
         }
     }
 
+    function testPermit() public {
+
+        uint256 _amt = 1000 * 1e18;
+        uint256 _pKey = 1337;
+        address _leet = vm.addr(_pKey);
+
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(
+            _pKey,
+            keccak256(abi.encodePacked(
+                    "\x19\x01",
+                    maseerOne.DOMAIN_SEPARATOR(),
+                    keccak256(
+                        abi.encode(
+                            keccak256("Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)"),
+                            _leet,
+                            bob,
+                            _amt,
+                            maseerOne.nonces(_leet),
+                            block.timestamp
+                        )
+                    )
+                )
+            )
+        );
+
+        maseerOne.permit(_leet, bob, _amt, block.timestamp, v, r, s);
+
+        assertEq(maseerOne.allowance(_leet, bob), _amt);
+        assertEq(maseerOne.nonces(_leet), 1);
+    }
+
     // TODO: General ERC20 tests
 }
