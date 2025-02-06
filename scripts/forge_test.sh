@@ -6,9 +6,10 @@ set -e
 # Parse command-line arguments
 while [[ "$#" -gt 0 ]]; do
     case $1 in
-        --v=*)     v="${1#*=}"     ;;
-        --mt=*)    mt="${1#*=}"    ;;
-        --mc=*)    mc="${1#*=}"    ;;
+        --v=*)      v="${1#*=}"         ;;
+        --mt=*)     mt="${1#*=}"        ;;
+        --mc=*)     mc="${1#*=}"        ;;
+        gas-report) gas_report_set=true ;;
         *) echo "Unknown parameter passed: $1"; exit 1;;
     esac
     shift
@@ -39,9 +40,13 @@ if [ -n "$mt" ]; then
   mtstr="--mt $mt"
 fi
 
+if [ -n "$gas_report_set" ]; then
+    test_args="--gas-report"
+fi
+
 echo "Running ${type} tests"
 test_data="v: ${vstr:-"default"}, mc: ${mc:-"all"}, mt: ${mt:-"all"}"
 
 echo "$test_data"
 
-forge test --fork-url ${ETH_RPC_URL} $mtstr $nmcstr $vstr $mcstr
+forge test --fork-url ${ETH_RPC_URL} $mtstr $nmcstr $vstr $mcstr $test_args
