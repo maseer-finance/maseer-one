@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-contract MockPip {
+import "../../src/MaseerImplementation.sol";
 
-    mapping(address => uint256) public wards;
+contract MockPip is MaseerImplementation {
 
     uint256 internal _price;
 

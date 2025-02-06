@@ -1,17 +1,17 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-contract MockCop {
+import "../../src/MaseerImplementation.sol";
 
-    mapping(address => uint256) public wards;
+contract MockCop is MaseerImplementation {
 
-    bool internal _pass = true;
+    mapping(address => bool) internal _blackList;
 
-    function setPass(bool pass_) external {
-        _pass = pass_;
+    function blacklist(address _usr, bool pass_) external {
+        _blackList[_usr] = pass_;
     }
 
-    function pass() external view returns (bool) {
-        return _pass;
+    function pass(address _usr) external view returns (bool) {
+        return !_blackList[_usr];
     }
 }
