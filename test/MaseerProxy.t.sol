@@ -44,7 +44,7 @@ contract MaseerOneProxyTest is MaseerTestBase {
         assertEq(_testProxy.wardsProxy(address(this)), 1);
 
         // alice is not authorized to rely
-        vm.expectRevert("MaseerProxy/not-authorized");
+        vm.expectRevert(MaseerProxy.NotAuthorized.selector);
         vm.prank(alice);
         _testProxy.relyProxy(alice);
     }
@@ -89,7 +89,7 @@ contract MaseerOneProxyTest is MaseerTestBase {
         assertEq(_testProxy.wardsProxy(address(this)), 0);
 
         // alice is no longer authorized to deny
-        vm.expectRevert("MaseerProxy/not-authorized");
+        vm.expectRevert(MaseerProxy.NotAuthorized.selector);
         vm.prank(alice);
         _testProxy.denyProxy(carol);
 

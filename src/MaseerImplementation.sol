@@ -5,8 +5,11 @@ abstract contract MaseerImplementation {
 
     bytes32 internal constant _WARD_SLOT = keccak256("maseer.wards");
 
+    error NotAuthorized(address usr);
+    error UnrecognizedParam(bytes32 param);
+
     modifier auth() {
-        require(uint256(_getVal(keccak256(abi.encode(_WARD_SLOT, msg.sender)))) == 1, "MaseerAuth/not-authorized");
+        if (uint256(_getVal(keccak256(abi.encode(_WARD_SLOT, msg.sender)))) != 1) revert NotAuthorized(msg.sender);
         _;
     }
 

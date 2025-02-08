@@ -3,6 +3,9 @@ pragma solidity ^0.8.28;
 
 import "./MaseerTestBase.t.sol";
 
+import {MaseerImplementation} from "../src/MaseerImplementation.sol";
+import {MaseerPrice} from "../src/MaseerPrice.sol";
+
 contract MaseerOnePriceTest is MaseerTestBase {
 
     function setUp() public {
@@ -34,7 +37,7 @@ contract MaseerOnePriceTest is MaseerTestBase {
         assertEq(pip.name(), "CANAUSDT");
 
         vm.prank(bob);
-        vm.expectRevert("MaseerAuth/not-authorized");
+        vm.expectRevert(abi.encodeWithSelector(MaseerImplementation.NotAuthorized.selector, bob));
         pip.file("name", "URHACKED");
 
         assertEq(pip.name(), "CANAUSDT");
@@ -53,7 +56,7 @@ contract MaseerOnePriceTest is MaseerTestBase {
 
         // bob is not authorized to update the price
         vm.prank(bob);
-        vm.expectRevert("MaseerAuth/not-authorized");
+        vm.expectRevert(abi.encodeWithSelector(MaseerImplementation.NotAuthorized.selector, bob));
         pip.poke(1337);
         assertEq(pip.read(), 30240000);
 
@@ -69,7 +72,7 @@ contract MaseerOnePriceTest is MaseerTestBase {
         // Fail 10% of the time
         bool _nope = (_rand % 10 == 0);
         if (_nope) {
-            vm.expectRevert("MaseerAuth/not-authorized");
+            vm.expectRevert(abi.encodeWithSelector(MaseerImplementation.NotAuthorized.selector, address(this)));
             pip.poke(_price);
             return;
         }
@@ -98,7 +101,7 @@ contract MaseerOnePriceTest is MaseerTestBase {
         _decimals = bound(_decimals, 0, 20);
 
         if (_decimals > 18) {
-            vm.expectRevert("MaseerPrice/file-unrecognized-param");
+            vm.expectRevert(abi.encodeWithSelector(MaseerImplementation.UnrecognizedParam.selector, bytes32(_decimals)));
             vm.prank(pipAuth);
             pip.file("decimals", bytes32(_decimals));
             return;

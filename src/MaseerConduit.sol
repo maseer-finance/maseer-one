@@ -19,16 +19,21 @@ contract MaseerConduit is MaseerImplementation {
     // Allocate Slots 3-49
     uint256[48] private __gap;
 
+    error ZeroAddress();
+    error TransferFailed();
+    error InvalidAddress(address);
+    error NotOperator(address);
+
     function hope(address usr) external auth { can[usr] = 1; }
     function nope(address usr) external auth { can[usr] = 0; }
     modifier operator() {
-        require (can[msg.sender] == 1, "MaseerConduit/not-operator");
+        if (can[msg.sender] != 1) revert NotOperator(msg.sender);
         _;
     }
     function kiss(address usr) external auth { bud[usr] = 1; }
     function diss(address usr) external auth { bud[usr] = 0; }
     modifier buds(address usr) {
-        require (bud[usr] == 1, "MaseerConduit/invalid-address");
+        if (bud[usr] != 1) revert InvalidAddress(usr);
         _;
     }
 
@@ -43,7 +48,7 @@ contract MaseerConduit is MaseerImplementation {
     }
 
     function move(address _token, address _to) external operator buds(_to) returns (uint256 _amt) {
-        require(_token != address(0), "MaseerConduit/no-token");
+        if (_token == address(0)) revert ZeroAddress();
         _amt = Gem(_token).balanceOf(address(this));
         _safeTransfer(_token, _to, _amt);
         emit Move(_token, _to, _amt);
@@ -51,6 +56,6 @@ contract MaseerConduit is MaseerImplementation {
 
     function _safeTransfer(address _token, address _to, uint256 _amt) internal {
         (bool success, bytes memory data) = _token.call(abi.encodeWithSelector(Gem.transfer.selector, _to, _amt));
-        require(success && (data.length == 0 || abi.decode(data, (bool))), "MaseerConduit/transfer-failed");
+        if (!success || (data.length > 0 && abi.decode(data, (bool)) == false)) revert TransferFailed();
     }
 }

@@ -66,6 +66,7 @@ contract MaseerOne is MaseerToken {
     error UnauthorizedUser(address usr);
     error TransferToContract();
     error TransferToZeroAddress();
+    error TransferFailed();
     error MarketClosed();
     error InvalidPrice();
     error ExceedsCap();
@@ -354,11 +355,11 @@ contract MaseerOne is MaseerToken {
 
     function _safeTransfer(address _token, address _to, uint256 _amt) internal {
         (bool success, bytes memory data) = _token.call(abi.encodeWithSelector(Gem.transfer.selector, _to, _amt));
-        require(success && (data.length == 0 || abi.decode(data, (bool))), "MaseerConduit/transfer-failed");
+        if (!success || (data.length > 0 && abi.decode(data, (bool)) == false)) revert TransferFailed();
     }
 
     function _safeTransferFrom(address _token, address _from, address _to, uint256 _amt) internal {
         (bool success, bytes memory data) = _token.call(abi.encodeWithSelector(Gem.transferFrom.selector, _from, _to, _amt));
-        require(success && (data.length == 0 || abi.decode(data, (bool))), "MaseerOne/transfer-failed");
+        if (!success || (data.length > 0 && abi.decode(data, (bool)) == false)) revert TransferFailed();
     }
 }

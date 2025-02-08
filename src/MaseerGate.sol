@@ -64,22 +64,22 @@ contract MaseerGate is MaseerImplementation {
     }
 
     function setOpenMint(uint256 open_) external auth {
-        require(open_ < block.timestamp + 365 days, "MaseerGate/open-mint-too-far");
+        if (open_ > block.timestamp + 365 days) revert UnrecognizedParam(bytes32(open_));
         _setOpenMint(open_);
     }
 
     function setHaltMint(uint256 halt_) external auth {
-        require(halt_ < block.timestamp + 365 days, "MaseerGate/halt-mint-too-far");
+        if (halt_ > block.timestamp + 365 days) revert UnrecognizedParam(bytes32(halt_));
         _setHaltMint(halt_);
     }
 
     function setOpenBurn(uint256 open_) external auth {
-        require(open_ < block.timestamp + 365 days, "MaseerGate/open-burn-too-far");
+        if (open_ > block.timestamp + 365 days) revert UnrecognizedParam(bytes32(open_));
         _setOpenBurn(open_);
     }
 
     function setHaltBurn(uint256 halt_) external auth {
-        require(halt_ < block.timestamp + 365 days, "MaseerGate/halt-burn-too-far");
+        if (halt_ > block.timestamp + 365 days) revert UnrecognizedParam(bytes32(halt_));
         _setHaltBurn(halt_);
     }
 
@@ -91,17 +91,17 @@ contract MaseerGate is MaseerImplementation {
     }
 
     function setBpsin(uint256 bpsin_) external auth {
-        require(bpsin_ <= 10000, "MaseerGate/bpsin-too-high");
+        if (bpsin_ > 10000) revert UnrecognizedParam(bytes32(bpsin_));
         _setBpsin(bpsin_);
     }
 
     function setBpsout(uint256 bpsout_) external auth {
-        require(bpsout_ <= 10000, "MaseerGate/bpsout-too-high");
+        if (bpsout_ > 10000) revert UnrecognizedParam(bytes32(bpsout_));
         _setBpsout(bpsout_);
     }
 
     function setDelay(uint256 delay_) external auth {
-        require(delay_ <= 365 days, "MaseerGate/delay-too-high");
+        if (delay_ > 365 days) revert UnrecognizedParam(bytes32(delay_));
         _setDelay(delay_);
     }
 
@@ -118,7 +118,7 @@ contract MaseerGate is MaseerImplementation {
         else if (what == "bpsout")   _setBpsout(data);
         else if (what == "delay")    _setDelay(data);
         else if (what == "cap")      _setCap(data);
-        else    revert("MaseerGate/file-unrecognized-param");
+        else    revert UnrecognizedParam(what);
     }
 
     function _setOpenMint(uint256 open_) internal {

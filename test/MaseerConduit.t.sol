@@ -3,37 +3,43 @@ pragma solidity ^0.8.28;
 
 import "./MaseerTestBase.t.sol";
 
+import {MaseerImplementation} from "../src/MaseerImplementation.sol";
+
 contract MaseerConduitTest is MaseerTestBase {
 
     MaseerConduit public maseerConduit;
 
     function setUp() public {
-        maseerConduit = new MaseerConduit();
+        maseerConduit = MaseerConduit(flo);
     }
 
     function testWards() public {
-        assertEq(maseerConduit.wards(address(this)), 1);
+        assertEq(maseerConduit.wards(floAuth), 1);
         assertEq(maseerConduit.wards(alice), 0);
 
+        vm.prank(floAuth);
         maseerConduit.rely(alice);
-        maseerConduit.deny(address(this));
+        vm.prank(floAuth);
+        maseerConduit.deny(floAuth);
 
-        assertEq(maseerConduit.wards(address(this)), 0);
+        assertEq(maseerConduit.wards(floAuth), 0);
         assertEq(maseerConduit.wards(alice), 1);
 
         vm.prank(alice);
-        maseerConduit.rely(address(this));
+        maseerConduit.rely(floAuth);
 
-        assertEq(maseerConduit.wards(address(this)), 1);
+        assertEq(maseerConduit.wards(floAuth), 1);
     }
 
     function testCan() public {
         assertEq(maseerConduit.can(alice), 0);
 
+        vm.prank(floAuth);
         maseerConduit.hope(alice);
 
         assertEq(maseerConduit.can(alice), 1);
 
+        vm.prank(floAuth);
         maseerConduit.nope(alice);
 
         assertEq(maseerConduit.can(alice), 0);
@@ -42,10 +48,12 @@ contract MaseerConduitTest is MaseerTestBase {
     function testBud() public {
         assertEq(maseerConduit.bud(alice), 0);
 
+        vm.prank(floAuth);
         maseerConduit.kiss(alice);
 
         assertEq(maseerConduit.bud(alice), 1);
 
+        vm.prank(floAuth);
         maseerConduit.diss(alice);
 
         assertEq(maseerConduit.bud(alice), 0);
@@ -56,7 +64,9 @@ contract MaseerConduitTest is MaseerTestBase {
         uint256 amt;
         uint256 bal = 100_000 * 1e6;
 
+        vm.prank(floAuth);
         maseerConduit.hope(alice);
+        vm.prank(floAuth);
         maseerConduit.kiss(bob);
 
         // Sanity check 0 initial balances
@@ -95,9 +105,10 @@ contract MaseerConduitTest is MaseerTestBase {
     function testMoveFailNotBud() public {
 
         // alice is a valid operator but carol is not a valid destination
+        vm.prank(floAuth);
         maseerConduit.hope(alice);
 
-        vm.expectRevert(bytes("MaseerConduit/invalid-address"));
+        vm.expectRevert(abi.encodeWithSelector(MaseerConduit.InvalidAddress.selector, carol));
         vm.prank(alice);
         maseerConduit.move(USDT, carol);
     }
@@ -105,9 +116,10 @@ contract MaseerConduitTest is MaseerTestBase {
     function testMoveFailNotCan() public {
 
         // carol is a valid destination but alice is not a valid operator
+        vm.prank(floAuth);
         maseerConduit.kiss(carol);
 
-        vm.expectRevert(bytes("MaseerConduit/not-operator"));
+        vm.expectRevert(abi.encodeWithSelector(MaseerConduit.NotOperator.selector, alice));
         vm.prank(alice);
         maseerConduit.move(USDT, carol);
     }
@@ -116,27 +128,27 @@ contract MaseerConduitTest is MaseerTestBase {
 
         // alice is not authorized to modify permissions
 
-        vm.expectRevert(bytes("MaseerAuth/not-authorized"));
+        vm.expectRevert();
         vm.prank(alice);
         maseerConduit.rely(alice);
 
-        vm.expectRevert(bytes("MaseerAuth/not-authorized"));
+        vm.expectRevert(abi.encodeWithSelector(MaseerImplementation.NotAuthorized.selector, alice));
         vm.prank(alice);
         maseerConduit.deny(alice);
 
-        vm.expectRevert(bytes("MaseerAuth/not-authorized"));
+        vm.expectRevert(abi.encodeWithSelector(MaseerImplementation.NotAuthorized.selector, alice));
         vm.prank(alice);
         maseerConduit.hope(alice);
 
-        vm.expectRevert(bytes("MaseerAuth/not-authorized"));
+        vm.expectRevert(abi.encodeWithSelector(MaseerImplementation.NotAuthorized.selector, alice));
         vm.prank(alice);
         maseerConduit.nope(alice);
 
-        vm.expectRevert(bytes("MaseerAuth/not-authorized"));
+        vm.expectRevert(abi.encodeWithSelector(MaseerImplementation.NotAuthorized.selector, alice));
         vm.prank(alice);
         maseerConduit.kiss(alice);
 
-        vm.expectRevert(bytes("MaseerAuth/not-authorized"));
+        vm.expectRevert(abi.encodeWithSelector(MaseerImplementation.NotAuthorized.selector, alice));
         vm.prank(alice);
         maseerConduit.diss(alice);
     }
@@ -149,7 +161,9 @@ contract MaseerConduitTest is MaseerTestBase {
         deal(WETH, address(maseerConduit), bal);
         deal(DAI, address(maseerConduit), bal);
 
+        vm.prank(floAuth);
         maseerConduit.hope(address(this));
+        vm.prank(floAuth);
         maseerConduit.kiss(bob);
 
         assertEq(IERC20(WETH).balanceOf(address(maseerConduit)), bal);

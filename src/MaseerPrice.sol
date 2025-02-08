@@ -47,7 +47,7 @@ contract MaseerPrice is MaseerImplementation{
         if      (what == "price")    _poke(uint256(data));
         else if (what == "name")     _setVal(_NAME_SLOT, data);
         else if (what == "decimals" && uint256(data) <= 18) _setVal(_DECIMALS_SLOT, data);
-        else    revert("MaseerPrice/file-unrecognized-param");
+        else    revert UnrecognizedParam(data);
         emit    File(what, data);
     }
 

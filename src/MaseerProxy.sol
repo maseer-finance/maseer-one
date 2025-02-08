@@ -13,8 +13,11 @@ contract MaseerProxy {
     function relyProxy(address usr) external proxyAuth { _setAuth(usr, 1); }
     function denyProxy(address usr) external proxyAuth { _setAuth(usr, 0); }
 
+    error NotAuthorized();
+    error NoImplementation();
+
     modifier proxyAuth() {
-        require(_getAuth(msg.sender) == 1, "MaseerProxy/not-authorized");
+        if (_getAuth(msg.sender) != 1) revert NotAuthorized();
         _;
     }
 
@@ -48,7 +51,7 @@ contract MaseerProxy {
     }
 
     function _setImpl(address _impl) internal {
-        require(_impl != address(0), "MaseerProxy/no-implementation");
+        if (_impl == address(0)) revert NoImplementation();
         bytes32 _slot = _IMPL_SLOT;
         assembly {
             sstore(_slot, _impl)
