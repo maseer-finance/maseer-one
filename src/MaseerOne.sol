@@ -271,6 +271,11 @@ contract MaseerOne is MaseerToken {
         return (_bal < totalPending) ? 0 : _bal - totalPending;
     }
 
+    function obligated() external view returns (uint256) {
+        uint256 _bal = _gemBalance();
+        return (_bal > totalPending) ? 0 : totalPending - _bal;
+    }
+
     // Token overrides for compliance
 
     function approve(address usr) external override pass(msg.sender) pass(usr) returns (bool) {

@@ -83,6 +83,10 @@ contract MaseerOnePriceTest is MaseerTestBase {
         assertEq(pip.read(), _price);
 
         vm.prank(pipAuth);
+        pip.poke(0);
+        assertEq(pip.read(), 0);
+
+        vm.prank(pipAuth);
         pip.file("price", bytes32(_price));
 
         assertEq(pip.read(), _price);

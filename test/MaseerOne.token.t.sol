@@ -230,5 +230,44 @@ contract MaseerOneTokenTest is MaseerTestBase {
         assertEq(maseerOne.nonces(_leet), 1);
     }
 
+    function testAllowance() public {
+        uint256 _amt = 1000 * 1e18;
+
+        _mintTokens(alice, _amt);
+        assertEq(maseerOne.balanceOf(alice), _amt);
+        assertEq(maseerOne.allowance(alice, bob), 0);
+
+        vm.prank(alice);
+        maseerOne.approve(bob, _amt);
+
+        assertEq(maseerOne.allowance(alice, bob), _amt);
+    }
+
+    function testFuzzApprovals(address to, address from, uint256 amt) public {
+
+        if (!maseerOne.canPass(from) || !maseerOne.canPass(to)) {
+            if (!maseerOne.canPass(from)) {
+                vm.expectRevert(abi.encodeWithSelector(MaseerOne.UnauthorizedUser.selector, from));
+            } else {
+                vm.expectRevert(abi.encodeWithSelector(MaseerOne.UnauthorizedUser.selector, to));
+            }
+            vm.prank(from);
+            maseerOne.approve(to, amt);
+            return;
+        }
+
+        if (vm.randomBool()) {
+            vm.prank(from);
+            maseerOne.approve(to, amt);
+            assertEq(maseerOne.allowance(from, to), amt);
+        } else {
+            vm.prank(from);
+            maseerOne.approve(to);
+            assertEq(maseerOne.allowance(from, to), type(uint256).max);
+        }
+
+
+    }
+
     // TODO: General ERC20 tests
 }

@@ -69,6 +69,8 @@ contract MaseerOneOperationsTest is MaseerTestBase {
         assertEq(maseerOne.totalSupply(), _amt);
         assertEq(maseerOne.balanceOf(alice), _amt);
         assertEq(usdt.balanceOf(alice), 900_000 * 1e6);
+        assertEq(maseerOne.totalPending(), 0);
+        assertEq(maseerOne.unsettled(), 100_000 * 1e6);
 
         vm.prank(bob);
         usdt.approve(address(maseerOne), 100_000 * 1e6);
@@ -80,6 +82,8 @@ contract MaseerOneOperationsTest is MaseerTestBase {
         assertEq(maseerOne.totalSupply(), _amt * 2);
         assertEq(maseerOne.balanceOf(bob), _amt);
         assertEq(usdt.balanceOf(bob), 900_000 * 1e6);
+        assertEq(maseerOne.totalPending(), 0);
+        assertEq(maseerOne.unsettled(), 200_000 * 1e6);
     }
 
     function testBurn() public {
@@ -88,6 +92,10 @@ contract MaseerOneOperationsTest is MaseerTestBase {
         usdt.approve(address(maseerOne), 1_000_000 * 1e6);
         vm.prank(alice);
         uint256 _amt = maseerOne.mint(100_000 * 1e6);
+        maseerOne.settle();
+        assertEq(maseerOne.totalPending(), 0);
+        assertEq(maseerOne.pendingExit(alice), 0);
+        assertEq(maseerOne.pendingTime(alice), 0);
 
         vm.prank(alice);
         uint256 _claim = maseerOne.burn(_amt);
@@ -98,6 +106,12 @@ contract MaseerOneOperationsTest is MaseerTestBase {
         assertEq(maseerOne.totalPending(), _claim);
         assertEq(maseerOne.pendingExit(alice), _claim);
         assertEq(maseerOne.pendingTime(alice), block.timestamp + maseerOne.claimDelay());
+        assertEq(maseerOne.obligated(), _claim);
+
+        _mintUSDT(address(maseerOne), _claim);
+        assertEq(usdt.balanceOf(address(maseerOne)), _claim);
+        assertEq(maseerOne.obligated(), 0);
+        assertEq(maseerOne.unsettled(), 0);
     }
 
     function testExit() public {
