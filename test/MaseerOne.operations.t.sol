@@ -167,6 +167,9 @@ contract MaseerOneOperationsTest is MaseerTestBase {
         vm.prank(bob);
         maseerOne.settle();
 
+        assertEq(usdt.balanceOf(maseerOneAddr), 0);
+        assertEq(usdt.balanceOf(maseerOne.flo()), _bal);
+
         vm.prank(floAuth);
         flo.kiss(offramp);
         vm.prank(floAuth);
