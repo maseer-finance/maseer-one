@@ -108,6 +108,7 @@ contract MaseerOneOperationsTest is MaseerTestBase {
         assertEq(maseerOne.pendingTime(alice), block.timestamp + maseerOne.claimDelay());
         assertEq(maseerOne.obligated(), _claim);
 
+        // Put tokens back into the contract to settle the claim
         _mintUSDT(address(maseerOne), _claim);
         assertEq(usdt.balanceOf(address(maseerOne)), _claim);
         assertEq(maseerOne.obligated(), 0);
