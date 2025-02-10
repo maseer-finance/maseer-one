@@ -5,8 +5,6 @@ interface Gem {
     function transfer(address usr, uint wad) external returns (bool);
     function transferFrom(address src, address dst, uint wad) external returns (bool);
     function balanceOf(address account) external view returns (uint256);
-    function approve(address usr, uint wad) external returns (bool);
-    function decimals() external view returns (uint8);
 }
 
 interface Cop {
