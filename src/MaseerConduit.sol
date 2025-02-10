@@ -4,7 +4,7 @@ pragma solidity ^0.8.28;
 import {MaseerImplementation} from "./MaseerImplementation.sol";
 
 interface Gem {
-    function transfer(address dst, uint wad) external returns (bool);
+    function transfer(address dst, uint256 wad) external returns (bool);
     function balanceOf(address account) external view returns (uint256);
 }
 

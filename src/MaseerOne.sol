@@ -2,8 +2,8 @@
 pragma solidity ^0.8.28;
 
 interface Gem {
-    function transfer(address usr, uint wad) external returns (bool);
-    function transferFrom(address src, address dst, uint wad) external returns (bool);
+    function transfer(address usr, uint256 wad) external returns (bool);
+    function transferFrom(address src, address dst, uint256 wad) external returns (bool);
     function balanceOf(address account) external view returns (uint256);
 }
 
@@ -256,16 +256,16 @@ contract MaseerOne is MaseerToken {
         return super.approve(usr, type(uint256).max);
     }
 
-    function approve(address usr, uint wad) public override pass(msg.sender) pass(usr) returns (bool) {
+    function approve(address usr, uint256 wad) public override pass(msg.sender) pass(usr) returns (bool) {
         return super.approve(usr, wad);
     }
 
-    function transfer(address dst, uint wad) public override pass(msg.sender) pass(dst) returns (bool) {
+    function transfer(address dst, uint256 wad) public override pass(msg.sender) pass(dst) returns (bool) {
         if (dst == address(this)) revert TransferToContract();
         return super.transfer(dst, wad);
     }
 
-    function transferFrom(address src, address dst, uint wad) public override pass(msg.sender) pass(src) pass(dst) returns (bool) {
+    function transferFrom(address src, address dst, uint256 wad) public override pass(msg.sender) pass(src) pass(dst) returns (bool) {
         if (dst == address(this)) revert TransferToContract();
         return super.transferFrom(src, dst, wad);
     }
@@ -316,11 +316,11 @@ contract MaseerOne is MaseerToken {
         if (x > y) { z = y; } else { z = x; }
     }
 
-    function _wmul(uint256 x, uint256 y) internal pure returns (uint z) {
+    function _wmul(uint256 x, uint256 y) internal pure returns (uint256 z) {
         z = ((x * y) + (WAD / 2)) / WAD;
     }
 
-    function _wdiv(uint256 x, uint256 y) internal pure returns (uint z) {
+    function _wdiv(uint256 x, uint256 y) internal pure returns (uint256 z) {
         z = ((x * WAD) + (y / 2)) / y;
     }
 

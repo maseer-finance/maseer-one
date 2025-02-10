@@ -26,14 +26,14 @@ abstract contract MaseerToken {
         DOMAIN_SEPARATOR = _domainSeparator();
     }
 
-    event Approval(address indexed src, address indexed usr, uint wad);
-    event Transfer(address indexed src, address indexed dst, uint wad);
+    event Approval(address indexed src, address indexed usr, uint256 wad);
+    event Transfer(address indexed src, address indexed dst, uint256 wad);
 
     function approve(address usr) external virtual returns (bool) {
         return approve(usr, type(uint256).max);
     }
 
-    function approve(address usr, uint wad) public virtual returns (bool) {
+    function approve(address usr, uint256 wad) public virtual returns (bool) {
         allowance[msg.sender][usr] = wad;
 
         emit Approval(msg.sender, usr, wad);
@@ -41,7 +41,7 @@ abstract contract MaseerToken {
         return true;
     }
 
-    function transfer(address dst, uint wad) public virtual returns (bool) {
+    function transfer(address dst, uint256 wad) public virtual returns (bool) {
         balanceOf[msg.sender] -= wad;
 
         // Cannot overflow because balance
@@ -55,7 +55,7 @@ abstract contract MaseerToken {
         return true;
     }
 
-    function transferFrom(address src, address dst, uint wad)
+    function transferFrom(address src, address dst, uint256 wad)
         public virtual
         returns (bool)
     {
@@ -118,7 +118,7 @@ abstract contract MaseerToken {
         emit Approval(owner, spender, value);
     }
 
-    function _mint(address usr, uint wad) internal {
+    function _mint(address usr, uint256 wad) internal {
         totalSupply += wad;
         // Cannot overflow
         unchecked {
@@ -127,7 +127,7 @@ abstract contract MaseerToken {
         emit Transfer(address(0), usr, wad);
     }
 
-    function _burn(address usr, uint wad) internal {
+    function _burn(address usr, uint256 wad) internal {
         balanceOf[usr] -= wad;
         // Cannot overflow
         unchecked {
