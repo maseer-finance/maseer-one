@@ -51,6 +51,20 @@ abstract contract MaseerImplementation {
         }
     }
 
+    function _setVal(bytes32 slot, bool val) internal {
+        assembly {
+            sstore(slot, val)
+        }
+    }
+
+    function _setVal(bytes32 slot, string memory val) internal {
+        if (bytes(val).length > 32) revert UnrecognizedParam(bytes32(bytes(val)));
+        bytes32 val_ = bytes32(bytes(val));
+        assembly {
+            sstore(slot, val_)
+        }
+    }
+
     function _getVal(bytes32 slot) internal view returns (bytes32 val) {
         assembly {
             val := sload(slot)
@@ -63,6 +77,10 @@ abstract contract MaseerImplementation {
 
     function _addressSlot(bytes32 slot) internal view returns (address) {
         return address(uint160(uint256(_getVal(slot))));
+    }
+
+    function _boolSlot(bytes32 slot) internal view returns (bool) {
+        return _getVal(slot) == bytes32(uint256(1)) ? true : false;
     }
 
     function _stringSlot(bytes32 slot) internal view returns (string memory) {
