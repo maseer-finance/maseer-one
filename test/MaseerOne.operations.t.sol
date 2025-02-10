@@ -176,6 +176,14 @@ contract MaseerOneOperationsTest is MaseerTestBase {
         flo.hope(agent);
 
         vm.prank(agent);
+        uint256 _amt = flo.move(USDT, offramp, 10);
+        assertEq(_amt, 10);
+        assertEq(usdt.balanceOf(offramp), 10);
+        assertEq(usdt.balanceOf(maseerOneAddr), 0);
+        assertEq(usdt.balanceOf(agent), 0);
+        assertEq(usdt.balanceOf(maseerOne.flo()), _bal - 10);
+
+        vm.prank(agent);
         flo.move(USDT, offramp);
 
         assertEq(usdt.balanceOf(offramp), _bal);
