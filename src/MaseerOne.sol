@@ -224,7 +224,7 @@ contract MaseerOne is MaseerToken {
         return _delay();
     }
 
-    function price() external view returns (uint256) {
+    function unitPrice() external view returns (uint256) {
         return _read();
     }
 
