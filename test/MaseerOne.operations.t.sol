@@ -42,19 +42,19 @@ contract MaseerOneOperationsTest is MaseerTestBase {
     }
 
     function testNextOpenMint() public view {
-        assertEq(maseerOne.nextOpenMint(), block.timestamp);
+        assertEq(act.nextOpenMint(), block.timestamp);
     }
 
     function testNextHaltMint() public view {
-        assertEq(maseerOne.nextHaltMint(), block.timestamp + 1 days);
+        assertEq(act.nextHaltMint(), block.timestamp + 1 days);
     }
 
     function testNextOpenBurn() public view {
-        assertEq(maseerOne.nextOpenBurn(), block.timestamp);
+        assertEq(act.nextOpenBurn(), block.timestamp);
     }
 
     function testNextHaltBurn() public view {
-        assertEq(maseerOne.nextHaltBurn(), block.timestamp + 1 days);
+        assertEq(act.nextHaltBurn(), block.timestamp + 1 days);
     }
 
     function testMint() public {

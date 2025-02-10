@@ -18,16 +18,12 @@ interface Pip {
 }
 
 interface Act {
-    function openMint() external view returns (uint256);
-    function haltMint() external view returns (uint256);
-    function openBurn() external view returns (uint256);
-    function haltBurn() external view returns (uint256);
+    function mintable() external view returns (bool);
+    function burnable() external view returns (bool);
     function bpsin()    external view returns (uint256);
     function bpsout()   external view returns (uint256);
     function delay()    external view returns (uint256);
     function cap()      external view returns (uint256);
-    function mintable() external view returns (bool);
-    function burnable() external view returns (bool);
 }
 
 import {MaseerToken} from "./MaseerToken.sol";
@@ -220,26 +216,6 @@ contract MaseerOne is MaseerToken {
 
     function burnable() public view returns (bool) {
         return Act(act).burnable();
-    }
-
-    function nextOpenMint() external view returns (uint256) {
-        uint256 _open = Act(act).openMint();
-        return _open >= block.timestamp ? _open : 0;
-    }
-
-    function nextHaltMint() external view returns (uint256) {
-        uint256 _halt = Act(act).haltMint();
-        return _halt >= block.timestamp ? _halt : 0;
-    }
-
-    function nextOpenBurn() external view returns (uint256) {
-        uint256 _open = Act(act).openBurn();
-        return _open >= block.timestamp ? _open : 0;
-    }
-
-    function nextHaltBurn() external view returns (uint256) {
-        uint256 _halt = Act(act).haltBurn();
-        return _halt >= block.timestamp ? _halt : 0;
     }
 
     function canPass(address usr) external view returns (bool) {

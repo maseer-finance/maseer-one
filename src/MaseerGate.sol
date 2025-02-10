@@ -63,6 +63,26 @@ contract MaseerGate is MaseerImplementation {
         return _uint256Slot(_CAP_SLOT);
     }
 
+    function nextOpenMint() external view returns (uint256) {
+        uint256 _open = openMint();
+        return _open >= block.timestamp ? _open : 0;
+    }
+
+    function nextHaltMint() external view returns (uint256) {
+        uint256 _halt = haltMint();
+        return _halt >= block.timestamp ? _halt : 0;
+    }
+
+    function nextOpenBurn() external view returns (uint256) {
+        uint256 _open = openBurn();
+        return _open >= block.timestamp ? _open : 0;
+    }
+
+    function nextHaltBurn() external view returns (uint256) {
+        uint256 _halt = haltBurn();
+        return _halt >= block.timestamp ? _halt : 0;
+    }
+
     function setOpenMint(uint256 open_) external auth {
         if (open_ > block.timestamp + 365 days) revert UnrecognizedParam(bytes32(open_));
         _setOpenMint(open_);
