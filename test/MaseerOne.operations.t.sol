@@ -86,6 +86,21 @@ contract MaseerOneOperationsTest is MaseerTestBase {
         assertEq(maseerOne.unsettled(), 200_000 * 1e6);
     }
 
+    function testMintFail() public {
+
+        vm.prank(alice);
+        usdt.approve(address(maseerOne), 1_000_000 * 1e6);
+        assertEq(usdt.balanceOf(alice),  1_000_000 * 1e6);
+
+        vm.expectRevert(abi.encodeWithSelector(MaseerOne.DustThreshold.selector, maseerOne.mintPrice()));
+        vm.prank(alice);
+        maseerOne.mint(9 * 1e6);
+
+        vm.expectRevert(abi.encodeWithSelector(MaseerOne.DustThreshold.selector, maseerOne.mintPrice()));
+        vm.prank(alice);
+        maseerOne.mint(0);
+    }
+
     function testBurn() public {
 
         vm.prank(alice);

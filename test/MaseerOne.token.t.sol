@@ -230,17 +230,20 @@ contract MaseerOneTokenTest is MaseerTestBase {
         assertEq(maseerOne.nonces(_leet), 1);
     }
 
-    function testAllowance() public {
+    function testApproveAmt() public {
         uint256 _amt = 1000 * 1e18;
-
-        _mintTokens(alice, _amt);
-        assertEq(maseerOne.balanceOf(alice), _amt);
         assertEq(maseerOne.allowance(alice, bob), 0);
 
         vm.prank(alice);
         maseerOne.approve(bob, _amt);
-
         assertEq(maseerOne.allowance(alice, bob), _amt);
+    }
+
+    function testApproveMax() public {
+        assertEq(maseerOne.allowance(alice, carol), 0);
+        vm.prank(alice);
+        maseerOne.approve(carol);
+        assertEq(maseerOne.allowance(alice, carol), type(uint256).max);
     }
 
     function testFuzzApprovals(address to, address from, uint256 amt) public {

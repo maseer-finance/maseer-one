@@ -87,4 +87,52 @@ contract MaseerOneTest is MaseerTestBase {
         maseerGate.setBpsout(10000);
         assertEq(maseerGate.bpsout(), 10000);
     }
+
+    function testFile() public {
+
+        assertEq(maseerGate.openMint(), 0);
+        vm.prank(actAuth);
+        maseerGate.file("openmint", block.timestamp + 1 days);
+        assertEq(maseerGate.openMint(), block.timestamp + 1 days);
+
+        assertEq(maseerGate.haltMint(), 0);
+        vm.prank(actAuth);
+        maseerGate.file("haltmint", block.timestamp + 1 days);
+        assertEq(maseerGate.haltMint(), block.timestamp + 1 days);
+
+        assertEq(maseerGate.openBurn(), 0);
+        vm.prank(actAuth);
+        maseerGate.file("openburn", block.timestamp + 1 days);
+        assertEq(maseerGate.openBurn(), block.timestamp + 1 days);
+
+        assertEq(maseerGate.haltBurn(), 0);
+        vm.prank(actAuth);
+        maseerGate.file("haltburn", block.timestamp + 1 days);
+        assertEq(maseerGate.haltBurn(), block.timestamp + 1 days);
+
+        assertEq(maseerGate.bpsin(), 0);
+        vm.prank(actAuth);
+        maseerGate.file("bpsin", 10000);
+        assertEq(maseerGate.bpsin(), 10000);
+
+        assertEq(maseerGate.bpsout(), 0);
+        vm.prank(actAuth);
+        maseerGate.file("bpsout", 10000);
+        assertEq(maseerGate.bpsout(), 10000);
+
+        assertEq(maseerGate.delay(), 0);
+        vm.prank(actAuth);
+        maseerGate.file("delay", 1 days);
+        assertEq(maseerGate.delay(), 1 days);
+
+        assertEq(maseerGate.cap(), 0);
+        vm.prank(actAuth);
+        maseerGate.file("cap", 1_000_000 * 1e18);
+        assertEq(maseerGate.cap(), 1_000_000 * 1e18);
+
+        vm.expectRevert();
+        vm.prank(actAuth);
+        maseerGate.file("invalid", 1337);
+
+    }
 }
