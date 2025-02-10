@@ -101,6 +101,7 @@ contract MaseerOneScript is Script {
         // MASEER_CONDUIT_PROXY set wards and buds
         MaseerConduit(MASEER_CONDUIT_PROXY).hope(conduitAuth);
         MaseerConduit(MASEER_CONDUIT_PROXY).kiss(conduitOut);
+        MaseerConduit(MASEER_CONDUIT_PROXY).kiss(address(maseerOne));
         MaseerConduit(MASEER_CONDUIT_PROXY).rely(conduitAuth);
         MaseerConduit(MASEER_CONDUIT_PROXY).deny(msg.sender);
         MaseerProxy(MASEER_CONDUIT_PROXY).relyProxy(proxyAuth);
