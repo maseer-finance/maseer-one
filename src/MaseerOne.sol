@@ -252,8 +252,8 @@ contract MaseerOne is MaseerToken {
 
     // Token overrides for compliance
 
-    function approve(address usr) external override pass(msg.sender) pass(usr) returns (bool) {
-        return super.approve(usr, type(uint256).max);
+    function approve(address usr) public override pass(msg.sender) pass(usr) returns (bool) {
+        return super.approve(usr);
     }
 
     function approve(address usr, uint256 wad) public override pass(msg.sender) pass(usr) returns (bool) {
