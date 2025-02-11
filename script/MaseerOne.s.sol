@@ -50,14 +50,12 @@ contract MaseerOneScript is Script {
 
     function run() public {
         vm.startBroadcast();
+        if (getChainId() == 11155111) useSepoliaConfig();
 
         MASEER_ORACLE_IMPLEMENTATION = address(new MaseerPrice());
         MASEER_ORACLE_PROXY = address(new MaseerProxy(MASEER_ORACLE_IMPLEMENTATION));
         MASEER_MARKET_IMPLEMENTATION = address(new MaseerGate());
         MASEER_MARKET_PROXY = address(new MaseerProxy(MASEER_MARKET_IMPLEMENTATION));
-        if (getChainId() == 11155111) {  // sepolia
-            USDT = address(new MockUSDT());
-        }
         MASEER_COMPLIANCE_IMPLEMENTATION = address(new MaseerGuard(USDT));
         MASEER_COMPLIANCE_PROXY = address(new MaseerProxy(MASEER_COMPLIANCE_IMPLEMENTATION));
         MASEER_CONDUIT_IMPLEMENTATION = address(new MaseerConduit());
@@ -128,6 +126,16 @@ contract MaseerOneScript is Script {
         require(maseerOne.totalSupply() == 0, "MaseerOne totalSupply is not correct");
         console.log("MaseerOne totalSupply: ",maseerOne.totalSupply());
 
+    }
+
+    function useSepoliaConfig() internal {
+        USDT = address(new MockUSDT());
+        proxyAuth = msg.sender;
+        oracleAuth = msg.sender;
+        marketAuth = msg.sender;
+        complianceAuth = msg.sender;
+        conduitAuth = msg.sender;
+        conduitOut = msg.sender;
     }
 
     function getChainId() internal view returns (uint256) {
