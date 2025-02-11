@@ -29,7 +29,7 @@ abstract contract MaseerToken {
     event Approval(address indexed src, address indexed usr, uint256 wad);
     event Transfer(address indexed src, address indexed dst, uint256 wad);
 
-    function approve(address usr) external virtual returns (bool) {
+    function approve(address usr) public virtual returns (bool) {
         return approve(usr, type(uint256).max);
     }
 
