@@ -9,8 +9,7 @@ import {MaseerGuard} from "../src/MaseerGuard.sol";
 import {MaseerProxy} from "../src/MaseerProxy.sol";
 import {MaseerConduit} from "../src/MaseerConduit.sol";
 
-import {MockPip} from "../test/Mocks/MockPip.sol";
-import {MockCop} from "../test/Mocks/MockCop.sol";
+import {MockUSDT} from "../test/Mocks/MockUSDT.sol";
 
 contract MaseerOneScript is Script {
     MaseerOne public maseerOne;
@@ -31,11 +30,11 @@ contract MaseerOneScript is Script {
 
     uint256 public constant MARKET_CAP    = 1_000_000e18;
     uint256 public constant MARKET_DELAY  = 5 days;
-    uint256 public constant MARKET_BPSIN  = 100;
-    uint256 public constant MARKET_BPSOUT = 100;
+    uint256 public constant MARKET_BPSIN  = 50;
+    uint256 public constant MARKET_BPSOUT = 50;
 
     // Mainnet
-    address public constant USDT = 0xdAC17F958D2ee523a2206206994597C13D831ec7;
+    address public USDT = 0xdAC17F958D2ee523a2206206994597C13D831ec7;
 
     address public MASEER_ORACLE_IMPLEMENTATION;
     address public MASEER_ORACLE_PROXY;
@@ -56,6 +55,9 @@ contract MaseerOneScript is Script {
         MASEER_ORACLE_PROXY = address(new MaseerProxy(MASEER_ORACLE_IMPLEMENTATION));
         MASEER_MARKET_IMPLEMENTATION = address(new MaseerGate());
         MASEER_MARKET_PROXY = address(new MaseerProxy(MASEER_MARKET_IMPLEMENTATION));
+        if (getChainId() == 11155111) {  // sepolia
+            USDT = address(new MockUSDT());
+        }
         MASEER_COMPLIANCE_IMPLEMENTATION = address(new MaseerGuard(USDT));
         MASEER_COMPLIANCE_PROXY = address(new MaseerProxy(MASEER_COMPLIANCE_IMPLEMENTATION));
         MASEER_CONDUIT_IMPLEMENTATION = address(new MaseerConduit());
@@ -126,5 +128,13 @@ contract MaseerOneScript is Script {
         require(maseerOne.totalSupply() == 0, "MaseerOne totalSupply is not correct");
         console.log("MaseerOne totalSupply: ",maseerOne.totalSupply());
 
+    }
+
+    function getChainId() internal view returns (uint256) {
+        uint256 chainId;
+        assembly {
+            chainId := chainid()
+        }
+        return chainId;
     }
 }
