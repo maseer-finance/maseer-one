@@ -32,17 +32,17 @@
             <td></td>
             <td class="headerItem">Lines:</td>
             <td class="headerCovTableEntry">53</td>
-            <td class="headerCovTableEntry">54</td>
-            <td class="headerCovTableEntryHi">98.1 %</td>
+            <td class="headerCovTableEntry">61</td>
+            <td class="headerCovTableEntryMed">86.9 %</td>
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2025-02-11 13:09:33</td>
+            <td class="headerValue">2025-02-12 10:50:41</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">2</td>
-            <td class="headerCovTableEntry">2</td>
-            <td class="headerCovTableEntryHi">100.0 %</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntryLo">66.7 %</td>
           </tr>
           <tr><td><img src="../glass.png" width=3 height=3 alt=""></td></tr>
         </table>
@@ -112,94 +112,102 @@
 <a name="50"><span class="lineNum">      50 </span>            : </a>
 <a name="51"><span class="lineNum">      51 </span><span class="lineCov">          2 :     function run() public {</span></a>
 <a name="52"><span class="lineNum">      52 </span><span class="lineCov">          2 :         vm.startBroadcast();</span></a>
-<a name="53"><span class="lineNum">      53 </span>            : </a>
-<a name="54"><span class="lineNum">      54 </span><span class="lineCov">          2 :         MASEER_ORACLE_IMPLEMENTATION = address(new MaseerPrice());</span></a>
-<a name="55"><span class="lineNum">      55 </span><span class="lineCov">          2 :         MASEER_ORACLE_PROXY = address(new MaseerProxy(MASEER_ORACLE_IMPLEMENTATION));</span></a>
-<a name="56"><span class="lineNum">      56 </span><span class="lineCov">          2 :         MASEER_MARKET_IMPLEMENTATION = address(new MaseerGate());</span></a>
-<a name="57"><span class="lineNum">      57 </span><span class="lineCov">          2 :         MASEER_MARKET_PROXY = address(new MaseerProxy(MASEER_MARKET_IMPLEMENTATION));</span></a>
-<a name="58"><span class="lineNum">      58 </span><span class="lineCov">          2 :         if (getChainId() == 11155111) {  // sepolia</span></a>
-<a name="59"><span class="lineNum">      59 </span><span class="lineNoCov">          0 :             USDT = address(new MockUSDT());</span></a>
-<a name="60"><span class="lineNum">      60 </span>            :         }</a>
-<a name="61"><span class="lineNum">      61 </span><span class="lineCov">          2 :         MASEER_COMPLIANCE_IMPLEMENTATION = address(new MaseerGuard(USDT));</span></a>
-<a name="62"><span class="lineNum">      62 </span><span class="lineCov">          2 :         MASEER_COMPLIANCE_PROXY = address(new MaseerProxy(MASEER_COMPLIANCE_IMPLEMENTATION));</span></a>
-<a name="63"><span class="lineNum">      63 </span><span class="lineCov">          2 :         MASEER_CONDUIT_IMPLEMENTATION = address(new MaseerConduit());</span></a>
-<a name="64"><span class="lineNum">      64 </span><span class="lineCov">          2 :         MASEER_CONDUIT_PROXY = address(new MaseerProxy(MASEER_CONDUIT_IMPLEMENTATION));</span></a>
-<a name="65"><span class="lineNum">      65 </span>            : </a>
-<a name="66"><span class="lineNum">      66 </span><span class="lineCov">          2 :         maseerOne = new MaseerOne(</span></a>
-<a name="67"><span class="lineNum">      67 </span>            :             USDT,</a>
-<a name="68"><span class="lineNum">      68 </span>            :             MASEER_ORACLE_PROXY,</a>
-<a name="69"><span class="lineNum">      69 </span>            :             MASEER_MARKET_PROXY,</a>
-<a name="70"><span class="lineNum">      70 </span>            :             MASEER_COMPLIANCE_PROXY,</a>
-<a name="71"><span class="lineNum">      71 </span>            :             MASEER_CONDUIT_PROXY,</a>
-<a name="72"><span class="lineNum">      72 </span>            :             NAME,</a>
-<a name="73"><span class="lineNum">      73 </span>            :             SYMBOL</a>
-<a name="74"><span class="lineNum">      74 </span>            :         );</a>
-<a name="75"><span class="lineNum">      75 </span>            : </a>
-<a name="76"><span class="lineNum">      76 </span>            : </a>
-<a name="77"><span class="lineNum">      77 </span>            :         // TODO: Configure Authorizations on proxies</a>
-<a name="78"><span class="lineNum">      78 </span>            :         // MASEER_ORACLE_PROXY set wards and initial config</a>
-<a name="79"><span class="lineNum">      79 </span><span class="lineCov">          2 :         MaseerPrice(MASEER_ORACLE_PROXY).file(&quot;name&quot;, ORACLE_NAME);</span></a>
-<a name="80"><span class="lineNum">      80 </span><span class="lineCov">          2 :         MaseerPrice(MASEER_ORACLE_PROXY).file(&quot;decimals&quot;, ORACLE_DECIMALS);</span></a>
-<a name="81"><span class="lineNum">      81 </span><span class="lineCov">          2 :         MaseerPrice(MASEER_ORACLE_PROXY).poke(ORACLE_PRICE);</span></a>
-<a name="82"><span class="lineNum">      82 </span><span class="lineCov">          2 :         MaseerPrice(MASEER_ORACLE_PROXY).rely(oracleAuth);</span></a>
-<a name="83"><span class="lineNum">      83 </span><span class="lineCov">          2 :         MaseerPrice(MASEER_ORACLE_PROXY).deny(msg.sender);</span></a>
-<a name="84"><span class="lineNum">      84 </span><span class="lineCov">          2 :         MaseerProxy(MASEER_ORACLE_PROXY).relyProxy(proxyAuth);</span></a>
-<a name="85"><span class="lineNum">      85 </span><span class="lineCov">          2 :         MaseerProxy(MASEER_ORACLE_PROXY).denyProxy(msg.sender);</span></a>
-<a name="86"><span class="lineNum">      86 </span>            : </a>
-<a name="87"><span class="lineNum">      87 </span>            :         // MASEER_MARKET_PROXY set wards and initial config</a>
-<a name="88"><span class="lineNum">      88 </span><span class="lineCov">          2 :         MaseerGate(MASEER_MARKET_PROXY).setDelay(MARKET_DELAY);</span></a>
-<a name="89"><span class="lineNum">      89 </span><span class="lineCov">          2 :         MaseerGate(MASEER_MARKET_PROXY).setCap(MARKET_CAP);</span></a>
-<a name="90"><span class="lineNum">      90 </span><span class="lineCov">          2 :         MaseerGate(MASEER_MARKET_PROXY).setBpsin(MARKET_BPSIN);</span></a>
-<a name="91"><span class="lineNum">      91 </span><span class="lineCov">          2 :         MaseerGate(MASEER_MARKET_PROXY).setBpsout(MARKET_BPSOUT);</span></a>
-<a name="92"><span class="lineNum">      92 </span><span class="lineCov">          2 :         MaseerGate(MASEER_MARKET_PROXY).rely(marketAuth);</span></a>
-<a name="93"><span class="lineNum">      93 </span><span class="lineCov">          2 :         MaseerGate(MASEER_MARKET_PROXY).deny(msg.sender);</span></a>
-<a name="94"><span class="lineNum">      94 </span><span class="lineCov">          2 :         MaseerProxy(MASEER_MARKET_PROXY).relyProxy(proxyAuth);</span></a>
-<a name="95"><span class="lineNum">      95 </span><span class="lineCov">          2 :         MaseerProxy(MASEER_MARKET_PROXY).denyProxy(msg.sender);</span></a>
-<a name="96"><span class="lineNum">      96 </span>            : </a>
-<a name="97"><span class="lineNum">      97 </span>            :         // MASEER_COMPLIANCE_PROXY set wards</a>
-<a name="98"><span class="lineNum">      98 </span><span class="lineCov">          2 :         MaseerGuard(MASEER_COMPLIANCE_PROXY).rely(complianceAuth);</span></a>
-<a name="99"><span class="lineNum">      99 </span><span class="lineCov">          2 :         MaseerGuard(MASEER_COMPLIANCE_PROXY).deny(msg.sender);</span></a>
-<a name="100"><span class="lineNum">     100 </span><span class="lineCov">          2 :         MaseerProxy(MASEER_COMPLIANCE_PROXY).relyProxy(proxyAuth);</span></a>
-<a name="101"><span class="lineNum">     101 </span><span class="lineCov">          2 :         MaseerProxy(MASEER_COMPLIANCE_PROXY).denyProxy(msg.sender);</span></a>
-<a name="102"><span class="lineNum">     102 </span>            : </a>
-<a name="103"><span class="lineNum">     103 </span>            :         // MASEER_CONDUIT_PROXY set wards and buds</a>
-<a name="104"><span class="lineNum">     104 </span><span class="lineCov">          2 :         MaseerConduit(MASEER_CONDUIT_PROXY).hope(conduitAuth);</span></a>
-<a name="105"><span class="lineNum">     105 </span><span class="lineCov">          2 :         MaseerConduit(MASEER_CONDUIT_PROXY).kiss(conduitOut);</span></a>
-<a name="106"><span class="lineNum">     106 </span><span class="lineCov">          2 :         MaseerConduit(MASEER_CONDUIT_PROXY).kiss(address(maseerOne));</span></a>
-<a name="107"><span class="lineNum">     107 </span><span class="lineCov">          2 :         MaseerConduit(MASEER_CONDUIT_PROXY).rely(conduitAuth);</span></a>
-<a name="108"><span class="lineNum">     108 </span><span class="lineCov">          2 :         MaseerConduit(MASEER_CONDUIT_PROXY).deny(msg.sender);</span></a>
-<a name="109"><span class="lineNum">     109 </span><span class="lineCov">          2 :         MaseerProxy(MASEER_CONDUIT_PROXY).relyProxy(proxyAuth);</span></a>
-<a name="110"><span class="lineNum">     110 </span><span class="lineCov">          2 :         MaseerProxy(MASEER_CONDUIT_PROXY).denyProxy(msg.sender);</span></a>
+<a name="53"><span class="lineNum">      53 </span><span class="lineCov">          2 :         if (getChainId() == 11155111) useSepoliaConfig();</span></a>
+<a name="54"><span class="lineNum">      54 </span>            : </a>
+<a name="55"><span class="lineNum">      55 </span><span class="lineCov">          2 :         MASEER_ORACLE_IMPLEMENTATION = address(new MaseerPrice());</span></a>
+<a name="56"><span class="lineNum">      56 </span><span class="lineCov">          2 :         MASEER_ORACLE_PROXY = address(new MaseerProxy(MASEER_ORACLE_IMPLEMENTATION));</span></a>
+<a name="57"><span class="lineNum">      57 </span><span class="lineCov">          2 :         MASEER_MARKET_IMPLEMENTATION = address(new MaseerGate());</span></a>
+<a name="58"><span class="lineNum">      58 </span><span class="lineCov">          2 :         MASEER_MARKET_PROXY = address(new MaseerProxy(MASEER_MARKET_IMPLEMENTATION));</span></a>
+<a name="59"><span class="lineNum">      59 </span><span class="lineCov">          2 :         MASEER_COMPLIANCE_IMPLEMENTATION = address(new MaseerGuard(USDT));</span></a>
+<a name="60"><span class="lineNum">      60 </span><span class="lineCov">          2 :         MASEER_COMPLIANCE_PROXY = address(new MaseerProxy(MASEER_COMPLIANCE_IMPLEMENTATION));</span></a>
+<a name="61"><span class="lineNum">      61 </span><span class="lineCov">          2 :         MASEER_CONDUIT_IMPLEMENTATION = address(new MaseerConduit());</span></a>
+<a name="62"><span class="lineNum">      62 </span><span class="lineCov">          2 :         MASEER_CONDUIT_PROXY = address(new MaseerProxy(MASEER_CONDUIT_IMPLEMENTATION));</span></a>
+<a name="63"><span class="lineNum">      63 </span>            : </a>
+<a name="64"><span class="lineNum">      64 </span><span class="lineCov">          2 :         maseerOne = new MaseerOne(</span></a>
+<a name="65"><span class="lineNum">      65 </span>            :             USDT,</a>
+<a name="66"><span class="lineNum">      66 </span>            :             MASEER_ORACLE_PROXY,</a>
+<a name="67"><span class="lineNum">      67 </span>            :             MASEER_MARKET_PROXY,</a>
+<a name="68"><span class="lineNum">      68 </span>            :             MASEER_COMPLIANCE_PROXY,</a>
+<a name="69"><span class="lineNum">      69 </span>            :             MASEER_CONDUIT_PROXY,</a>
+<a name="70"><span class="lineNum">      70 </span>            :             NAME,</a>
+<a name="71"><span class="lineNum">      71 </span>            :             SYMBOL</a>
+<a name="72"><span class="lineNum">      72 </span>            :         );</a>
+<a name="73"><span class="lineNum">      73 </span>            : </a>
+<a name="74"><span class="lineNum">      74 </span>            : </a>
+<a name="75"><span class="lineNum">      75 </span>            :         // TODO: Configure Authorizations on proxies</a>
+<a name="76"><span class="lineNum">      76 </span>            :         // MASEER_ORACLE_PROXY set wards and initial config</a>
+<a name="77"><span class="lineNum">      77 </span><span class="lineCov">          2 :         MaseerPrice(MASEER_ORACLE_PROXY).file(&quot;name&quot;, ORACLE_NAME);</span></a>
+<a name="78"><span class="lineNum">      78 </span><span class="lineCov">          2 :         MaseerPrice(MASEER_ORACLE_PROXY).file(&quot;decimals&quot;, ORACLE_DECIMALS);</span></a>
+<a name="79"><span class="lineNum">      79 </span><span class="lineCov">          2 :         MaseerPrice(MASEER_ORACLE_PROXY).poke(ORACLE_PRICE);</span></a>
+<a name="80"><span class="lineNum">      80 </span><span class="lineCov">          2 :         MaseerPrice(MASEER_ORACLE_PROXY).rely(oracleAuth);</span></a>
+<a name="81"><span class="lineNum">      81 </span><span class="lineCov">          2 :         MaseerPrice(MASEER_ORACLE_PROXY).deny(msg.sender);</span></a>
+<a name="82"><span class="lineNum">      82 </span><span class="lineCov">          2 :         MaseerProxy(MASEER_ORACLE_PROXY).relyProxy(proxyAuth);</span></a>
+<a name="83"><span class="lineNum">      83 </span><span class="lineCov">          2 :         MaseerProxy(MASEER_ORACLE_PROXY).denyProxy(msg.sender);</span></a>
+<a name="84"><span class="lineNum">      84 </span>            : </a>
+<a name="85"><span class="lineNum">      85 </span>            :         // MASEER_MARKET_PROXY set wards and initial config</a>
+<a name="86"><span class="lineNum">      86 </span><span class="lineCov">          2 :         MaseerGate(MASEER_MARKET_PROXY).setDelay(MARKET_DELAY);</span></a>
+<a name="87"><span class="lineNum">      87 </span><span class="lineCov">          2 :         MaseerGate(MASEER_MARKET_PROXY).setCap(MARKET_CAP);</span></a>
+<a name="88"><span class="lineNum">      88 </span><span class="lineCov">          2 :         MaseerGate(MASEER_MARKET_PROXY).setBpsin(MARKET_BPSIN);</span></a>
+<a name="89"><span class="lineNum">      89 </span><span class="lineCov">          2 :         MaseerGate(MASEER_MARKET_PROXY).setBpsout(MARKET_BPSOUT);</span></a>
+<a name="90"><span class="lineNum">      90 </span><span class="lineCov">          2 :         MaseerGate(MASEER_MARKET_PROXY).rely(marketAuth);</span></a>
+<a name="91"><span class="lineNum">      91 </span><span class="lineCov">          2 :         MaseerGate(MASEER_MARKET_PROXY).deny(msg.sender);</span></a>
+<a name="92"><span class="lineNum">      92 </span><span class="lineCov">          2 :         MaseerProxy(MASEER_MARKET_PROXY).relyProxy(proxyAuth);</span></a>
+<a name="93"><span class="lineNum">      93 </span><span class="lineCov">          2 :         MaseerProxy(MASEER_MARKET_PROXY).denyProxy(msg.sender);</span></a>
+<a name="94"><span class="lineNum">      94 </span>            : </a>
+<a name="95"><span class="lineNum">      95 </span>            :         // MASEER_COMPLIANCE_PROXY set wards</a>
+<a name="96"><span class="lineNum">      96 </span><span class="lineCov">          2 :         MaseerGuard(MASEER_COMPLIANCE_PROXY).rely(complianceAuth);</span></a>
+<a name="97"><span class="lineNum">      97 </span><span class="lineCov">          2 :         MaseerGuard(MASEER_COMPLIANCE_PROXY).deny(msg.sender);</span></a>
+<a name="98"><span class="lineNum">      98 </span><span class="lineCov">          2 :         MaseerProxy(MASEER_COMPLIANCE_PROXY).relyProxy(proxyAuth);</span></a>
+<a name="99"><span class="lineNum">      99 </span><span class="lineCov">          2 :         MaseerProxy(MASEER_COMPLIANCE_PROXY).denyProxy(msg.sender);</span></a>
+<a name="100"><span class="lineNum">     100 </span>            : </a>
+<a name="101"><span class="lineNum">     101 </span>            :         // MASEER_CONDUIT_PROXY set wards and buds</a>
+<a name="102"><span class="lineNum">     102 </span><span class="lineCov">          2 :         MaseerConduit(MASEER_CONDUIT_PROXY).hope(conduitAuth);</span></a>
+<a name="103"><span class="lineNum">     103 </span><span class="lineCov">          2 :         MaseerConduit(MASEER_CONDUIT_PROXY).kiss(conduitOut);</span></a>
+<a name="104"><span class="lineNum">     104 </span><span class="lineCov">          2 :         MaseerConduit(MASEER_CONDUIT_PROXY).kiss(address(maseerOne));</span></a>
+<a name="105"><span class="lineNum">     105 </span><span class="lineCov">          2 :         MaseerConduit(MASEER_CONDUIT_PROXY).rely(conduitAuth);</span></a>
+<a name="106"><span class="lineNum">     106 </span><span class="lineCov">          2 :         MaseerConduit(MASEER_CONDUIT_PROXY).deny(msg.sender);</span></a>
+<a name="107"><span class="lineNum">     107 </span><span class="lineCov">          2 :         MaseerProxy(MASEER_CONDUIT_PROXY).relyProxy(proxyAuth);</span></a>
+<a name="108"><span class="lineNum">     108 </span><span class="lineCov">          2 :         MaseerProxy(MASEER_CONDUIT_PROXY).denyProxy(msg.sender);</span></a>
+<a name="109"><span class="lineNum">     109 </span>            : </a>
+<a name="110"><span class="lineNum">     110 </span><span class="lineCov">          2 :         vm.stopBroadcast();</span></a>
 <a name="111"><span class="lineNum">     111 </span>            : </a>
-<a name="112"><span class="lineNum">     112 </span><span class="lineCov">          2 :         vm.stopBroadcast();</span></a>
-<a name="113"><span class="lineNum">     113 </span>            : </a>
-<a name="114"><span class="lineNum">     114 </span><span class="lineCov">          2 :         require(address(maseerOne) != address(0), &quot;MaseerOne address is zero&quot;);</span></a>
-<a name="115"><span class="lineNum">     115 </span><span class="lineCov">          2 :         console.log(&quot;MaseerOne address: &quot;,    address(maseerOne));</span></a>
-<a name="116"><span class="lineNum">     116 </span><span class="lineCov">          2 :         require(</span></a>
-<a name="117"><span class="lineNum">     117 </span>            :             keccak256(abi.encodePacked(maseerOne.name())) ==</a>
-<a name="118"><span class="lineNum">     118 </span>            :             keccak256(abi.encodePacked(NAME)),</a>
-<a name="119"><span class="lineNum">     119 </span>            :             &quot;MaseerOne name is not correct&quot;);</a>
-<a name="120"><span class="lineNum">     120 </span><span class="lineCov">          2 :         console.log(&quot;MaseerOne name: &quot;,       maseerOne.name());</span></a>
-<a name="121"><span class="lineNum">     121 </span><span class="lineCov">          2 :         require(</span></a>
-<a name="122"><span class="lineNum">     122 </span>            :             keccak256(abi.encodePacked(maseerOne.symbol())) ==</a>
-<a name="123"><span class="lineNum">     123 </span>            :             keccak256(abi.encodePacked(SYMBOL)),</a>
-<a name="124"><span class="lineNum">     124 </span>            :             &quot;MaseerOne symbol is not correct&quot;);</a>
-<a name="125"><span class="lineNum">     125 </span><span class="lineCov">          2 :         console.log(&quot;MaseerOne symbol: &quot;,     maseerOne.symbol());</span></a>
-<a name="126"><span class="lineNum">     126 </span><span class="lineCov">          2 :         require(maseerOne.decimals() == 18, &quot;MaseerOne decimals is not correct&quot;);</span></a>
-<a name="127"><span class="lineNum">     127 </span><span class="lineCov">          2 :         console.log(&quot;MaseerOne decimals: &quot;,   maseerOne.decimals());</span></a>
-<a name="128"><span class="lineNum">     128 </span><span class="lineCov">          2 :         require(maseerOne.totalSupply() == 0, &quot;MaseerOne totalSupply is not correct&quot;);</span></a>
-<a name="129"><span class="lineNum">     129 </span><span class="lineCov">          2 :         console.log(&quot;MaseerOne totalSupply: &quot;,maseerOne.totalSupply());</span></a>
+<a name="112"><span class="lineNum">     112 </span><span class="lineCov">          2 :         require(address(maseerOne) != address(0), &quot;MaseerOne address is zero&quot;);</span></a>
+<a name="113"><span class="lineNum">     113 </span><span class="lineCov">          2 :         console.log(&quot;MaseerOne address: &quot;,    address(maseerOne));</span></a>
+<a name="114"><span class="lineNum">     114 </span><span class="lineCov">          2 :         require(</span></a>
+<a name="115"><span class="lineNum">     115 </span>            :             keccak256(abi.encodePacked(maseerOne.name())) ==</a>
+<a name="116"><span class="lineNum">     116 </span>            :             keccak256(abi.encodePacked(NAME)),</a>
+<a name="117"><span class="lineNum">     117 </span>            :             &quot;MaseerOne name is not correct&quot;);</a>
+<a name="118"><span class="lineNum">     118 </span><span class="lineCov">          2 :         console.log(&quot;MaseerOne name: &quot;,       maseerOne.name());</span></a>
+<a name="119"><span class="lineNum">     119 </span><span class="lineCov">          2 :         require(</span></a>
+<a name="120"><span class="lineNum">     120 </span>            :             keccak256(abi.encodePacked(maseerOne.symbol())) ==</a>
+<a name="121"><span class="lineNum">     121 </span>            :             keccak256(abi.encodePacked(SYMBOL)),</a>
+<a name="122"><span class="lineNum">     122 </span>            :             &quot;MaseerOne symbol is not correct&quot;);</a>
+<a name="123"><span class="lineNum">     123 </span><span class="lineCov">          2 :         console.log(&quot;MaseerOne symbol: &quot;,     maseerOne.symbol());</span></a>
+<a name="124"><span class="lineNum">     124 </span><span class="lineCov">          2 :         require(maseerOne.decimals() == 18, &quot;MaseerOne decimals is not correct&quot;);</span></a>
+<a name="125"><span class="lineNum">     125 </span><span class="lineCov">          2 :         console.log(&quot;MaseerOne decimals: &quot;,   maseerOne.decimals());</span></a>
+<a name="126"><span class="lineNum">     126 </span><span class="lineCov">          2 :         require(maseerOne.totalSupply() == 0, &quot;MaseerOne totalSupply is not correct&quot;);</span></a>
+<a name="127"><span class="lineNum">     127 </span><span class="lineCov">          2 :         console.log(&quot;MaseerOne totalSupply: &quot;,maseerOne.totalSupply());</span></a>
+<a name="128"><span class="lineNum">     128 </span>            : </a>
+<a name="129"><span class="lineNum">     129 </span>            :     }</a>
 <a name="130"><span class="lineNum">     130 </span>            : </a>
-<a name="131"><span class="lineNum">     131 </span>            :     }</a>
-<a name="132"><span class="lineNum">     132 </span>            : </a>
-<a name="133"><span class="lineNum">     133 </span><span class="lineCov">          2 :     function getChainId() internal view returns (uint256) {</span></a>
-<a name="134"><span class="lineNum">     134 </span><span class="lineCov">          2 :         uint256 chainId;</span></a>
-<a name="135"><span class="lineNum">     135 </span>            :         assembly {</a>
-<a name="136"><span class="lineNum">     136 </span><span class="lineCov">          2 :             chainId := chainid()</span></a>
-<a name="137"><span class="lineNum">     137 </span>            :         }</a>
-<a name="138"><span class="lineNum">     138 </span><span class="lineCov">          2 :         return chainId;</span></a>
+<a name="131"><span class="lineNum">     131 </span><span class="lineNoCov">          0 :     function useSepoliaConfig() internal {</span></a>
+<a name="132"><span class="lineNum">     132 </span><span class="lineNoCov">          0 :         USDT = address(new MockUSDT());</span></a>
+<a name="133"><span class="lineNum">     133 </span><span class="lineNoCov">          0 :         proxyAuth = msg.sender;</span></a>
+<a name="134"><span class="lineNum">     134 </span><span class="lineNoCov">          0 :         oracleAuth = msg.sender;</span></a>
+<a name="135"><span class="lineNum">     135 </span><span class="lineNoCov">          0 :         marketAuth = msg.sender;</span></a>
+<a name="136"><span class="lineNum">     136 </span><span class="lineNoCov">          0 :         complianceAuth = msg.sender;</span></a>
+<a name="137"><span class="lineNum">     137 </span><span class="lineNoCov">          0 :         conduitAuth = msg.sender;</span></a>
+<a name="138"><span class="lineNum">     138 </span><span class="lineNoCov">          0 :         conduitOut = msg.sender;</span></a>
 <a name="139"><span class="lineNum">     139 </span>            :     }</a>
-<a name="140"><span class="lineNum">     140 </span>            : }</a>
+<a name="140"><span class="lineNum">     140 </span>            : </a>
+<a name="141"><span class="lineNum">     141 </span><span class="lineCov">          2 :     function getChainId() internal view returns (uint256) {</span></a>
+<a name="142"><span class="lineNum">     142 </span><span class="lineCov">          2 :         uint256 chainId;</span></a>
+<a name="143"><span class="lineNum">     143 </span>            :         assembly {</a>
+<a name="144"><span class="lineNum">     144 </span><span class="lineCov">          2 :             chainId := chainid()</span></a>
+<a name="145"><span class="lineNum">     145 </span>            :         }</a>
+<a name="146"><span class="lineNum">     146 </span><span class="lineCov">          2 :         return chainId;</span></a>
+<a name="147"><span class="lineNum">     147 </span>            :     }</a>
+<a name="148"><span class="lineNum">     148 </span>            : }</a>
 </pre>
       </td>
     </tr>
