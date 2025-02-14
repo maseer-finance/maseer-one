@@ -34,21 +34,28 @@ contract MaseerOne is MaseerToken {
     address immutable public cop;  // Compliance feed
     address immutable public flo;  // Output conduit
 
-    uint256                      public totalPending;
-    mapping (address => uint256) public pendingExit;
-    mapping (address => uint256) public pendingTime;
+    uint256                         public totalPending;
+    uint256                         public redemptionCount;
+    mapping (uint256 => Redemption) public redemptions;
+
+    struct Redemption {
+        address redeemer;
+        uint48  date;
+        uint256 amount;
+    }
 
     event ContractCreated(
         address indexed creator,
         uint256 indexed price,
         uint256 indexed amount
     );
-    event ContractRedeemed(
+    event ContractRedemption(
+        uint256 indexed id,
         address indexed redeemer,
-        uint256 indexed price,
         uint256 indexed amount
     );
     event ClaimProcessed(
+        uint256 indexed id,
         address indexed claimer,
         uint256 indexed amount
     );
@@ -135,7 +142,7 @@ contract MaseerOne is MaseerToken {
         emit ContractCreated(msg.sender, _unit, _out);
     }
 
-    function burn(uint256 amt) external burnlive pass(msg.sender) returns (uint256 _exit) {
+    function redeem(uint256 amt) external burnlive pass(msg.sender) returns (uint256 _id) {
 
         // Oracle price check
         uint256 _unit = _read();
@@ -147,49 +154,59 @@ contract MaseerOne is MaseerToken {
         _unit = _adjustBurnPrice(_unit, _bpsout());
 
         // Calculate the redemption amount
-        _exit = _wmul(amt, _unit);
+        uint256 _claim = _wmul(amt, _unit);
 
         // Add to the total pending redemptions
-        totalPending += _exit;
+        totalPending += _claim;
 
-        // Add to the user's pending redemptions
-        pendingExit[msg.sender] += _exit;
+        // Assign a new redemption ID
+        _id = redemptionCount++;
 
-        // Bump the user's redemption time
-        pendingTime[msg.sender] = block.timestamp + _delay();
+        // Store the redemption
+        redemptions[_id] = Redemption({
+            redeemer: msg.sender,
+            date:     uint48(block.timestamp + _delay()),
+            amount:   _claim
+        });
 
         // Burn the tokens
         _burn(msg.sender, amt);
 
         // Emit contract event
-        emit ContractRedeemed(msg.sender, _unit, _exit);
+        emit ContractRedemption(_id, msg.sender, _claim);
     }
 
-    function exit() external pass(msg.sender) returns (uint256 _out) {
+    function exit(uint256 id) external pass(msg.sender) returns (uint256 _out) {
+        return _exit(id, msg.sender);
+    }
 
-        uint256 _time = pendingTime[msg.sender];
+    function exit(uint256 id, address holder) external pass(msg.sender) pass(holder) returns (uint256 _out) {
+        return _exit(id, holder);
+    }
+
+    function _exit(uint256 id, address holder) internal returns (uint256 _out) {
+        Redemption storage _redemption = redemptions[id];
+
+        uint256 _time = _redemption.date;
 
         // Check if the claim is past the redemption period
-        if (_time > block.timestamp) revert ClaimableAfter(pendingTime[msg.sender]);
+        if (_time > block.timestamp) revert ClaimableAfter(_time);
         if (_time == 0) revert NoPendingClaim();
 
-        // Check claimable amounts
-        uint256 _amt = pendingExit[msg.sender];
-
         // User can claim the amount owed or current available balance
-        _out = _min(_amt, _gemBalance());
+        _out = _min(_redemption.amount, _gemBalance());
 
         // Decrement the total pending redemptions
         totalPending -= _out;
 
         // Decrement the user's pending redemptions
-        pendingExit[msg.sender] -= _out;
+        _redemption.amount -= _out;
 
         // Transfer the tokens
-        _safeTransfer(gem, msg.sender, _out);
+        _safeTransfer(gem, holder, _out);
 
         // Emit claim
-        emit ClaimProcessed(msg.sender, _out);
+        emit ClaimProcessed(id, holder, _out);
     }
 
     function settle() external pass(msg.sender) returns (uint256 _out) {
@@ -248,6 +265,18 @@ contract MaseerOne is MaseerToken {
 
     function cap() external view returns (uint256) {
         return _cap();
+    }
+
+    function redemptionAddr(uint256 id) external view returns (address) {
+        return redemptions[id].redeemer;
+    }
+
+    function redemptionDate(uint256 id) external view returns (uint256) {
+        return redemptions[id].date;
+    }
+
+    function redemptionAmount(uint256 id) external view returns (uint256) {
+        return redemptions[id].amount;
     }
 
     function unsettled() external view returns (uint256) {

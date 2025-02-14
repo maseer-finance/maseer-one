@@ -109,23 +109,23 @@ contract MaseerOneOperationsTest is MaseerTestBase {
         uint256 _amt = maseerOne.mint(100_000 * 1e6);
         maseerOne.settle();
         assertEq(maseerOne.totalPending(), 0);
-        assertEq(maseerOne.pendingExit(alice), 0);
-        assertEq(maseerOne.pendingTime(alice), 0);
+        assertEq(_amt, _wdiv(100_000 * 1e6, maseerOne.mintPrice()));
 
         vm.prank(alice);
-        uint256 _claim = maseerOne.burn(_amt);
-        assertTrue(_claim > 0);
+        uint256 _id = maseerOne.redeem(_amt);
+        assertTrue(_id == 0);
         assertEq(maseerOne.totalSupply(), 0);
         assertEq(maseerOne.balanceOf(alice), 0);
         assertEq(usdt.balanceOf(alice), 900_000 * 1e6);
-        assertEq(maseerOne.totalPending(), _claim);
-        assertEq(maseerOne.pendingExit(alice), _claim);
-        assertEq(maseerOne.pendingTime(alice), block.timestamp + maseerOne.claimDelay());
-        assertEq(maseerOne.obligated(), _claim);
+        assertEq(maseerOne.totalPending(), maseerOne.redemptionAmount(_id));
+        assertEq(maseerOne.redemptionAddr(_id), address(alice));
+        assertEq(maseerOne.redemptionDate(_id), block.timestamp + maseerOne.claimDelay());
+        assertEq(maseerOne.redemptionAmount(_id), _wmul(_amt, maseerOne.burnPrice()));
+        assertEq(maseerOne.obligated(), maseerOne.redemptionAmount(_id));
 
         // Put tokens back into the contract to settle the claim
-        _mintUSDT(address(maseerOne), _claim);
-        assertEq(usdt.balanceOf(address(maseerOne)), _claim);
+        _mintUSDT(address(maseerOne), maseerOne.redemptionAmount(_id));
+        assertEq(usdt.balanceOf(address(maseerOne)), maseerOne.redemptionAmount(_id));
         assertEq(maseerOne.obligated(), 0);
         assertEq(maseerOne.unsettled(), 0);
     }
@@ -137,19 +137,21 @@ contract MaseerOneOperationsTest is MaseerTestBase {
         vm.prank(alice);
         uint256 _amt = maseerOne.mint(100_000 * 1e6);
         vm.prank(alice);
-        uint256 _claim = maseerOne.burn(_amt);
+        uint256 _id = maseerOne.redeem(_amt);
 
         uint256 _exitTime = block.timestamp + maseerOne.claimDelay();
 
         vm.warp(block.timestamp + maseerOne.claimDelay() + 1);
 
         vm.prank(alice);
-        uint256 _out = maseerOne.exit();
+        uint256 _out = maseerOne.exit(_id);
         assertTrue(_out > 0);
-        assertEq(maseerOne.totalPending(), 0);
-        assertEq(maseerOne.pendingExit(alice), 0);
-        assertEq(maseerOne.pendingTime(alice), _exitTime);
-        assertEq(usdt.balanceOf(alice), 900_000 * 1e6 + _claim);
+        assertEq(maseerOne.redemptionAmount(_id), 0);
+        assertEq(maseerOne.redemptionAddr(_id), address(alice));
+        assertEq(maseerOne.redemptionDate(_id), _exitTime);
+        assertEq(maseerOne.obligated(), 0);
+        assertEq(maseerOne.unsettled(), usdt.balanceOf(address(maseerOne)));
+        assertEq(usdt.balanceOf(alice), 900_000 * 1e6 + _out);
     }
 
     function testSettle() public {
@@ -206,5 +208,7 @@ contract MaseerOneOperationsTest is MaseerTestBase {
         assertEq(usdt.balanceOf(agent), 0);
         assertEq(usdt.balanceOf(maseerOne.flo()), 0);
     }
+
+
 
 }

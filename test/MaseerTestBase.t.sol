@@ -164,4 +164,16 @@ contract MaseerTestBase is Test {
 
         return string(bytesArray);
     }
+
+    function _min(uint256 x, uint256 y) internal pure returns (uint256 z) {
+        if (x > y) { z = y; } else { z = x; }
+    }
+
+    function _wmul(uint256 x, uint256 y) internal pure returns (uint256 z) {
+        z = ((x * y) + (WAD / 2)) / WAD;
+    }
+
+    function _wdiv(uint256 x, uint256 y) internal pure returns (uint256 z) {
+        z = ((x * WAD) + (y / 2)) / y;
+    }
 }
