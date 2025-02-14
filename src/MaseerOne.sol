@@ -39,9 +39,9 @@ contract MaseerOne is MaseerToken {
     mapping (uint256 => Redemption) public redemptions;
 
     struct Redemption {
-        address redeemer;
-        uint48  date;
         uint256 amount;
+        address redeemer;
+        uint96  date;
     }
 
     event ContractCreated(
@@ -164,9 +164,9 @@ contract MaseerOne is MaseerToken {
 
         // Store the redemption
         redemptions[_id] = Redemption({
+            amount:   _claim,
             redeemer: msg.sender,
-            date:     uint48(block.timestamp + _delay()),
-            amount:   _claim
+            date:     uint96(block.timestamp + _delay())
         });
 
         // Burn the tokens
@@ -347,10 +347,6 @@ contract MaseerOne is MaseerToken {
 
     function _gemBalance() internal view returns (uint256) {
         return Gem(gem).balanceOf(address(this));
-    }
-
-    function _min(uint256 x, uint256 y) internal pure returns (uint256 z) {
-        if (x > y) { z = y; } else { z = x; }
     }
 
     function _wmul(uint256 x, uint256 y) internal pure returns (uint256 z) {
