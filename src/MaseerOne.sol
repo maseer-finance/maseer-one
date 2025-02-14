@@ -56,6 +56,10 @@ contract MaseerOne is MaseerToken {
         address indexed conduit,
         uint256 indexed amount
     );
+    event Destroyed(
+        address indexed destroyer,
+        uint256 indexed amount
+    );
 
     error UnauthorizedUser(address usr);
     error TransferToContract();
@@ -204,6 +208,12 @@ contract MaseerOne is MaseerToken {
 
         // Emit settle
         emit Settled(flo, _out);
+    }
+
+    function destroy(uint256 amt) external pass(msg.sender) {
+        _burn(msg.sender, amt);
+
+        emit Destroyed(msg.sender, amt);
     }
 
     // View functions
