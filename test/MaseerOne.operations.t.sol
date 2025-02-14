@@ -63,6 +63,8 @@ contract MaseerOneOperationsTest is MaseerTestBase {
         usdt.approve(address(maseerOne), 1_000_000 * 1e6);
         assertEq(usdt.balanceOf(alice),  1_000_000 * 1e6);
 
+        vm.expectEmit();
+        emit MaseerOne.ContractCreated(alice, 10050000, 9950248756218905472637);
         vm.prank(alice);
         uint256 _amt = maseerOne.mint(100_000 * 1e6);
         assertTrue(_amt > 0);
@@ -101,7 +103,7 @@ contract MaseerOneOperationsTest is MaseerTestBase {
         maseerOne.mint(0);
     }
 
-    function testBurn() public {
+    function testRedeem() public {
 
         vm.prank(alice);
         usdt.approve(address(maseerOne), 1_000_000 * 1e6);
@@ -111,6 +113,8 @@ contract MaseerOneOperationsTest is MaseerTestBase {
         assertEq(maseerOne.totalPending(), 0);
         assertEq(_amt, _wdiv(100_000 * 1e6, maseerOne.mintPrice()));
 
+        vm.expectEmit();
+        emit MaseerOne.ContractRedemption(0, alice, 99007452736);
         vm.prank(alice);
         uint256 _id = maseerOne.redeem(_amt);
         assertTrue(_id == 0);
@@ -143,6 +147,8 @@ contract MaseerOneOperationsTest is MaseerTestBase {
 
         vm.warp(block.timestamp + maseerOne.claimDelay() + 1);
 
+        vm.expectEmit();
+        emit MaseerOne.ClaimProcessed(_id, alice, 99007452736);
         vm.prank(alice);
         uint256 _out = maseerOne.exit(_id);
         assertTrue(_out > 0);
@@ -209,6 +215,20 @@ contract MaseerOneOperationsTest is MaseerTestBase {
         assertEq(usdt.balanceOf(maseerOne.flo()), 0);
     }
 
+    function testDestroy() public {
+        vm.prank(alice);
+        usdt.approve(address(maseerOne), 1_000_000 * 1e6);
+        vm.prank(alice);
+        uint256 out = maseerOne.mint(100_000 * 1e6);
+        assertEq(maseerOne.totalSupply(), out);
 
+        vm.expectEmit();
+        emit MaseerOne.Destroyed(alice, 10 * WAD);
+        vm.prank(alice);
+        maseerOne.destroy(10 * WAD);
+
+        assertEq(maseerOne.totalSupply(), out - 10 * WAD);
+        assertEq(maseerOne.balanceOf(alice), out - 10 * WAD);
+    }
 
 }
