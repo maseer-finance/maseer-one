@@ -177,14 +177,6 @@ contract MaseerOne is MaseerToken {
     }
 
     function exit(uint256 id) external pass(msg.sender) returns (uint256 _out) {
-        return _exit(id, msg.sender);
-    }
-
-    function exit(uint256 id, address holder) external pass(msg.sender) pass(holder) returns (uint256 _out) {
-        return _exit(id, holder);
-    }
-
-    function _exit(uint256 id, address holder) internal returns (uint256 _out) {
         Redemption storage _redemption = redemptions[id];
 
         uint256 _time = _redemption.date;
@@ -193,32 +185,38 @@ contract MaseerOne is MaseerToken {
         if (_time > block.timestamp) revert ClaimableAfter(_time);
         if (_time == 0) revert NoPendingClaim();
 
+        uint256 _amt = _redemption.amount;
+        uint256 _bal = _gemBalance();
         // User can claim the amount owed or current available balance
-        _out = _min(_redemption.amount, _gemBalance());
+        _out = (_amt < _bal) ? _amt : _bal;
 
         // Decrement the total pending redemptions
-        totalPending -= _out;
-
         // Decrement the user's pending redemptions
-        _redemption.amount -= _out;
+        unchecked {
+            totalPending -= _out;
+            _redemption.amount -= _out;
+        }
 
         // Transfer the tokens
-        _safeTransfer(gem, holder, _out);
+        _safeTransfer(gem, _redemption.redeemer, _out);
 
         // Emit claim
-        emit ClaimProcessed(id, holder, _out);
+        emit ClaimProcessed(id, _redemption.redeemer, _out);
     }
 
     function settle() external pass(msg.sender) returns (uint256 _out) {
 
         // Get the gem balance
         uint256 _bal = _gemBalance();
+        uint256 _pnd = totalPending;
 
         // Return 0 if the balance is reserved for pending claims
-        if (_bal < totalPending) return 0;
+        if (_bal <= _pnd) return 0;
 
         // Calculate the balance after pending redemptions
-        _out = _bal - totalPending;
+        unchecked {
+            _out = _bal - _pnd;
+        }
 
         // Send the remaining balance to the output conduit
         _safeTransfer(gem, flo, _out);
