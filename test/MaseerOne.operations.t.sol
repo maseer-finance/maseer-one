@@ -170,6 +170,8 @@ contract MaseerOneOperationsTest is MaseerTestBase {
         uint256 _bal = usdt.balanceOf(maseerOneAddr);
         assertTrue(_bal > 0);
 
+        vm.expectEmit();
+        emit MaseerOne.Settled(maseerOne.flo(), _bal);
         vm.prank(bob);
         maseerOne.settle();
 
