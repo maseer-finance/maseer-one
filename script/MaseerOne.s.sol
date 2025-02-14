@@ -48,6 +48,8 @@ contract MaseerOneScript is Script {
     address public MASEER_CONDUIT_IMPLEMENTATION;
     address public MASEER_CONDUIT_PROXY;
 
+    address public SEPOLIA_AUTH = 0xB05502bf20342331F42A7B80Aa4bAB3F8cA86C0F;
+
     function run() public {
         vm.startBroadcast();
         if (getChainId() == 11155111) useSepoliaConfig();
@@ -130,12 +132,15 @@ contract MaseerOneScript is Script {
 
     function useSepoliaConfig() internal {
         USDT = address(new MockUSDT());
-        proxyAuth = msg.sender;
-        oracleAuth = msg.sender;
-        marketAuth = msg.sender;
-        complianceAuth = msg.sender;
-        conduitAuth = msg.sender;
-        conduitOut = msg.sender;
+        (bool success, bytes memory data) = USDT.call(abi.encodeWithSignature("mint(address,uint256", SEPOLIA_AUTH, 100_000_000 * 1e6));
+        data;
+        require(success, "USDT mint failed");
+        proxyAuth = SEPOLIA_AUTH;
+        oracleAuth = SEPOLIA_AUTH;
+        marketAuth = SEPOLIA_AUTH;
+        complianceAuth = SEPOLIA_AUTH;
+        conduitAuth = SEPOLIA_AUTH;
+        conduitOut = SEPOLIA_AUTH;
     }
 
     function getChainId() internal view returns (uint256) {
