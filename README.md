@@ -17,10 +17,10 @@ A control layer that facilitates the enabling and halting of minting and burning
 
     * `function mintable() external view returns (bool);`
     * `function burnable() external view returns (bool);`
-    * `function bpsin()    external view returns (uint256);`
-    * `function bpsout()   external view returns (uint256);`
-    * `function delay()    external view returns (uint256);`
-    * `function cap()      external view returns (uint256);`
+    * `function mintcost(uint256) external view returns (uint256);`
+    * `function burncost(uint256) external view returns (uint256);`
+    * `function cooldown() external view returns (uint256);`
+    * `function capacity() external view returns (uint256);`
 
 ### MaseerToken.sol
 
