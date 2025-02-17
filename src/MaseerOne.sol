@@ -18,10 +18,10 @@ interface Pip {
 interface Act {
     function mintable() external view returns (bool);
     function burnable() external view returns (bool);
-    function mintcost(uint256) external view returns (uint256);
-    function burncost(uint256) external view returns (uint256);
     function cooldown() external view returns (uint256);
     function capacity() external view returns (uint256);
+    function mintcost(uint256) external view returns (uint256);
+    function burncost(uint256) external view returns (uint256);
 }
 
 import {MaseerToken} from "./MaseerToken.sol";

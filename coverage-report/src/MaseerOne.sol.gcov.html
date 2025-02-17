@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2025-02-17 15:24:50</td>
+            <td class="headerValue">2025-02-17 15:31:08</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">37</td>
@@ -80,10 +80,10 @@
 <a name="18"><span class="lineNum">      18 </span>            : interface Act {</a>
 <a name="19"><span class="lineNum">      19 </span>            :     function mintable() external view returns (bool);</a>
 <a name="20"><span class="lineNum">      20 </span>            :     function burnable() external view returns (bool);</a>
-<a name="21"><span class="lineNum">      21 </span>            :     function mintcost(uint256) external view returns (uint256);</a>
-<a name="22"><span class="lineNum">      22 </span>            :     function burncost(uint256) external view returns (uint256);</a>
-<a name="23"><span class="lineNum">      23 </span>            :     function cooldown() external view returns (uint256);</a>
-<a name="24"><span class="lineNum">      24 </span>            :     function capacity() external view returns (uint256);</a>
+<a name="21"><span class="lineNum">      21 </span>            :     function cooldown() external view returns (uint256);</a>
+<a name="22"><span class="lineNum">      22 </span>            :     function capacity() external view returns (uint256);</a>
+<a name="23"><span class="lineNum">      23 </span>            :     function mintcost(uint256) external view returns (uint256);</a>
+<a name="24"><span class="lineNum">      24 </span>            :     function burncost(uint256) external view returns (uint256);</a>
 <a name="25"><span class="lineNum">      25 </span>            : }</a>
 <a name="26"><span class="lineNum">      26 </span>            : </a>
 <a name="27"><span class="lineNum">      27 </span>            : import {MaseerToken} from &quot;./MaseerToken.sol&quot;;</a>
@@ -303,8 +303,8 @@
 <a name="241"><span class="lineNum">     241 </span><span class="lineCov">          4 :         return Act(act).burnable();</span></a>
 <a name="242"><span class="lineNum">     242 </span>            :     }</a>
 <a name="243"><span class="lineNum">     243 </span>            : </a>
-<a name="244"><span class="lineNum">     244 </span><span class="lineCov">       1698 :     function canPass(address usr) external view returns (bool) {</span></a>
-<a name="245"><span class="lineNum">     245 </span><span class="lineCov">       1698 :         return _canPass(usr);</span></a>
+<a name="244"><span class="lineNum">     244 </span><span class="lineCov">       1699 :     function canPass(address usr) external view returns (bool) {</span></a>
+<a name="245"><span class="lineNum">     245 </span><span class="lineCov">       1699 :         return _canPass(usr);</span></a>
 <a name="246"><span class="lineNum">     246 </span>            :     }</a>
 <a name="247"><span class="lineNum">     247 </span>            : </a>
 <a name="248"><span class="lineNum">     248 </span><span class="lineCov">          4 :     function cooldown() external view returns (uint256) {</span></a>
@@ -356,7 +356,7 @@
 <a name="294"><span class="lineNum">     294 </span>            :     }</a>
 <a name="295"><span class="lineNum">     295 </span>            : </a>
 <a name="296"><span class="lineNum">     296 </span><span class="lineCov">        263 :     function approve(address usr, uint256 wad) public override pass(msg.sender) pass(usr) returns (bool) {</span></a>
-<a name="297"><span class="lineNum">     297 </span><span class="lineCov">        515 :         return super.approve(usr, wad);</span></a>
+<a name="297"><span class="lineNum">     297 </span><span class="lineCov">        516 :         return super.approve(usr, wad);</span></a>
 <a name="298"><span class="lineNum">     298 </span>            :     }</a>
 <a name="299"><span class="lineNum">     299 </span>            : </a>
 <a name="300"><span class="lineNum">     300 </span><span class="lineCov">        260 :     function transfer(address dst, uint256 wad) public override pass(msg.sender) pass(dst) returns (bool) {</span></a>
@@ -383,8 +383,8 @@
 <a name="321"><span class="lineNum">     321 </span>            : </a>
 <a name="322"><span class="lineNum">     322 </span>            :     // Internal utility functions</a>
 <a name="323"><span class="lineNum">     323 </span>            : </a>
-<a name="324"><span class="lineNum">     324 </span><span class="lineCov">       4565 :     function _canPass(address _usr) internal view returns (bool) {</span></a>
-<a name="325"><span class="lineNum">     325 </span><span class="lineCov">       4565 :         return Cop(cop).pass(_usr);</span></a>
+<a name="324"><span class="lineNum">     324 </span><span class="lineCov">       4568 :     function _canPass(address _usr) internal view returns (bool) {</span></a>
+<a name="325"><span class="lineNum">     325 </span><span class="lineCov">       4568 :         return Cop(cop).pass(_usr);</span></a>
 <a name="326"><span class="lineNum">     326 </span>            :     }</a>
 <a name="327"><span class="lineNum">     327 </span>            : </a>
 <a name="328"><span class="lineNum">     328 </span><span class="lineCov">          6 :     function _cooldown() internal view returns (uint256) {</span></a>
