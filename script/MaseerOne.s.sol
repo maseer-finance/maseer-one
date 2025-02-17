@@ -48,6 +48,7 @@ contract MaseerOneScript is Script {
     address public MASEER_CONDUIT_IMPLEMENTATION;
     address public MASEER_CONDUIT_PROXY;
 
+    // Sepolia
     address public SEPOLIA_AUTH = 0xB05502bf20342331F42A7B80Aa4bAB3F8cA86C0F;
 
     function run() public {
@@ -132,7 +133,7 @@ contract MaseerOneScript is Script {
 
     function useSepoliaConfig() internal {
         USDT = address(new MockUSDT());
-        (bool success, bytes memory data) = USDT.call(abi.encodeWithSignature("mint(address,uint256)", SEPOLIA_AUTH, 100_000_000 * 1e6));
+        (bool success, bytes memory data) = USDT.call(abi.encodeWithSignature("mint(address,uint256)", SEPOLIA_AUTH, 100_000_000_000 * 1e6));
         data;
         require(success, "USDT mint failed");
         proxyAuth = SEPOLIA_AUTH;
