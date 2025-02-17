@@ -79,7 +79,8 @@ make build
 ### Deployment
 
 ```
-forge script scripts/Deploy.s.sol:DeployMaseer --broadcast --rpc-url <ETH_RPC_URL>
+make clean && make
+forge script scripts/MaseerOne.s.sol --broadcast --verify --rpc-url <ETH_RPC_URL>
 ```
 
 ### Testing
