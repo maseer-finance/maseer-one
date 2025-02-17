@@ -1,30 +1,96 @@
-## MaseerOne
+# MaseerOne Token and Dependencies
 
-Prototype
+## Overview
 
-### Readable Functions (Pure/View)
-- **DOMAIN_SEPARATOR()**: `bytes32`
-- **allowance(address , address )**: `uint256`
-- **balanceOf(address )**: `uint256`
-- **cop()**: `address`
-- **decimals()**: `uint8`
-- **gem()**: `address`
-- **name()**: `string`
-- **nonces(address )**: `uint256`
-- **pendingClaim(address )**: `uint256`
-- **pendingTime(address )**: `uint256`
-- **pip()**: `address`
-- **symbol()**: `string`
-- **totalPending()**: `uint256`
-- **totalSupply()**: `uint256`
 
-### Writable Functions (Non-Pure/Non-View)
-- **approve(address usr, uint256 wad)**: `bool`
-- **approve(address usr)**: `bool`
-- **claim()**: ``
-- **mint(uint256 amt_)**: ``
-- **permit(address owner, address spender, uint256 value, uint256 deadline, uint8 v, bytes32 r, bytes32 s)**: ``
-- **redeem(uint256 amt_)**: ``
-- **settle()**: ``
-- **transfer(address dst, uint256 wad)**: `bool`
-- **transferFrom(address src, address dst, uint256 wad)**: `bool`
+## Contract Descriptions
+
+### MaseerOne.sol
+
+The primary token contract representing the MaseerOne token. It manages core ERC-20 functionalities, including minting, burning, transfers, and balance tracking.
+
+### MaseerGate.sol
+
+A control layer that facilitates the enabling and halting of minting and burning operations through defined storage slots, ensuring secure and controlled token supply management.
+
+#### Required Interface
+
+    * `function mintable() external view returns (bool);`
+    * `function burnable() external view returns (bool);`
+    * `function bpsin()    external view returns (uint256);`
+    * `function bpsout()   external view returns (uint256);`
+    * `function delay()    external view returns (uint256);`
+    * `function cap()      external view returns (uint256);`
+
+### MaseerToken.sol
+
+Implements token-specific logic and interactions, ensuring compliance with ERC-20 standards and integrating with other system components.
+
+### MaseerConduit.sol
+
+Handles the flow of tokens to the off-chain servicer.
+
+### MaseerImplementation.sol
+
+The base proxy implementation contract providing shared logic and functionality for all Maseer implementations supporting the upgradeable architecture.
+
+### MaseerPrice.sol
+
+Manages token price feeds and oracles, ensuring accurate and real-time pricing information for the MaseerOne token.
+
+#### Required interface
+
+    * `function read() external view returns (uint256);`
+
+### MaseerProxy.sol
+
+Implements the proxy pattern to enable contract upgrades without disrupting the existing state or functionality, maintaining backward compatibility.
+
+### MaseerGuard.sol
+
+Provides security mechanisms such as access control, pausing, and emergency stops, protecting the token ecosystem from potential threats.
+
+#### Required Interface
+
+    * `function pass(address usr) external view returns (bool);`
+
+## Setup and Deployment
+
+### Prerequisites
+
+Foundry (forge and cast)
+
+Solidity compiler version ^0.8.28
+
+Copy `.env.sample` to `.env` and replace variables.
+
+### Installation
+
+```
+make install
+```
+
+### Compilation
+
+```
+make build
+```
+
+### Deployment
+
+```
+forge script scripts/Deploy.s.sol:DeployMaseer --broadcast --rpc-url <ETH_RPC_URL>
+```
+
+### Testing
+
+Run the test suite to ensure all contracts function correctly:
+
+```
+make test
+```
+
+
+## License
+
+This project is licensed under the Business Source License 1.1 (BUSL-1.1).
