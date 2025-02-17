@@ -120,15 +120,15 @@ contract MaseerOneTest is MaseerTestBase {
         maseerGate.file("bpsout", 10000);
         assertEq(maseerGate.bpsout(), 10000);
 
-        assertEq(maseerGate.delay(), 0);
+        assertEq(maseerGate.cooldown(), 0);
         vm.prank(actAuth);
-        maseerGate.file("delay", 1 days);
-        assertEq(maseerGate.delay(), 1 days);
+        maseerGate.file("cooldown", 1 days);
+        assertEq(maseerGate.cooldown(), 1 days);
 
-        assertEq(maseerGate.cap(), 0);
+        assertEq(maseerGate.capacity(), 0);
         vm.prank(actAuth);
-        maseerGate.file("cap", 1_000_000 * 1e18);
-        assertEq(maseerGate.cap(), 1_000_000 * 1e18);
+        maseerGate.file("capacity", 1_000_000 * 1e18);
+        assertEq(maseerGate.capacity(), 1_000_000 * 1e18);
 
         vm.expectRevert();
         vm.prank(actAuth);

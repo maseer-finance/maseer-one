@@ -85,8 +85,8 @@ contract MaseerOneScript is Script {
         MaseerProxy(MASEER_ORACLE_PROXY).denyProxy(msg.sender);
 
         // MASEER_MARKET_PROXY set wards and initial config
-        MaseerGate(MASEER_MARKET_PROXY).setDelay(MARKET_DELAY);
-        MaseerGate(MASEER_MARKET_PROXY).setCap(MARKET_CAP);
+        MaseerGate(MASEER_MARKET_PROXY).setCooldown(MARKET_DELAY);
+        MaseerGate(MASEER_MARKET_PROXY).setCapacity(MARKET_CAP);
         MaseerGate(MASEER_MARKET_PROXY).setBpsin(MARKET_BPSIN);
         MaseerGate(MASEER_MARKET_PROXY).setBpsout(MARKET_BPSOUT);
         MaseerGate(MASEER_MARKET_PROXY).rely(marketAuth);

@@ -18,10 +18,10 @@ interface Pip {
 interface Act {
     function mintable() external view returns (bool);
     function burnable() external view returns (bool);
-    function bpsin()    external view returns (uint256);
-    function bpsout()   external view returns (uint256);
-    function delay()    external view returns (uint256);
-    function cap()      external view returns (uint256);
+    function mintcost(uint256) external view returns (uint256);
+    function burncost(uint256) external view returns (uint256);
+    function cooldown() external view returns (uint256);
+    function capacity() external view returns (uint256);
 }
 
 import {MaseerToken} from "./MaseerToken.sol";
@@ -119,7 +119,7 @@ contract MaseerOne is MaseerToken {
         if (_unit == 0) revert InvalidPrice();
 
         // Adjust the price for minting
-        _unit = _adjustMintPrice(_unit, _bpsin());
+        _unit = _mintcost(_unit);
 
         // Assert minimum purchase amount of one unit to avoid dust
         if (amt < _unit) {
@@ -130,7 +130,7 @@ contract MaseerOne is MaseerToken {
         _out = _wdiv(amt, _unit);
 
         // Revert if the total supply after mint exceeds the cap
-        if (totalSupply + _out > _cap()) revert ExceedsCap();
+        if (totalSupply + _out > _capacity()) revert ExceedsCap();
 
         // Transfer tokens in
         _safeTransferFrom(gem, msg.sender, address(this), amt);
@@ -151,7 +151,7 @@ contract MaseerOne is MaseerToken {
         if (_unit == 0) revert InvalidPrice();
 
         // Adjust the price for redemption
-        _unit = _adjustBurnPrice(_unit, _bpsout());
+        _unit = _burncost(_unit);
 
         // Calculate the redemption amount
         uint256 _claim = _wmul(amt, _unit);
@@ -166,7 +166,7 @@ contract MaseerOne is MaseerToken {
         redemptions[_id] = Redemption({
             amount:   _claim,
             redeemer: msg.sender,
-            date:     uint96(block.timestamp + _delay())
+            date:     uint96(block.timestamp + _cooldown())
         });
 
         // Burn the tokens
@@ -245,24 +245,24 @@ contract MaseerOne is MaseerToken {
         return _canPass(usr);
     }
 
-    function claimDelay() external view returns (uint256) {
-        return _delay();
+    function cooldown() external view returns (uint256) {
+        return _cooldown();
     }
 
-    function unitPrice() external view returns (uint256) {
+    function navprice() external view returns (uint256) {
         return _read();
     }
 
-    function mintPrice() external view returns (uint256) {
-        return _adjustMintPrice(_read(), _bpsin());
+    function mintcost() external view returns (uint256) {
+        return _mintcost(_read());
     }
 
-    function burnPrice() external view returns (uint256) {
-        return _adjustBurnPrice(_read(), _bpsout());
+    function burncost() external view returns (uint256) {
+        return _burncost(_read());
     }
 
-    function cap() external view returns (uint256) {
-        return _cap();
+    function capacity() external view returns (uint256) {
+        return _capacity();
     }
 
     function redemptionAddr(uint256 id) external view returns (address) {
@@ -325,20 +325,20 @@ contract MaseerOne is MaseerToken {
         return Cop(cop).pass(_usr);
     }
 
-    function _delay() internal view returns (uint256) {
-        return Act(act).delay();
+    function _cooldown() internal view returns (uint256) {
+        return Act(act).cooldown();
     }
 
-    function _bpsin() internal view returns (uint256) {
-        return Act(act).bpsin();
+    function _mintcost(uint256 _price) internal view returns (uint256) {
+        return Act(act).mintcost(_price);
     }
 
-    function _bpsout() internal view returns (uint256) {
-        return Act(act).bpsout();
+    function _burncost(uint256 _price) internal view returns (uint256) {
+        return Act(act).burncost(_price);
     }
 
-    function _cap() internal view returns (uint256) {
-        return Act(act).cap();
+    function _capacity() internal view returns (uint256) {
+        return Act(act).capacity();
     }
 
     function _read() internal view returns (uint256) {
@@ -355,14 +355,6 @@ contract MaseerOne is MaseerToken {
 
     function _wdiv(uint256 x, uint256 y) internal pure returns (uint256 z) {
         z = ((x * WAD) + (y / 2)) / y;
-    }
-
-    function _adjustMintPrice(uint256 _price, uint256 _bps) internal pure returns (uint256) {
-        return (_price * (10_000 + _bps)) / 10_000; // Round up
-    }
-
-    function _adjustBurnPrice(uint256 _price, uint256 _bps) internal pure returns (uint256) {
-        return (_price * 10_000) / (10_000 + _bps) + 1; // Round down
     }
 
     function _safeTransfer(address _token, address _to, uint256 _amt) internal {

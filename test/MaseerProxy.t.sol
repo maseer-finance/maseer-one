@@ -122,9 +122,9 @@ contract MaseerOneProxyTest is MaseerTestBase {
 
         assertEq(MaseerGate(address(_testProxy)).bpsout(), 10000);
 
-        MaseerGate(address(_testProxy)).setDelay(1 days);
+        MaseerGate(address(_testProxy)).setCooldown(1 days);
 
-        assertEq(MaseerGate(address(_testProxy)).delay(), 1 days);
+        assertEq(MaseerGate(address(_testProxy)).cooldown(), 1 days);
 
         MaseerGate(address(_testProxy)).pauseMarket();
 

@@ -55,11 +55,11 @@ contract MaseerOneScriptTest is MaseerTestBase {
         assertEq(maseerOne.flo(), maseerOneScript.MASEER_CONDUIT_PROXY());
         assertEq(maseerOne.mintable(), false);
         assertEq(maseerOne.burnable(), false);
-        assertEq(maseerOne.claimDelay(), maseerOneScript.MARKET_DELAY());
-        assertEq(maseerOne.unitPrice(), 1_000_000);
-        assertEq(maseerOne.mintPrice(), 1_005_000);
-        assertEq(maseerOne.burnPrice(),   995_025);
-        assertEq(maseerOne.cap(), maseerOneScript.MARKET_CAP());
+        assertEq(maseerOne.cooldown(), maseerOneScript.MARKET_DELAY());
+        assertEq(maseerOne.navprice(), 1_000_000);
+        assertEq(maseerOne.mintcost(), 1_005_000);
+        assertEq(maseerOne.burncost(),   995_025);
+        assertEq(maseerOne.capacity(), maseerOneScript.MARKET_CAP());
 
 
         assertEq(maseerOne.pip(), maseerOneScript.MASEER_ORACLE_PROXY());
@@ -71,8 +71,8 @@ contract MaseerOneScriptTest is MaseerTestBase {
 
         assertEq(maseerOne.act(), maseerOneScript.MASEER_MARKET_PROXY());
         assertEq(MaseerProxy(maseerOne.act()).impl(), maseerOneScript.MASEER_MARKET_IMPLEMENTATION());
-        assertEq(MaseerGate(maseerOne.act()).cap(), maseerOneScript.MARKET_CAP());
-        assertEq(MaseerGate(maseerOne.act()).delay(), maseerOneScript.MARKET_DELAY());
+        assertEq(MaseerGate(maseerOne.act()).capacity(), maseerOneScript.MARKET_CAP());
+        assertEq(MaseerGate(maseerOne.act()).cooldown(), maseerOneScript.MARKET_DELAY());
         assertEq(MaseerGate(maseerOne.act()).wards(maseerOneScript.marketAuth()), 1);
         assertEq(MaseerProxy(maseerOne.act()).wardsProxy(maseerOneScript.proxyAuth()), 1);
 
