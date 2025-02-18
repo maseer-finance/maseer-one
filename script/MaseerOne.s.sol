@@ -26,7 +26,7 @@ contract MaseerOneScript is Script {
 
     bytes32 public constant ORACLE_NAME     = "CANAUSDT";
     bytes32 public constant ORACLE_DECIMALS = bytes32(uint256(6));
-    uint256 public          ORACLE_PRICE    = 0;
+    uint256 public          ORACLE_PRICE    = 1e6; // 1.0
 
     uint256 public          MARKET_CAPACITY = 1_000_000e18;
     uint256 public          MARKET_COOLDOWN = 5 days;
