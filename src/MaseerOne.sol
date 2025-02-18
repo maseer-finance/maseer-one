@@ -51,8 +51,9 @@ contract MaseerOne is MaseerToken {
     );
     event ContractRedemption(
         uint256 indexed id,
-        address indexed redeemer,
-        uint256 indexed amount
+        uint256 indexed amount,
+        uint256 indexed date,
+        address         redeemer
     );
     event ClaimProcessed(
         uint256 indexed id,
@@ -111,7 +112,6 @@ contract MaseerOne is MaseerToken {
     }
 
     function mint(uint256 amt) external mintlive pass(msg.sender) returns (uint256 _out) {
-
         // Oracle price check
         uint256 _unit = _read();
 
@@ -143,7 +143,6 @@ contract MaseerOne is MaseerToken {
     }
 
     function redeem(uint256 amt) external burnlive pass(msg.sender) returns (uint256 _id) {
-
         // Oracle price check
         uint256 _unit = _read();
 
@@ -162,18 +161,21 @@ contract MaseerOne is MaseerToken {
         // Assign a new redemption ID
         _id = redemptionCount++;
 
+        // Calculate the redemption date
+        uint96 _time = uint96(block.timestamp + _cooldown());
+
         // Store the redemption
         redemptions[_id] = Redemption({
             amount:   _claim,
             redeemer: msg.sender,
-            date:     uint96(block.timestamp + _cooldown())
+            date:     _time
         });
 
         // Burn the tokens
         _burn(msg.sender, amt);
 
         // Emit contract event
-        emit ContractRedemption(_id, msg.sender, _claim);
+        emit ContractRedemption(_id, _claim, _time, msg.sender);
     }
 
     function exit(uint256 id) external pass(msg.sender) returns (uint256 _out) {
@@ -205,7 +207,6 @@ contract MaseerOne is MaseerToken {
     }
 
     function settle() external pass(msg.sender) returns (uint256 _out) {
-
         // Get the gem balance
         uint256 _bal = _gemBalance();
         uint256 _pnd = totalPending;
