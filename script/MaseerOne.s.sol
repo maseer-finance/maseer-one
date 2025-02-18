@@ -26,12 +26,12 @@ contract MaseerOneScript is Script {
 
     bytes32 public constant ORACLE_NAME     = "CANAUSDT";
     bytes32 public constant ORACLE_DECIMALS = bytes32(uint256(6));
-    uint256 public constant ORACLE_PRICE    = 1e6; // Temporary initial price
+    uint256 public          ORACLE_PRICE    = 0;
 
-    uint256 public constant MARKET_CAP    = 1_000_000e18;
-    uint256 public constant MARKET_DELAY  = 5 days;
-    uint256 public constant MARKET_BPSIN  = 50;
-    uint256 public constant MARKET_BPSOUT = 50;
+    uint256 public          MARKET_CAPACITY = 1_000_000e18;
+    uint256 public          MARKET_COOLDOWN = 5 days;
+    uint256 public constant MARKET_BPSIN    = 50;
+    uint256 public constant MARKET_BPSOUT   = 50;
 
     // Mainnet
     address public USDT = 0xdAC17F958D2ee523a2206206994597C13D831ec7;
@@ -53,6 +53,7 @@ contract MaseerOneScript is Script {
 
     function run() public {
         vm.startBroadcast();
+
         if (getChainId() == 11155111) useSepoliaConfig();
 
         MASEER_ORACLE_IMPLEMENTATION = address(new MaseerPrice());
@@ -81,33 +82,38 @@ contract MaseerOneScript is Script {
         MaseerPrice(MASEER_ORACLE_PROXY).file("decimals", ORACLE_DECIMALS);
         MaseerPrice(MASEER_ORACLE_PROXY).poke(ORACLE_PRICE);
         MaseerPrice(MASEER_ORACLE_PROXY).rely(oracleAuth);
-        MaseerPrice(MASEER_ORACLE_PROXY).deny(msg.sender);
         MaseerProxy(MASEER_ORACLE_PROXY).relyProxy(proxyAuth);
-        MaseerProxy(MASEER_ORACLE_PROXY).denyProxy(msg.sender);
 
         // MASEER_MARKET_PROXY set wards and initial config
-        MaseerGate(MASEER_MARKET_PROXY).setCooldown(MARKET_DELAY);
-        MaseerGate(MASEER_MARKET_PROXY).setCapacity(MARKET_CAP);
+        MaseerGate(MASEER_MARKET_PROXY).setCooldown(MARKET_COOLDOWN);
+        MaseerGate(MASEER_MARKET_PROXY).setCapacity(MARKET_CAPACITY);
         MaseerGate(MASEER_MARKET_PROXY).setBpsin(MARKET_BPSIN);
         MaseerGate(MASEER_MARKET_PROXY).setBpsout(MARKET_BPSOUT);
         MaseerGate(MASEER_MARKET_PROXY).rely(marketAuth);
-        MaseerGate(MASEER_MARKET_PROXY).deny(msg.sender);
         MaseerProxy(MASEER_MARKET_PROXY).relyProxy(proxyAuth);
-        MaseerProxy(MASEER_MARKET_PROXY).denyProxy(msg.sender);
 
         // MASEER_COMPLIANCE_PROXY set wards
         MaseerGuard(MASEER_COMPLIANCE_PROXY).rely(complianceAuth);
-        MaseerGuard(MASEER_COMPLIANCE_PROXY).deny(msg.sender);
         MaseerProxy(MASEER_COMPLIANCE_PROXY).relyProxy(proxyAuth);
-        MaseerProxy(MASEER_COMPLIANCE_PROXY).denyProxy(msg.sender);
 
         // MASEER_CONDUIT_PROXY set wards and buds
         MaseerConduit(MASEER_CONDUIT_PROXY).hope(conduitAuth);
         MaseerConduit(MASEER_CONDUIT_PROXY).kiss(conduitOut);
         MaseerConduit(MASEER_CONDUIT_PROXY).kiss(address(maseerOne));
         MaseerConduit(MASEER_CONDUIT_PROXY).rely(conduitAuth);
-        MaseerConduit(MASEER_CONDUIT_PROXY).deny(msg.sender);
         MaseerProxy(MASEER_CONDUIT_PROXY).relyProxy(proxyAuth);
+
+        // Additional setup for Sepolia
+        if (getChainId() == 11155111) setupSepoliaMarket();
+
+        // Disable deployer auths
+        MaseerPrice(MASEER_ORACLE_PROXY).deny(msg.sender);
+        MaseerProxy(MASEER_ORACLE_PROXY).denyProxy(msg.sender);
+        MaseerGate(MASEER_MARKET_PROXY).deny(msg.sender);
+        MaseerProxy(MASEER_MARKET_PROXY).denyProxy(msg.sender);
+        MaseerGuard(MASEER_COMPLIANCE_PROXY).deny(msg.sender);
+        MaseerProxy(MASEER_COMPLIANCE_PROXY).denyProxy(msg.sender);
+        MaseerConduit(MASEER_CONDUIT_PROXY).deny(msg.sender);
         MaseerProxy(MASEER_CONDUIT_PROXY).denyProxy(msg.sender);
 
         vm.stopBroadcast();
@@ -133,15 +139,28 @@ contract MaseerOneScript is Script {
 
     function useSepoliaConfig() internal {
         USDT = address(new MockUSDT());
-        (bool success, bytes memory data) = USDT.call(abi.encodeWithSignature("mint(address,uint256)", SEPOLIA_AUTH, 100_000_000_000 * 1e6));
+        (bool success, bytes memory data) = USDT.call(abi.encodeWithSignature("mint(address,uint256)", msg.sender, 100_000_000_000 * 1e6));
+        (success, data) = USDT.call(abi.encodeWithSignature("mint(address,uint256)", SEPOLIA_AUTH, 100_000_000_000 * 1e6));
         data;
-        require(success, "USDT mint failed");
         proxyAuth = SEPOLIA_AUTH;
         oracleAuth = SEPOLIA_AUTH;
         marketAuth = SEPOLIA_AUTH;
         complianceAuth = SEPOLIA_AUTH;
         conduitAuth = SEPOLIA_AUTH;
         conduitOut = SEPOLIA_AUTH;
+    }
+
+    function setupSepoliaMarket() internal {
+        MaseerGate(MASEER_MARKET_PROXY).setOpenMint(0);
+        MaseerGate(MASEER_MARKET_PROXY).file("haltmint", type(uint256).max);
+        require(MaseerGate(MASEER_MARKET_PROXY).mintable());
+        MaseerGate(MASEER_MARKET_PROXY).setOpenBurn(0);
+        MaseerGate(MASEER_MARKET_PROXY).file("haltburn", type(uint256).max);
+        require(MaseerGate(MASEER_MARKET_PROXY).burnable());
+        MARKET_CAPACITY = 1_000_000e18 * 1000;
+        MaseerGate(MASEER_MARKET_PROXY).setCapacity(MARKET_CAPACITY);
+        MARKET_COOLDOWN = 10 minutes;
+        MaseerGate(MASEER_MARKET_PROXY).setCooldown(MARKET_COOLDOWN);
     }
 
     function getChainId() internal view returns (uint256) {
