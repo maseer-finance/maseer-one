@@ -114,7 +114,7 @@ contract MaseerOneOperationsTest is MaseerTestBase {
         assertEq(_amt, _wdiv(100_000 * 1e6, maseerOne.mintcost()));
 
         vm.expectEmit();
-        emit MaseerOne.ContractRedemption(0, alice, 99007452736);
+        emit MaseerOne.ContractRedemption(0, 99007452736, block.timestamp + maseerOne.cooldown(), alice);
         vm.prank(alice);
         uint256 _id = maseerOne.redeem(_amt);
         assertTrue(_id == 0);
