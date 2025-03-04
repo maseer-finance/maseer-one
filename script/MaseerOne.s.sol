@@ -30,8 +30,8 @@ contract MaseerOneScript is Script {
 
     uint256 public          MARKET_CAPACITY = 1_000_000e18;
     uint256 public          MARKET_COOLDOWN = 5 days;
-    uint256 public constant MARKET_BPSIN    = 50;
-    uint256 public constant MARKET_BPSOUT   = 50;
+    uint256 public constant MARKET_BPSIN    = 100;
+    uint256 public constant MARKET_BPSOUT   = 100;
 
     // Mainnet
     address public USDT = 0xdAC17F958D2ee523a2206206994597C13D831ec7;
