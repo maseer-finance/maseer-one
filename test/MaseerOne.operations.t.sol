@@ -217,7 +217,22 @@ contract MaseerOneOperationsTest is MaseerTestBase {
         assertEq(usdt.balanceOf(maseerOne.flo()), 0);
     }
 
-    function testDestroy() public {
+    function testIssue() public {
+        vm.prank(admAuth);
+        adm.bestow(bank);
+
+        uint256 amt = 100_000 * 1e18;
+        uint256 sup = maseerOne.totalSupply();
+
+        vm.prank(bank);
+        maseerOne.issue(amt);
+
+        assertEq(maseerOne.totalSupply(), sup + amt);
+        assertEq(maseerOne.balanceOf(bank), amt);
+
+    }
+
+    function testSmelt() public {
         vm.prank(alice);
         usdt.approve(address(maseerOne), 1_000_000 * 1e6);
         vm.prank(alice);
@@ -225,9 +240,9 @@ contract MaseerOneOperationsTest is MaseerTestBase {
         assertEq(maseerOne.totalSupply(), out);
 
         vm.expectEmit();
-        emit MaseerOne.Destroyed(alice, 10 * WAD);
+        emit MaseerOne.Smelted(alice, 10 * WAD);
         vm.prank(alice);
-        maseerOne.destroy(10 * WAD);
+        maseerOne.smelt(10 * WAD);
 
         assertEq(maseerOne.totalSupply(), out - 10 * WAD);
         assertEq(maseerOne.balanceOf(alice), out - 10 * WAD);

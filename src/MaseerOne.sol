@@ -24,6 +24,10 @@ interface Act {
     function burncost(uint256) external view returns (uint256);
 }
 
+interface Adm {
+    function issuer(address usr) external view returns (bool);
+}
+
 import {MaseerToken} from "./MaseerToken.sol";
 
 contract MaseerOne is MaseerToken {
@@ -31,6 +35,7 @@ contract MaseerOne is MaseerToken {
     address immutable public gem;  // Purchase token
     address immutable public pip;  // Oracle price feed
     address immutable public act;  // Market timing feed
+    address immutable public adm;  // Issuer control
     address immutable public cop;  // Compliance feed
     address immutable public flo;  // Output conduit
 
@@ -64,8 +69,12 @@ contract MaseerOne is MaseerToken {
         address indexed conduit,
         uint256 indexed amount
     );
-    event Destroyed(
-        address indexed destroyer,
+    event Issued(
+        address indexed issuer,
+        uint256 indexed amount
+    );
+    event Smelted(
+        address indexed smelter,
         uint256 indexed amount
     );
 
@@ -84,6 +93,7 @@ contract MaseerOne is MaseerToken {
         address gem_,
         address pip_,
         address act_,
+        address adm_,
         address cop_,
         address flo_,
         string memory name_,
@@ -92,6 +102,7 @@ contract MaseerOne is MaseerToken {
         gem = gem_;
         pip = pip_;
         act = act_;
+        adm = adm_;
         cop = cop_;
         flo = flo_;
     }
@@ -108,6 +119,11 @@ contract MaseerOne is MaseerToken {
 
     modifier burnlive() {
         if (!burnable()) revert MarketClosed();
+        _;
+    }
+
+    modifier issuer() {
+        if (!Adm(adm).issuer(msg.sender)) revert UnauthorizedUser(msg.sender);
         _;
     }
 
@@ -226,10 +242,18 @@ contract MaseerOne is MaseerToken {
         emit Settled(flo, _out);
     }
 
-    function destroy(uint256 amt) external pass(msg.sender) {
+    // Issuer functions for cross-chain bridging
+    function issue(uint256 amt) external issuer pass(msg.sender) {
+        _mint(msg.sender, amt);
+
+        emit Issued(msg.sender, amt);
+    }
+
+    // Smelting function for burning tokens
+    function smelt(uint256 amt) external pass(msg.sender) {
         _burn(msg.sender, amt);
 
-        emit Destroyed(msg.sender, amt);
+        emit Smelted(msg.sender, amt);
     }
 
     // View functions
