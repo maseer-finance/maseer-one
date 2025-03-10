@@ -5,6 +5,7 @@ import {Script, console} from "forge-std/Script.sol";
 import {MaseerOne} from "../src/MaseerOne.sol";
 import {MaseerPrice} from "../src/MaseerPrice.sol";
 import {MaseerGate} from "../src/MaseerGate.sol";
+import {MaseerTreasury} from "../src/MaseerTreasury.sol";
 import {MaseerGuard} from "../src/MaseerGuard.sol";
 import {MaseerProxy} from "../src/MaseerProxy.sol";
 import {MaseerConduit} from "../src/MaseerConduit.sol";
@@ -17,11 +18,12 @@ contract MaseerOneScript is Script {
     address public proxyAuth;      // TODO
     address public oracleAuth;     // TODO
     address public marketAuth;     // TODO
+    address public treasuryAuth;   // TODO
     address public complianceAuth; // TODO
     address public conduitAuth;    // TODO
     address public conduitOut;     // TODO
 
-    string public constant NAME = "Cana";
+    string public constant NAME = "Maseer Cana";
     string public constant SYMBOL = "CANA";
 
     bytes32 public constant ORACLE_NAME     = "CANAUSDT";
@@ -42,6 +44,9 @@ contract MaseerOneScript is Script {
     address public MASEER_MARKET_IMPLEMENTATION;
     address public MASEER_MARKET_PROXY;
 
+    address public MASEER_TREASURY_IMPLEMENTATION;
+    address public MASEER_TREASURY_PROXY;
+
     address public MASEER_COMPLIANCE_IMPLEMENTATION;
     address public MASEER_COMPLIANCE_PROXY;
 
@@ -60,6 +65,8 @@ contract MaseerOneScript is Script {
         MASEER_ORACLE_PROXY = address(new MaseerProxy(MASEER_ORACLE_IMPLEMENTATION));
         MASEER_MARKET_IMPLEMENTATION = address(new MaseerGate());
         MASEER_MARKET_PROXY = address(new MaseerProxy(MASEER_MARKET_IMPLEMENTATION));
+        MASEER_TREASURY_IMPLEMENTATION = address(new MaseerTreasury());
+        MASEER_TREASURY_PROXY = address(new MaseerProxy(MASEER_TREASURY_IMPLEMENTATION));
         MASEER_COMPLIANCE_IMPLEMENTATION = address(new MaseerGuard(USDT));
         MASEER_COMPLIANCE_PROXY = address(new MaseerProxy(MASEER_COMPLIANCE_IMPLEMENTATION));
         MASEER_CONDUIT_IMPLEMENTATION = address(new MaseerConduit());
@@ -69,6 +76,7 @@ contract MaseerOneScript is Script {
             USDT,
             MASEER_ORACLE_PROXY,
             MASEER_MARKET_PROXY,
+            MASEER_TREASURY_PROXY,
             MASEER_COMPLIANCE_PROXY,
             MASEER_CONDUIT_PROXY,
             NAME,
@@ -92,6 +100,11 @@ contract MaseerOneScript is Script {
         MaseerGate(MASEER_MARKET_PROXY).rely(marketAuth);
         MaseerProxy(MASEER_MARKET_PROXY).relyProxy(proxyAuth);
 
+        // MASEER_TREASURY_PROXY set issuer
+        MaseerTreasury(MASEER_TREASURY_PROXY).rely(treasuryAuth);
+        MaseerTreasury(MASEER_TREASURY_PROXY).bestow(treasuryAuth);
+        MaseerProxy(MASEER_TREASURY_PROXY).relyProxy(proxyAuth);
+
         // MASEER_COMPLIANCE_PROXY set wards
         MaseerGuard(MASEER_COMPLIANCE_PROXY).rely(complianceAuth);
         MaseerProxy(MASEER_COMPLIANCE_PROXY).relyProxy(proxyAuth);
@@ -111,6 +124,8 @@ contract MaseerOneScript is Script {
         MaseerProxy(MASEER_ORACLE_PROXY).denyProxy(msg.sender);
         MaseerGate(MASEER_MARKET_PROXY).deny(msg.sender);
         MaseerProxy(MASEER_MARKET_PROXY).denyProxy(msg.sender);
+        MaseerTreasury(MASEER_TREASURY_PROXY).deny(msg.sender);
+        MaseerProxy(MASEER_TREASURY_PROXY).denyProxy(msg.sender);
         MaseerGuard(MASEER_COMPLIANCE_PROXY).deny(msg.sender);
         MaseerProxy(MASEER_COMPLIANCE_PROXY).denyProxy(msg.sender);
         MaseerConduit(MASEER_CONDUIT_PROXY).deny(msg.sender);

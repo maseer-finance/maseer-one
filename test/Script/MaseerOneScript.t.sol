@@ -16,7 +16,7 @@ contract MaseerOneScriptTest is MaseerTestBase {
     }
 
     function testMaseerOneScript() public view {
-        assertEq(maseerOneScript.NAME(), "Cana");
+        assertEq(maseerOneScript.NAME(), "Maseer Cana");
         assertEq(maseerOneScript.SYMBOL(), "CANA");
         assertEq(maseerOneScript.USDT(), 0xdAC17F958D2ee523a2206206994597C13D831ec7);
     }

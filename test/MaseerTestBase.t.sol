@@ -1,17 +1,18 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.28;
 
-import {Test, console} from "forge-std/Test.sol";
-import {IERC20}        from "forge-std/interfaces/IERC20.sol";
-import {MockPip}       from "./Mocks/MockPip.sol";
-import {MockCop}       from "./Mocks/MockCop.sol";
+import {Test, console}  from "forge-std/Test.sol";
+import {IERC20}         from "forge-std/interfaces/IERC20.sol";
+import {MockPip}        from "./Mocks/MockPip.sol";
+import {MockCop}        from "./Mocks/MockCop.sol";
 
-import {MaseerOne}     from "../src/MaseerOne.sol";
-import {MaseerPrice}   from "../src/MaseerPrice.sol";
-import {MaseerGuard}   from "../src/MaseerGuard.sol";
-import {MaseerGate}    from "../src/MaseerGate.sol";
-import {MaseerConduit} from "../src/MaseerConduit.sol";
-import {MaseerProxy}   from "../src/MaseerProxy.sol";
+import {MaseerOne}      from "../src/MaseerOne.sol";
+import {MaseerPrice}    from "../src/MaseerPrice.sol";
+import {MaseerGuard}    from "../src/MaseerGuard.sol";
+import {MaseerGate}     from "../src/MaseerGate.sol";
+import {MaseerTreasury} from "../src/MaseerTreasury.sol";
+import {MaseerConduit}  from "../src/MaseerConduit.sol";
+import {MaseerProxy}    from "../src/MaseerProxy.sol";
 
 
 interface IUSDT {
@@ -40,22 +41,27 @@ contract MaseerTestBase is Test {
     address public pipProxy;
     address public actImpl;
     address public actProxy;
+    address public admImpl;
+    address public admProxy;
     address public copImpl;
     address public copProxy;
     address public floImpl;
     address public floProxy;
 
-    MaseerPrice   public pip;
-    MaseerGate    public act;
-    MaseerGuard   public cop;
-    MaseerConduit public flo;
+    MaseerPrice    public pip;
+    MaseerGate     public act;
+    MaseerTreasury public adm;
+    MaseerGuard    public cop;
+    MaseerConduit  public flo;
 
     address public alice;
     address public bob;
     address public carol;
     address public david;
+    address public bank;
     address public pipAuth;
     address public actAuth;
+    address public admAuth;
     address public copAuth;
     address public floAuth;
     address public proxyAuth;
@@ -72,9 +78,11 @@ contract MaseerTestBase is Test {
         bob   = makeAddr("bob");
         carol = makeAddr("carol");
         david = makeAddr("david");
+        bank  = makeAddr("bank");
 
         pipAuth = makeAddr("pipAuth");
         actAuth = makeAddr("actAuth");
+        admAuth = makeAddr("admAuth");
         copAuth = makeAddr("copAuth");
         floAuth = makeAddr("floAuth");
         proxyAuth = makeAddr("proxyAuth");
@@ -95,6 +103,14 @@ contract MaseerTestBase is Test {
         MaseerProxy(actProxy).relyProxy(proxyAuth);
         MaseerProxy(actProxy).denyProxy(address(this));
 
+        admImpl = address(new MaseerTreasury());
+        adm = MaseerTreasury(address(new MaseerProxy(admImpl)));
+        admProxy = address(adm);
+        adm.rely(admAuth);
+        adm.deny(address(this));
+        MaseerProxy(admProxy).relyProxy(proxyAuth);
+        MaseerProxy(admProxy).denyProxy(address(this));
+
         copImpl = address(new MaseerGuard(USDT));
         cop = MaseerGuard(address(new MaseerProxy(copImpl)));
         cop.rely(copAuth);
@@ -112,7 +128,7 @@ contract MaseerTestBase is Test {
         MaseerProxy(floProxy).relyProxy(proxyAuth);
         MaseerProxy(floProxy).denyProxy(address(this));
 
-        maseerOne = new MaseerOne(USDT, pipProxy, actProxy, copProxy, floProxy, NAME, SYMBOL);
+        maseerOne = new MaseerOne(USDT, pipProxy, actProxy, admProxy, copProxy, floProxy, NAME, SYMBOL);
         maseerOneAddr = address(maseerOne);
     }
 
