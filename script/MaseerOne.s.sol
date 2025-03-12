@@ -9,6 +9,7 @@ import {MaseerTreasury} from "../src/MaseerTreasury.sol";
 import {MaseerGuard} from "../src/MaseerGuard.sol";
 import {MaseerProxy} from "../src/MaseerProxy.sol";
 import {MaseerConduit} from "../src/MaseerConduit.sol";
+import {MaseerPrecommit} from "../src/MaseerPrecommit.sol";
 
 import {MockUSDT} from "../test/Mocks/MockUSDT.sol";
 
@@ -53,6 +54,8 @@ contract MaseerOneScript is Script {
     address public MASEER_CONDUIT_IMPLEMENTATION;
     address public MASEER_CONDUIT_PROXY;
 
+    address public MASEER_PRECOMMIT;
+
     // Sepolia
     address public SEPOLIA_AUTH = 0xB05502bf20342331F42A7B80Aa4bAB3F8cA86C0F;
 
@@ -83,6 +86,7 @@ contract MaseerOneScript is Script {
             SYMBOL
         );
 
+        MASEER_PRECOMMIT = address(new MaseerPrecommit(address(maseerOne)));
 
         // TODO: Configure Authorizations on proxies
         // MASEER_ORACLE_PROXY set wards and initial config

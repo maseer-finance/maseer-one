@@ -40,6 +40,7 @@ contract MaseerOneScriptTest is MaseerTestBase {
         assertTrue(maseerOneScript.MASEER_COMPLIANCE_PROXY() != address(0), "MASEER_COMPLIANCE_PROXY is zero");
         assertTrue(maseerOneScript.MASEER_CONDUIT_IMPLEMENTATION() != address(0), "MASEER_CONDUIT is zero");
         assertTrue(maseerOneScript.MASEER_CONDUIT_PROXY() != address(0), "MASEER_CONDUIT_PROXY is zero");
+        assertTrue(maseerOneScript.MASEER_PRECOMMIT() != address(0), "MASEER_PRECOMMIT is zero");
 
         MaseerOne maseerOne = MaseerOne(maseerOneScript.maseerOne());
 
