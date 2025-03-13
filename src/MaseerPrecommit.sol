@@ -20,10 +20,9 @@ interface One {
 
 contract MaseerPrecommit {
 
+    address public   immutable gem;
+    address public   immutable one;
     uint256 internal immutable MIN;
-
-    address public immutable gem;
-    address public immutable one;
 
     uint256                   public deals;
     mapping (uint256 => Deal) public deal;
@@ -33,7 +32,6 @@ contract MaseerPrecommit {
         uint256 amt;
     }
 
-    error MarketUnavailable();
     error TransferFailed();
     error InsufficientAllowance();
     error InsufficientAmount();
@@ -79,7 +77,7 @@ contract MaseerPrecommit {
         return deal[_idx].usr;
     }
 
-    function min() public view returns (uint256) {
+    function min() external view returns (uint256) {
         return MIN;
     }
 
