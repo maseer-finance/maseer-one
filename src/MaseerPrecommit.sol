@@ -4,6 +4,7 @@ pragma solidity ^0.8.28;
 interface Gem {
     function transfer(address usr, uint256 wad) external returns (bool);
     function transferFrom(address src, address dst, uint256 wad) external returns (bool);
+    function decimals() external view returns (uint8);
     function approve(address usr, uint256 wad) external;
     function balanceOf(address account) external view returns (uint256);
     function allowance(address src, address dst) external view returns (uint256);
@@ -11,23 +12,28 @@ interface Gem {
 
 interface One {
     function gem() external view returns (address);
+    function flo() external view returns (address);
     function mint(uint256 wad) external returns (uint256);
+    function mintcost() external view returns (uint256);
     function canPass(address usr) external view returns (bool);
 }
 
 contract MaseerPrecommit {
 
+    uint256 internal immutable MIN;
+
     address public immutable gem;
     address public immutable one;
 
-    uint256                        public commits;
-    mapping (uint256 => Precommit) public commit;
+    uint256                   public deals;
+    mapping (uint256 => Deal) public deal;
 
-    struct Precommit {
+    struct Deal {
         address usr;
         uint256 amt;
     }
 
+    error MarketUnavailable();
     error TransferFailed();
     error InsufficientAllowance();
     error InsufficientAmount();
@@ -35,37 +41,46 @@ contract MaseerPrecommit {
 
     constructor(address _one) {
         gem = One(_one).gem();
+        MIN = 1000 * 10**uint256(Gem(gem).decimals());
         one = _one;
         Gem(gem).approve(_one, type(uint256).max);
     }
 
-    function precommit(uint256 _amt) external {
-        if (_amt == 0) revert InsufficientAmount();
+    function pact(uint256 _amt) external {
+        if (_amt < MIN) revert InsufficientAmount();
         if (Gem(gem).allowance(msg.sender, address(this)) < _amt) revert InsufficientAllowance();
         if (!One(one).canPass(msg.sender)) revert NotAuthorized();
 
-        commit[commits++] = Precommit({
+        deal[deals++] = Deal({
             usr: msg.sender,
             amt: _amt
         });
     }
 
     function exec(uint256 _idx) external {
-        Precommit memory c = commit[_idx];
+        Deal memory c = deal[_idx];
         if (c.amt == 0) revert InsufficientAmount();
-        commit[_idx].amt = 0;
+        deal[_idx].amt = 0;
 
         _safeTransferFrom(gem, c.usr, address(this), c.amt);
         uint256 out = One(one).mint(c.amt);
         _safeTransfer(one, c.usr, out);
     }
 
+    function exit() external {
+        _safeTransfer(gem, One(one).flo(), Gem(gem).balanceOf(address(this)));
+    }
+
     function amt(uint256 _idx) external view returns (uint256) {
-        return commit[_idx].amt;
+        return deal[_idx].amt;
     }
 
     function usr(uint256 _idx) external view returns (address) {
-        return commit[_idx].usr;
+        return deal[_idx].usr;
+    }
+
+    function min() public view returns (uint256) {
+        return MIN;
     }
 
     function _safeTransfer(address _token, address _to, uint256 _amt) internal {

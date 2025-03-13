@@ -26,11 +26,15 @@ contract MaseerPrecommitTest is MaseerTestBase {
 
         // alice approves maseerPrecommit to spend 1000 USDT
         vm.prank(alice);
-        maseerPrecommit.precommit(1000 * 1e6);
+        maseerPrecommit.pact(1000 * 1e6);
 
-        assertEq(maseerPrecommit.commits(), 1);
+        assertEq(maseerPrecommit.deals(), 1);
         assertEq(maseerPrecommit.usr(0), alice);
         assertEq(maseerPrecommit.amt(0), 1000 * 1e6);
+    }
+
+    function testPrecommitMin() public view {
+        assertEq(maseerPrecommit.min(), 1000 * 1e6);
     }
 
     function test_failPrecommitZeroAmt() public {
@@ -42,7 +46,7 @@ contract MaseerPrecommitTest is MaseerTestBase {
         // alice approves maseerPrecommit to spend 1000 USDT
         vm.expectRevert(MaseerPrecommit.InsufficientAmount.selector);
         vm.prank(alice);
-        maseerPrecommit.precommit(0);
+        maseerPrecommit.pact(0);
     }
 
     function test_failPrecommitInsufficientAllowance() public {
@@ -54,7 +58,7 @@ contract MaseerPrecommitTest is MaseerTestBase {
         // alice approves maseerPrecommit to spend 1000 USDT
         vm.expectRevert(MaseerPrecommit.InsufficientAllowance.selector);
         vm.prank(bob);
-        maseerPrecommit.precommit(1000 * 1e6);
+        maseerPrecommit.pact(1000 * 1e6);
     }
 
     function test_failPrecommitUnauthorizedUser() public {
@@ -70,7 +74,7 @@ contract MaseerPrecommitTest is MaseerTestBase {
 
         vm.expectRevert(MaseerPrecommit.NotAuthorized.selector);
         vm.prank(badGuy);
-        maseerPrecommit.precommit(1000 * 1e6);
+        maseerPrecommit.pact(1000 * 1e6);
     }
 
     function testPrecommitExec() public {
@@ -92,7 +96,7 @@ contract MaseerPrecommitTest is MaseerTestBase {
         vm.prank(alice);
         usdt.approve(address(maseerPrecommit), 1000 * 1e6);
         vm.prank(alice);
-        maseerPrecommit.precommit(1000 * 1e6);
+        maseerPrecommit.pact(1000 * 1e6);
 
         maseerPrecommit.exec(0);
 
@@ -127,10 +131,10 @@ contract MaseerPrecommitTest is MaseerTestBase {
 
         for (uint256 i = 0; i < n; i++) {
             vm.prank(users[i].usr);
-            maseerPrecommit.precommit(users[i].amt);
+            maseerPrecommit.pact(users[i].amt);
         }
 
-        assertEq(maseerPrecommit.commits(), n);
+        assertEq(maseerPrecommit.deals(), n);
 
         for (uint256 i = 0; i < n; i++) {
             assertEq(maseerPrecommit.usr(i), users[i].usr);
@@ -158,7 +162,7 @@ contract MaseerPrecommitTest is MaseerTestBase {
 
         for (uint256 i = 0; i < n; i++) {
             vm.prank(users[i].usr);
-            maseerPrecommit.precommit(users[i].amt);
+            maseerPrecommit.pact(users[i].amt);
         }
 
         // open market
