@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2025-03-12 16:20:01</td>
+            <td class="headerValue">2025-03-13 16:10:50</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">8</td>
@@ -80,12 +80,12 @@
 <a name="18"><span class="lineNum">      18 </span>            :     mapping(address =&gt; uint256) public nonces;</a>
 <a name="19"><span class="lineNum">      19 </span>            :     uint256 immutable         internal CHAIN_ID; // token is linked to deployment chain id. Forked chains are not supported.</a>
 <a name="20"><span class="lineNum">      20 </span>            : </a>
-<a name="21"><span class="lineNum">      21 </span><span class="lineCov">        102 :     constructor(string memory name_, string memory symbol_) {</span></a>
-<a name="22"><span class="lineNum">      22 </span><span class="lineCov">        102 :         name   = name_;</span></a>
-<a name="23"><span class="lineNum">      23 </span><span class="lineCov">        102 :         symbol = symbol_;</span></a>
+<a name="21"><span class="lineNum">      21 </span><span class="lineCov">        103 :     constructor(string memory name_, string memory symbol_) {</span></a>
+<a name="22"><span class="lineNum">      22 </span><span class="lineCov">        103 :         name   = name_;</span></a>
+<a name="23"><span class="lineNum">      23 </span><span class="lineCov">        103 :         symbol = symbol_;</span></a>
 <a name="24"><span class="lineNum">      24 </span>            : </a>
-<a name="25"><span class="lineNum">      25 </span><span class="lineCov">        102 :         CHAIN_ID = block.chainid;</span></a>
-<a name="26"><span class="lineNum">      26 </span><span class="lineCov">        102 :         DOMAIN_SEPARATOR = _domainSeparator();</span></a>
+<a name="25"><span class="lineNum">      25 </span><span class="lineCov">        103 :         CHAIN_ID = block.chainid;</span></a>
+<a name="26"><span class="lineNum">      26 </span><span class="lineCov">        103 :         DOMAIN_SEPARATOR = _domainSeparator();</span></a>
 <a name="27"><span class="lineNum">      27 </span>            :     }</a>
 <a name="28"><span class="lineNum">      28 </span>            : </a>
 <a name="29"><span class="lineNum">      29 </span>            :     event Approval(address indexed src, address indexed usr, uint256 wad);</a>
@@ -198,8 +198,8 @@
 <a name="136"><span class="lineNum">     136 </span><span class="lineCov">          3 :         emit Transfer(usr, address(0), wad);</span></a>
 <a name="137"><span class="lineNum">     137 </span>            :     }</a>
 <a name="138"><span class="lineNum">     138 </span>            : </a>
-<a name="139"><span class="lineNum">     139 </span><span class="lineCov">        102 :     function _domainSeparator() internal view returns (bytes32) {</span></a>
-<a name="140"><span class="lineNum">     140 </span><span class="lineCov">        102 :         return keccak256(abi.encode(</span></a>
+<a name="139"><span class="lineNum">     139 </span><span class="lineCov">        103 :     function _domainSeparator() internal view returns (bytes32) {</span></a>
+<a name="140"><span class="lineNum">     140 </span><span class="lineCov">        103 :         return keccak256(abi.encode(</span></a>
 <a name="141"><span class="lineNum">     141 </span>            :             keccak256(&quot;EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)&quot;),</a>
 <a name="142"><span class="lineNum">     142 </span>            :             keccak256(bytes(name)),</a>
 <a name="143"><span class="lineNum">     143 </span>            :             keccak256(bytes(&quot;1&quot;)),</a>
