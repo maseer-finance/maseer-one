@@ -16,13 +16,17 @@ import {MockUSDT} from "../test/Mocks/MockUSDT.sol";
 contract MaseerOneScript is Script {
     MaseerOne public maseerOne;
 
-    address public proxyAuth;      // TODO
-    address public oracleAuth;     // TODO
-    address public marketAuth;     // TODO
-    address public treasuryAuth;   // TODO
-    address public complianceAuth; // TODO
-    address public conduitAuth;    // TODO
-    address public conduitOut;     // TODO
+    address public SIG_ONE = 0x6CFd1DC9DF04a7F9162eF6c9b381D42135E8B896;
+    address public SIG_TWO = 0x99698A1538089f03e798FA265254d9d90F13824D;
+
+    address public proxyAuth       = SIG_ONE;
+    address public marketAuth      = SIG_ONE;
+    address public treasuryAuth    = SIG_ONE;
+    address public complianceAuth  = SIG_ONE;
+    address public conduitAuth     = SIG_ONE;
+    address public conduitOut      = SIG_ONE;
+
+    address public oracleAuth      = SIG_TWO;
 
     string public constant NAME = "Maseer Cana";
     string public constant SYMBOL = "CANA";
@@ -33,8 +37,8 @@ contract MaseerOneScript is Script {
 
     uint256 public          MARKET_CAPACITY = 1_000_000e18;
     uint256 public          MARKET_COOLDOWN = 5 days;
-    uint256 public constant MARKET_BPSIN    = 100;
-    uint256 public constant MARKET_BPSOUT   = 100;
+    uint256 public constant MARKET_BPSIN    = 200;
+    uint256 public constant MARKET_BPSOUT   = 200;
 
     // Mainnet
     address public USDT = 0xdAC17F958D2ee523a2206206994597C13D831ec7;
@@ -157,7 +161,7 @@ contract MaseerOneScript is Script {
     }
 
     function useSepoliaConfig() internal {
-        USDT = address(new MockUSDT());
+        USDT = 0xcAddB146B3f1A6A558eCD01380b81c2Faf9C8a10;
         (bool success, bytes memory data) = USDT.call(abi.encodeWithSignature("mint(address,uint256)", msg.sender, 100_000_000_000 * 1e6));
         (success, data) = USDT.call(abi.encodeWithSignature("mint(address,uint256)", SEPOLIA_AUTH, 100_000_000_000 * 1e6));
         data;
