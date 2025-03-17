@@ -12,7 +12,7 @@ contract MaseerGuardTest is MaseerTestBase {
         maseerGuard = new MaseerGuard(USDT);
     }
 
-    function testGoodActor() public {
+    function testGoodActor() public view {
         assertEq(maseerGuard.pass(alice), true);
     }
 

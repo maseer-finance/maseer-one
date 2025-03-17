@@ -34,13 +34,13 @@ contract MaseerTreasuryTest is MaseerTestBase {
         assertEq(adm.issuer(carol), true);
     }
 
-    function testRevoke() public {
+    function testDepose() public {
 
         vm.prank(admAuth);
         adm.bestow(bob);
 
         vm.prank(admAuth);
-        adm.revoke(bob);
+        adm.depose(bob);
         assertEq(adm.issuer(bob), false);
     }
 }

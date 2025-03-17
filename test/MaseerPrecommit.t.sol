@@ -186,5 +186,17 @@ contract MaseerPrecommitTest is MaseerTestBase {
         assertEq(maseerOne.totalSupply(), supply);
     }
 
+    function testPrecommitExit() public {
 
+        // Whoops someone sent USDT to the contract
+        _mintUSDT(address(maseerPrecommit), 1000 * 1e6);
+
+        assertEq(usdt.balanceOf(address(maseerPrecommit)), 1000 * 1e6);
+
+        maseerPrecommit.exit();
+
+        assertEq(usdt.balanceOf(address(maseerPrecommit)), 0);
+        assertEq(usdt.balanceOf(address(maseerOne.flo())), 1000 * 1e6);
+
+    }
 }

@@ -77,6 +77,16 @@ contract MaseerOneProxyTest is MaseerTestBase {
         assertEq(MaseerProxy(maseerOne.flo()).impl(), newFloImpl);
     }
 
-    // TODO: Test proxy interactions
-    // TODO: Test proxy upgrade
+    function testAdm() public view {
+        assertEq(maseerOne.adm(), admProxy);
+        assertEq(MaseerProxy(maseerOne.adm()).impl(), admImpl);
+    }
+
+    function testAdmUpgrade() public {
+        address newAdmImpl = address(new MaseerTreasury());
+        vm.prank(proxyAuth);
+        MaseerProxy(admProxy).file(newAdmImpl);
+        assertEq(maseerOne.adm(), admProxy);
+        assertEq(MaseerProxy(maseerOne.adm()).impl(), newAdmImpl);
+    }
 }

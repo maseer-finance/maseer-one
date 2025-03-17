@@ -14,7 +14,7 @@ contract MaseerTreasury is MaseerImplementation {
         _setIssuer(usr, 1);
     }
 
-    function revoke(address usr) external auth {
+    function depose(address usr) external auth {
         _setIssuer(usr, 0);
     }
 
