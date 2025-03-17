@@ -14,6 +14,8 @@ import {MaseerTreasury} from "../src/MaseerTreasury.sol";
 import {MaseerConduit}  from "../src/MaseerConduit.sol";
 import {MaseerProxy}    from "../src/MaseerProxy.sol";
 
+import {OFAC}           from "./fixtures/OFAC.sol";
+
 
 interface IUSDT {
     function transferFrom(address from, address to, uint256 amount) external; // non-standard
@@ -58,6 +60,8 @@ contract MaseerTestBase is Test {
     address public bob;
     address public carol;
     address public david;
+    address public enemy;
+    address public issuer;
     address public bank;
     address public pipAuth;
     address public actAuth;
@@ -73,12 +77,19 @@ contract MaseerTestBase is Test {
     MaseerOne public maseerOne;
     address   public maseerOneAddr;
 
+    OFAC      public ofac;
+
     constructor() {
-        alice = makeAddr("alice");
-        bob   = makeAddr("bob");
-        carol = makeAddr("carol");
-        david = makeAddr("david");
-        bank  = makeAddr("bank");
+
+        ofac  = new OFAC();
+
+        alice  = makeAddr("alice");
+        bob    = makeAddr("bob");
+        carol  = makeAddr("carol");
+        david  = makeAddr("david");
+        enemy  = ofac.ofac(0);
+        issuer = makeAddr("issuer");
+        bank   = makeAddr("bank");
 
         pipAuth = makeAddr("pipAuth");
         actAuth = makeAddr("actAuth");
@@ -107,6 +118,7 @@ contract MaseerTestBase is Test {
         adm = MaseerTreasury(address(new MaseerProxy(admImpl)));
         admProxy = address(adm);
         adm.rely(admAuth);
+        adm.bestow(issuer);
         adm.deny(address(this));
         MaseerProxy(admProxy).relyProxy(proxyAuth);
         MaseerProxy(admProxy).denyProxy(address(this));

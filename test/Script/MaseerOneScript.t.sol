@@ -16,8 +16,8 @@ contract MaseerOneScriptTest is MaseerTestBase {
     }
 
     function testMaseerOneScript() public view {
-        assertEq(maseerOneScript.NAME(), "Maseer Cana");
-        assertEq(maseerOneScript.SYMBOL(), "CANA");
+        assertEq(maseerOneScript.NAME(), "Maseer California Carbon Credits");
+        assertEq(maseerOneScript.SYMBOL(), "CRBN");
         assertEq(maseerOneScript.USDT(), 0xdAC17F958D2ee523a2206206994597C13D831ec7);
     }
 
@@ -88,6 +88,11 @@ contract MaseerOneScriptTest is MaseerTestBase {
         assertEq(MaseerConduit(maseerOne.flo()).can(maseerOneScript.conduitAuth()), 1);
         assertEq(MaseerConduit(maseerOne.flo()).bud(maseerOneScript.conduitOut()), 1);
         assertEq(MaseerProxy(maseerOne.flo()).wardsProxy(maseerOneScript.proxyAuth()), 1);
+
+        assertEq(maseerOne.adm(), maseerOneScript.MASEER_TREASURY_PROXY());
+        assertEq(MaseerProxy(maseerOne.adm()).impl(), maseerOneScript.MASEER_TREASURY_IMPLEMENTATION());
+        assertEq(MaseerTreasury(maseerOne.adm()).wards(maseerOneScript.treasuryAuth()), 1);
+        assertEq(MaseerProxy(maseerOne.adm()).wardsProxy(maseerOneScript.proxyAuth()), 1);
     }
 
 }

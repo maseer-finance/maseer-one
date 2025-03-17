@@ -249,7 +249,14 @@ contract MaseerOne is MaseerToken {
         emit Issued(msg.sender, amt);
     }
 
-    // Smelting function for burning tokens
+    // Issuer smelting function to burn for a specific user
+    function smelt(address usr, uint256 amt) external issuer pass(msg.sender) {
+        _burn(usr, amt);
+
+        emit Smelted(usr, amt);
+    }
+
+    // User-level smelting function for burning tokens
     function smelt(uint256 amt) external pass(msg.sender) {
         _burn(msg.sender, amt);
 

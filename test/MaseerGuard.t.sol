@@ -7,20 +7,19 @@ contract MaseerGuardTest is MaseerTestBase {
 
     MaseerGuard public maseerGuard;
 
-    // List of bad actors at https://github.com/ultrasoundmoney/ofac-ethereum-addresses
-    address badActor = 0x08723392Ed15743cc38513C4925f5e6be5c17243;
-
     function setUp() public {
 
         maseerGuard = new MaseerGuard(USDT);
     }
 
     function testGoodActor() public {
-        address goodActor = makeAddr("alice");
-        assertEq(maseerGuard.pass(goodActor), true);
+        assertEq(maseerGuard.pass(alice), true);
     }
 
     function testBadActor() public view{
-        assertEq(maseerGuard.pass(badActor), false);
+        uint256 _len = ofac.length();
+        for (uint256 i = 0; i < _len; i++) {
+            assertEq(maseerGuard.pass(ofac.ofac(i)), false);
+        }
     }
 }

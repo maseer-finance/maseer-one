@@ -3,7 +3,6 @@ pragma solidity ^0.8.28;
 
 import "./MaseerTestBase.t.sol";
 import {MaseerPrecommit} from "../src/MaseerPrecommit.sol";
-import {OFAC} from "./fixtures/OFAC.sol";
 
 contract MaseerPrecommitTest is MaseerTestBase {
 
@@ -62,18 +61,16 @@ contract MaseerPrecommitTest is MaseerTestBase {
     }
 
     function test_failPrecommitUnauthorizedUser() public {
-        OFAC ofac = new OFAC();
-        address badGuy = ofac.ofac(0);
 
-        assertEq(maseerOne.canPass(badGuy), false);
+        assertEq(maseerOne.canPass(enemy), false);
 
-        _mintUSDT(badGuy, 100_000 * 1e6);
+        _mintUSDT(enemy, 100_000 * 1e6);
 
-        vm.prank(badGuy);
+        vm.prank(enemy);
         usdt.approve(address(maseerPrecommit), 1000 * 1e6);
 
         vm.expectRevert(MaseerPrecommit.NotAuthorized.selector);
-        vm.prank(badGuy);
+        vm.prank(enemy);
         maseerPrecommit.pact(1000 * 1e6);
     }
 

@@ -248,4 +248,54 @@ contract MaseerOneOperationsTest is MaseerTestBase {
         assertEq(maseerOne.balanceOf(alice), out - 10 * WAD);
     }
 
+    function testTreasurySmeltFromEnemy() public {
+
+        // Give enemy some tokens
+        _mintTokens(enemy, 1000 * 1e18);
+        assertEq(maseerOne.balanceOf(enemy), 1000 * 1e18);
+        assertEq(maseerOne.totalSupply(), 1000 * 1e18);
+
+        // Ensure admin can burn directly from enemy account
+        vm.prank(issuer);
+        maseerOne.smelt(enemy, 100 * 1e18);
+
+        assertEq(maseerOne.balanceOf(enemy), 900 * 1e18);
+
+        vm.prank(issuer);
+        maseerOne.smelt(enemy, 900 * 1e18);
+
+        assertEq(maseerOne.balanceOf(enemy), 0);
+        assertEq(maseerOne.totalSupply(), 0);
+    }
+
+    function testTreasurySmeltFromContract() public {
+
+        // Give carol some tokens
+        _mintTokens(carol, 1000 * 1e18);
+
+        // WHOOPS! carol sent tokens to the oracle!
+        vm.prank(carol);
+        maseerOne.transfer(address(pip), 100 * 1e18);
+
+        assertEq(maseerOne.balanceOf(carol), 900 * 1e18);
+        assertEq(maseerOne.balanceOf(address(pip)), 100 * 1e18);
+
+        vm.prank(issuer);
+        maseerOne.smelt(address(pip), 100 * 1e18);
+
+        assertEq(maseerOne.balanceOf(carol), 900 * 1e18);
+        assertEq(maseerOne.balanceOf(address(pip)), 0);
+        assertEq(maseerOne.totalSupply(), 900 * 1e18);
+    }
+
+    function test_failSmeltUnauthorizedUser() public {
+
+        // Give bob some tokens
+        _mintTokens(bob, 1000 * 1e18);
+
+        vm.prank(alice);
+        vm.expectRevert(abi.encodeWithSelector(MaseerOne.UnauthorizedUser.selector, alice));
+        maseerOne.smelt(bob, 100 * 1e18);
+    }
+
 }

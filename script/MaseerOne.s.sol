@@ -28,10 +28,10 @@ contract MaseerOneScript is Script {
 
     address public oracleAuth      = SIG_TWO;
 
-    string public constant NAME = "Maseer Cana";
-    string public constant SYMBOL = "CANA";
+    string public constant NAME = "Maseer California Carbon Credits";
+    string public constant SYMBOL = "CRBN";
 
-    bytes32 public constant ORACLE_NAME     = "CANAUSDT";
+    bytes32 public constant ORACLE_NAME     = "CRBNUSDT";
     bytes32 public constant ORACLE_DECIMALS = bytes32(uint256(6));
     uint256 public          ORACLE_PRICE    = 1e6; // 1.0
 

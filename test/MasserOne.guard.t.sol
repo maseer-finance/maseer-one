@@ -7,10 +7,9 @@ import "./fixtures/OFAC.sol";
 
 contract MaseerOneGuardTest is MaseerTestBase {
 
-    OFAC ofac;
 
     function setUp() public {
-        ofac = new OFAC();
+
     }
 
     function testBadActors() public view {
@@ -26,5 +25,6 @@ contract MaseerOneGuardTest is MaseerTestBase {
         assertEq(maseerOne.canPass(alice), true);
         assertEq(maseerOne.canPass(bob),   true);
         assertEq(maseerOne.canPass(carol), true);
+        assertEq(maseerOne.canPass(david), true);
     }
 }
