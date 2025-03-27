@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2025-03-21 16:37:45</td>
+            <td class="headerValue">2025-03-27 16:47:08</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">8</td>
@@ -95,8 +95,8 @@
 <a name="33"><span class="lineNum">      33 </span>            :     error PermitDeadlineExpired(uint256 deadline, uint256 actual);</a>
 <a name="34"><span class="lineNum">      34 </span>            :     error InvalidSigner(address recovered, address expected);</a>
 <a name="35"><span class="lineNum">      35 </span>            : </a>
-<a name="36"><span class="lineNum">      36 </span><span class="lineCov">        247 :     function approve(address usr) public virtual returns (bool) {</span></a>
-<a name="37"><span class="lineNum">      37 </span><span class="lineCov">        247 :         return approve(usr, type(uint256).max);</span></a>
+<a name="36"><span class="lineNum">      36 </span><span class="lineCov">        250 :     function approve(address usr) public virtual returns (bool) {</span></a>
+<a name="37"><span class="lineNum">      37 </span><span class="lineCov">        250 :         return approve(usr, type(uint256).max);</span></a>
 <a name="38"><span class="lineNum">      38 </span>            :     }</a>
 <a name="39"><span class="lineNum">      39 </span>            : </a>
 <a name="40"><span class="lineNum">      40 </span><span class="lineCov">        504 :     function approve(address usr, uint256 wad) public virtual returns (bool) {</span></a>
@@ -107,35 +107,35 @@
 <a name="45"><span class="lineNum">      45 </span><span class="lineCov">        504 :         return true;</span></a>
 <a name="46"><span class="lineNum">      46 </span>            :     }</a>
 <a name="47"><span class="lineNum">      47 </span>            : </a>
-<a name="48"><span class="lineNum">      48 </span><span class="lineCov">        349 :     function transfer(address dst, uint256 wad) public virtual returns (bool) {</span></a>
-<a name="49"><span class="lineNum">      49 </span><span class="lineCov">        349 :         balanceOf[msg.sender] -= wad;</span></a>
+<a name="48"><span class="lineNum">      48 </span><span class="lineCov">        352 :     function transfer(address dst, uint256 wad) public virtual returns (bool) {</span></a>
+<a name="49"><span class="lineNum">      49 </span><span class="lineCov">        352 :         balanceOf[msg.sender] -= wad;</span></a>
 <a name="50"><span class="lineNum">      50 </span>            : </a>
 <a name="51"><span class="lineNum">      51 </span>            :         // Cannot overflow because balance</a>
 <a name="52"><span class="lineNum">      52 </span>            :         //   can't exceed totalSupply</a>
 <a name="53"><span class="lineNum">      53 </span>            :         unchecked {</a>
-<a name="54"><span class="lineNum">      54 </span><span class="lineCov">        349 :             balanceOf[dst] += wad;</span></a>
+<a name="54"><span class="lineNum">      54 </span><span class="lineCov">        352 :             balanceOf[dst] += wad;</span></a>
 <a name="55"><span class="lineNum">      55 </span>            :         }</a>
 <a name="56"><span class="lineNum">      56 </span>            : </a>
-<a name="57"><span class="lineNum">      57 </span><span class="lineCov">        349 :         emit Transfer(msg.sender, dst, wad);</span></a>
+<a name="57"><span class="lineNum">      57 </span><span class="lineCov">        352 :         emit Transfer(msg.sender, dst, wad);</span></a>
 <a name="58"><span class="lineNum">      58 </span>            : </a>
-<a name="59"><span class="lineNum">      59 </span><span class="lineCov">        349 :         return true;</span></a>
+<a name="59"><span class="lineNum">      59 </span><span class="lineCov">        352 :         return true;</span></a>
 <a name="60"><span class="lineNum">      60 </span>            :     }</a>
 <a name="61"><span class="lineNum">      61 </span>            : </a>
-<a name="62"><span class="lineNum">      62 </span><span class="lineCov">        249 :     function transferFrom(address src, address dst, uint256 wad)</span></a>
+<a name="62"><span class="lineNum">      62 </span><span class="lineCov">        252 :     function transferFrom(address src, address dst, uint256 wad)</span></a>
 <a name="63"><span class="lineNum">      63 </span>            :         public virtual</a>
 <a name="64"><span class="lineNum">      64 </span>            :         returns (bool)</a>
 <a name="65"><span class="lineNum">      65 </span>            :     {</a>
-<a name="66"><span class="lineNum">      66 </span><span class="lineCov">        249 :         uint256 _allowance = allowance[src][msg.sender];</span></a>
-<a name="67"><span class="lineNum">      67 </span><span class="lineCov">        249 :         if (_allowance != type(uint256).max) {</span></a>
-<a name="68"><span class="lineNum">      68 </span><span class="lineCov">        248 :             allowance[src][msg.sender] = _allowance - wad;</span></a>
+<a name="66"><span class="lineNum">      66 </span><span class="lineCov">        252 :         uint256 _allowance = allowance[src][msg.sender];</span></a>
+<a name="67"><span class="lineNum">      67 </span><span class="lineCov">        252 :         if (_allowance != type(uint256).max) {</span></a>
+<a name="68"><span class="lineNum">      68 </span><span class="lineCov">        251 :             allowance[src][msg.sender] = _allowance - wad;</span></a>
 <a name="69"><span class="lineNum">      69 </span>            :         }</a>
 <a name="70"><span class="lineNum">      70 </span>            : </a>
-<a name="71"><span class="lineNum">      71 </span><span class="lineCov">        248 :         balanceOf[src] -= wad;</span></a>
-<a name="72"><span class="lineNum">      72 </span><span class="lineCov">        248 :         balanceOf[dst] += wad;</span></a>
+<a name="71"><span class="lineNum">      71 </span><span class="lineCov">        251 :         balanceOf[src] -= wad;</span></a>
+<a name="72"><span class="lineNum">      72 </span><span class="lineCov">        251 :         balanceOf[dst] += wad;</span></a>
 <a name="73"><span class="lineNum">      73 </span>            : </a>
-<a name="74"><span class="lineNum">      74 </span><span class="lineCov">        248 :         emit Transfer(src, dst, wad);</span></a>
+<a name="74"><span class="lineNum">      74 </span><span class="lineCov">        251 :         emit Transfer(src, dst, wad);</span></a>
 <a name="75"><span class="lineNum">      75 </span>            : </a>
-<a name="76"><span class="lineNum">      76 </span><span class="lineCov">        248 :         return true;</span></a>
+<a name="76"><span class="lineNum">      76 </span><span class="lineCov">        251 :         return true;</span></a>
 <a name="77"><span class="lineNum">      77 </span>            :     }</a>
 <a name="78"><span class="lineNum">      78 </span>            : </a>
 <a name="79"><span class="lineNum">      79 </span><span class="lineCov">          1 :     function permit(</span></a>

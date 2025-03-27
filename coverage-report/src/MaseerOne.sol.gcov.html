@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2025-03-21 16:37:45</td>
+            <td class="headerValue">2025-03-27 16:47:08</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">39</td>
@@ -335,8 +335,8 @@
 <a name="273"><span class="lineNum">     273 </span><span class="lineCov">          4 :         return Act(act).burnable();</span></a>
 <a name="274"><span class="lineNum">     274 </span>            :     }</a>
 <a name="275"><span class="lineNum">     275 </span>            : </a>
-<a name="276"><span class="lineNum">     276 </span><span class="lineCov">       1904 :     function canPass(address usr) external view returns (bool) {</span></a>
-<a name="277"><span class="lineNum">     277 </span><span class="lineCov">       1904 :         return _canPass(usr);</span></a>
+<a name="276"><span class="lineNum">     276 </span><span class="lineCov">       1808 :     function canPass(address usr) external view returns (bool) {</span></a>
+<a name="277"><span class="lineNum">     277 </span><span class="lineCov">       1808 :         return _canPass(usr);</span></a>
 <a name="278"><span class="lineNum">     278 </span>            :     }</a>
 <a name="279"><span class="lineNum">     279 </span>            : </a>
 <a name="280"><span class="lineNum">     280 </span><span class="lineCov">          5 :     function cooldown() external view returns (uint256) {</span></a>
@@ -383,22 +383,22 @@
 <a name="321"><span class="lineNum">     321 </span>            : </a>
 <a name="322"><span class="lineNum">     322 </span>            :     // Token overrides for compliance</a>
 <a name="323"><span class="lineNum">     323 </span>            : </a>
-<a name="324"><span class="lineNum">     324 </span><span class="lineCov">        247 :     function approve(address usr) public override pass(msg.sender) pass(usr) returns (bool) {</span></a>
-<a name="325"><span class="lineNum">     325 </span><span class="lineCov">        247 :         return super.approve(usr);</span></a>
+<a name="324"><span class="lineNum">     324 </span><span class="lineCov">        250 :     function approve(address usr) public override pass(msg.sender) pass(usr) returns (bool) {</span></a>
+<a name="325"><span class="lineNum">     325 </span><span class="lineCov">        250 :         return super.approve(usr);</span></a>
 <a name="326"><span class="lineNum">     326 </span>            :     }</a>
 <a name="327"><span class="lineNum">     327 </span>            : </a>
-<a name="328"><span class="lineNum">     328 </span><span class="lineCov">        270 :     function approve(address usr, uint256 wad) public override pass(msg.sender) pass(usr) returns (bool) {</span></a>
+<a name="328"><span class="lineNum">     328 </span><span class="lineCov">        267 :     function approve(address usr, uint256 wad) public override pass(msg.sender) pass(usr) returns (bool) {</span></a>
 <a name="329"><span class="lineNum">     329 </span><span class="lineCov">        504 :         return super.approve(usr, wad);</span></a>
 <a name="330"><span class="lineNum">     330 </span>            :     }</a>
 <a name="331"><span class="lineNum">     331 </span>            : </a>
 <a name="332"><span class="lineNum">     332 </span><span class="lineCov">        361 :     function transfer(address dst, uint256 wad) public override pass(msg.sender) pass(dst) returns (bool) {</span></a>
-<a name="333"><span class="lineNum">     333 </span><span class="lineCov">        350 :         if (dst == address(this)) revert TransferToContract();</span></a>
-<a name="334"><span class="lineNum">     334 </span><span class="lineCov">        349 :         return super.transfer(dst, wad);</span></a>
+<a name="333"><span class="lineNum">     333 </span><span class="lineCov">        353 :         if (dst == address(this)) revert TransferToContract();</span></a>
+<a name="334"><span class="lineNum">     334 </span><span class="lineCov">        352 :         return super.transfer(dst, wad);</span></a>
 <a name="335"><span class="lineNum">     335 </span>            :     }</a>
 <a name="336"><span class="lineNum">     336 </span>            : </a>
 <a name="337"><span class="lineNum">     337 </span><span class="lineCov">        261 :     function transferFrom(address src, address dst, uint256 wad) public override pass(msg.sender) pass(src) pass(dst) returns (bool) {</span></a>
-<a name="338"><span class="lineNum">     338 </span><span class="lineCov">        250 :         if (dst == address(this)) revert TransferToContract();</span></a>
-<a name="339"><span class="lineNum">     339 </span><span class="lineCov">        249 :         return super.transferFrom(src, dst, wad);</span></a>
+<a name="338"><span class="lineNum">     338 </span><span class="lineCov">        253 :         if (dst == address(this)) revert TransferToContract();</span></a>
+<a name="339"><span class="lineNum">     339 </span><span class="lineCov">        252 :         return super.transferFrom(src, dst, wad);</span></a>
 <a name="340"><span class="lineNum">     340 </span>            :     }</a>
 <a name="341"><span class="lineNum">     341 </span>            : </a>
 <a name="342"><span class="lineNum">     342 </span><span class="lineCov">          1 :     function permit(</span></a>
@@ -415,8 +415,8 @@
 <a name="353"><span class="lineNum">     353 </span>            : </a>
 <a name="354"><span class="lineNum">     354 </span>            :     // Internal utility functions</a>
 <a name="355"><span class="lineNum">     355 </span>            : </a>
-<a name="356"><span class="lineNum">     356 </span><span class="lineCov">       5035 :     function _canPass(address _usr) internal view returns (bool) {</span></a>
-<a name="357"><span class="lineNum">     357 </span><span class="lineCov">       5035 :         return Cop(cop).pass(_usr);</span></a>
+<a name="356"><span class="lineNum">     356 </span><span class="lineCov">       4945 :     function _canPass(address _usr) internal view returns (bool) {</span></a>
+<a name="357"><span class="lineNum">     357 </span><span class="lineCov">       4945 :         return Cop(cop).pass(_usr);</span></a>
 <a name="358"><span class="lineNum">     358 </span>            :     }</a>
 <a name="359"><span class="lineNum">     359 </span>            : </a>
 <a name="360"><span class="lineNum">     360 </span><span class="lineCov">          7 :     function _cooldown() internal view returns (uint256) {</span></a>
