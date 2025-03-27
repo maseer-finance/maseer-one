@@ -29,6 +29,10 @@ abstract contract MaseerToken {
     event Approval(address indexed src, address indexed usr, uint256 wad);
     event Transfer(address indexed src, address indexed dst, uint256 wad);
 
+    error InvalidChain(uint256 expected, uint256 actual);
+    error PermitDeadlineExpired(uint256 deadline, uint256 actual);
+    error InvalidSigner(address recovered, address expected);
+
     function approve(address usr) public virtual returns (bool) {
         return approve(usr, type(uint256).max);
     }
@@ -81,8 +85,8 @@ abstract contract MaseerToken {
         bytes32 r,
         bytes32 s
     ) public virtual {
-        require(block.chainid == CHAIN_ID,   "INVALID_CHAIN");
-        require(deadline >= block.timestamp, "PERMIT_DEADLINE_EXPIRED");
+        if (block.chainid != CHAIN_ID) revert InvalidChain(CHAIN_ID, block.chainid);
+        if (deadline < block.timestamp) revert PermitDeadlineExpired(deadline, block.timestamp);
 
         // Unchecked because the owner's nonce is uint256 which cannot realistically overflow.
         unchecked {
@@ -110,7 +114,7 @@ abstract contract MaseerToken {
                 s
             );
 
-            require(recoveredAddress != address(0) && recoveredAddress == owner, "INVALID_SIGNER");
+            if (recoveredAddress == address(0) || recoveredAddress != owner) revert InvalidSigner(recoveredAddress, owner);
 
             allowance[recoveredAddress][spender] = value;
         }
