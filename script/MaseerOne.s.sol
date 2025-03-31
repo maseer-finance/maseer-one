@@ -165,12 +165,6 @@ contract MaseerOneScript is Script {
         (bool success, bytes memory data) = USDT.call(abi.encodeWithSignature("mint(address,uint256)", msg.sender, 100_000_000_000 * 1e6));
         (success, data) = USDT.call(abi.encodeWithSignature("mint(address,uint256)", SEPOLIA_AUTH, 100_000_000_000 * 1e6));
         data;
-        proxyAuth = SEPOLIA_AUTH;
-        oracleAuth = SEPOLIA_AUTH;
-        marketAuth = SEPOLIA_AUTH;
-        complianceAuth = SEPOLIA_AUTH;
-        conduitAuth = SEPOLIA_AUTH;
-        conduitOut = SEPOLIA_AUTH;
     }
 
     function setupSepoliaMarket() internal {
