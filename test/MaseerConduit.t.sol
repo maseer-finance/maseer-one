@@ -192,4 +192,20 @@ contract MaseerConduitTest is MaseerTestBase {
         assertEq(IERC20(DAI).balanceOf(bob), bal);
     }
 
+    function test_failMoveAddressZero() public {
+
+        vm.prank(floAuth);
+        maseerConduit.hope(alice);
+        vm.prank(floAuth);
+        maseerConduit.kiss(bob);
+
+        vm.expectRevert(MaseerConduit.ZeroAddress.selector);
+        vm.prank(alice);
+        maseerConduit.move(address(0), bob);
+
+        vm.expectRevert(MaseerConduit.ZeroAddress.selector);
+        vm.prank(alice);
+        maseerConduit.move(address(0), bob, 1);
+    }
+
 }
