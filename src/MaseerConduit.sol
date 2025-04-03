@@ -48,17 +48,18 @@ contract MaseerConduit is MaseerImplementation {
     }
 
     function move(address _token, address _to) external operator buds(_to) returns (uint256 _amt) {
+        if (_token == address(0)) revert ZeroAddress();
         _amt = Gem(_token).balanceOf(address(this));
         _move(_token, _to, _amt);
     }
 
     function move(address _token, address _to, uint256 _amt) external operator buds(_to) returns (uint256) {
+        if (_token == address(0)) revert ZeroAddress();
         _move(_token, _to, _amt);
         return _amt;
     }
 
     function _move(address _token, address _to, uint256 _amt) internal {
-        if (_token == address(0)) revert ZeroAddress();
         _safeTransfer(_token, _to, _amt);
         emit Move(_token, _to, _amt);
     }
