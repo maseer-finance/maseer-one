@@ -9,11 +9,22 @@ contract MaseerPrice is MaseerImplementation{
     bytes32 internal constant _PRICE_SLOT    = keccak256("maseer.price.price");
     bytes32 internal constant _DECIMALS_SLOT = keccak256("maseer.price.decimals");
 
-    // Allocate slots 0-49
+    // Slot 0
+    bytes32 private _emptySlot;
+    // Slot 1
+    mapping (address => uint256) public bud;
+    // Allocate slots 2-49
     uint256[50] private __gap;
 
     event File(bytes32 indexed what, bytes32 data);
-    event PriceUpdate(uint256 indexed price, uint256 indexed timestamp);
+    event Poke(uint256 indexed price, uint256 indexed timestamp);
+
+    function kiss(address usr) external auth { bud[usr] = 1; }
+    function diss(address usr) external auth { bud[usr] = 0; }
+    modifier buds() {
+        if (bud[msg.sender] != 1) revert NotAuthorized(msg.sender);
+        _;
+    }
 
     constructor() {
         _rely(msg.sender);
@@ -23,7 +34,7 @@ contract MaseerPrice is MaseerImplementation{
         return _uint256Slot(_PRICE_SLOT);
     }
 
-    function poke(uint256 read_) public auth {
+    function poke(uint256 read_) public buds {
         _poke(read_);
     }
 
@@ -53,6 +64,7 @@ contract MaseerPrice is MaseerImplementation{
 
     function _poke(uint256 read_) internal {
         _setVal(_PRICE_SLOT, bytes32(read_));
-        emit PriceUpdate(read_, block.timestamp);
+        emit Poke(read_, block.timestamp);
     }
+
 }

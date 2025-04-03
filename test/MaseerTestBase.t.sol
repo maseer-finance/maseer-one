@@ -64,6 +64,7 @@ contract MaseerTestBase is Test {
     address public issuer;
     address public bank;
     address public pipAuth;
+    address public pipBud;
     address public actAuth;
     address public admAuth;
     address public copAuth;
@@ -92,6 +93,7 @@ contract MaseerTestBase is Test {
         bank   = makeAddr("bank");
 
         pipAuth = makeAddr("pipAuth");
+        pipBud  = makeAddr("pipBud");
         actAuth = makeAddr("actAuth");
         admAuth = makeAddr("admAuth");
         copAuth = makeAddr("copAuth");
@@ -102,6 +104,7 @@ contract MaseerTestBase is Test {
         pip = MaseerPrice(address(new MaseerProxy(pipImpl)));
         pipProxy = address(pip);
         pip.rely(pipAuth);
+        pip.kiss(pipBud);
         pip.deny(address(this));
         MaseerProxy(pipProxy).relyProxy(proxyAuth);
         MaseerProxy(pipProxy).denyProxy(address(this));

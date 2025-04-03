@@ -21,19 +21,17 @@ contract MaseerConduit is MaseerImplementation {
 
     error ZeroAddress();
     error TransferFailed();
-    error InvalidAddress(address);
-    error NotOperator(address);
 
     function hope(address usr) external auth { can[usr] = 1; }
     function nope(address usr) external auth { can[usr] = 0; }
     modifier operator() {
-        if (can[msg.sender] != 1) revert NotOperator(msg.sender);
+        if (can[msg.sender] != 1) revert NotAuthorized(msg.sender);
         _;
     }
     function kiss(address usr) external auth { bud[usr] = 1; }
     function diss(address usr) external auth { bud[usr] = 0; }
     modifier buds(address usr) {
-        if (bud[usr] != 1) revert InvalidAddress(usr);
+        if (bud[usr] != 1) revert NotAuthorized(usr);
         _;
     }
 

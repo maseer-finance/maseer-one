@@ -21,12 +21,13 @@ contract MaseerOneScript is Script {
 
     address public proxyAuth       = SIG_ONE;
     address public marketAuth      = SIG_ONE;
+    address public oracleAuth      = SIG_ONE;
     address public treasuryAuth    = SIG_ONE;
     address public complianceAuth  = SIG_ONE;
     address public conduitAuth     = SIG_ONE;
     address public conduitOut      = SIG_ONE;
 
-    address public oracleAuth      = SIG_TWO;
+    address public oracleUpdater   = SIG_TWO;
 
     string public constant NAME = "CANA Holdings California Carbon Credits";
     string public constant SYMBOL = "CANA";
@@ -96,7 +97,8 @@ contract MaseerOneScript is Script {
         // MASEER_ORACLE_PROXY set wards and initial config
         MaseerPrice(MASEER_ORACLE_PROXY).file("name", ORACLE_NAME);
         MaseerPrice(MASEER_ORACLE_PROXY).file("decimals", ORACLE_DECIMALS);
-        MaseerPrice(MASEER_ORACLE_PROXY).poke(ORACLE_PRICE);
+        MaseerPrice(MASEER_ORACLE_PROXY).file("price", bytes32(ORACLE_PRICE));
+        MaseerPrice(MASEER_ORACLE_PROXY).kiss(oracleUpdater);
         MaseerPrice(MASEER_ORACLE_PROXY).rely(oracleAuth);
         MaseerProxy(MASEER_ORACLE_PROXY).relyProxy(proxyAuth);
 
