@@ -60,7 +60,7 @@ contract MaseerPrecommitTest is MaseerTestBase {
         maseerPrecommit.pact(1000 * 1e6);
     }
 
-    function test_failPrecommitUnauthorizedUser() public {
+    function test_failPrecommitPactUnauthorizedUser() public {
 
         assertEq(maseerOne.canPass(enemy), false);
 
@@ -72,6 +72,21 @@ contract MaseerPrecommitTest is MaseerTestBase {
         vm.expectRevert(MaseerPrecommit.NotAuthorized.selector);
         vm.prank(enemy);
         maseerPrecommit.pact(1000 * 1e6);
+    }
+
+    function test_failPrecommitExecUnauthorizedUser() public {
+        _mintUSDT(alice, 100_000 * 1e6);
+
+        vm.prank(alice);
+        usdt.approve(address(maseerPrecommit), 1000 * 1e6);
+
+        // alice approves maseerPrecommit to spend 1000 USDT
+        vm.prank(alice);
+        maseerPrecommit.pact(1000 * 1e6);
+
+        vm.expectRevert(MaseerPrecommit.NotAuthorized.selector);
+        vm.prank(enemy);
+        maseerPrecommit.exec(0);
     }
 
     function testPrecommitExec() public {

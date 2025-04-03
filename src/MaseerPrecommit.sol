@@ -37,6 +37,11 @@ contract MaseerPrecommit {
     error InsufficientAmount();
     error NotAuthorized();
 
+    modifier pass() {
+        if (!One(one).canPass(msg.sender)) revert NotAuthorized();
+        _;
+    }
+
     constructor(address _one) {
         gem = One(_one).gem();
         MIN = 1000 * 10**uint256(Gem(gem).decimals());
@@ -44,10 +49,9 @@ contract MaseerPrecommit {
         Gem(gem).approve(_one, type(uint256).max);
     }
 
-    function pact(uint256 _amt) external {
+    function pact(uint256 _amt) external pass {
         if (_amt < MIN) revert InsufficientAmount();
         if (Gem(gem).allowance(msg.sender, address(this)) < _amt) revert InsufficientAllowance();
-        if (!One(one).canPass(msg.sender)) revert NotAuthorized();
 
         deal[deals++] = Deal({
             usr: msg.sender,
@@ -55,7 +59,7 @@ contract MaseerPrecommit {
         });
     }
 
-    function exec(uint256 _idx) external {
+    function exec(uint256 _idx) external pass {
         Deal memory c = deal[_idx];
         if (c.amt == 0) revert InsufficientAmount();
         deal[_idx].amt = 0;
