@@ -25,7 +25,7 @@ contract MaseerOneOperationsTest is MaseerTestBase {
         vm.prank(actAuth);
         act.setCapacity(1_000_000 * 1e18); // 1M Cana total supply
 
-        vm.prank(pipAuth);
+        vm.prank(pipBud);
         pip.poke(10 * 1e6); // 10 USDT per token
 
         _mintUSDT(alice, 1_000_000 * 1e6);

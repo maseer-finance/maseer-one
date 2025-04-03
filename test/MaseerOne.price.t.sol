@@ -12,10 +12,27 @@ contract MaseerOnePriceTest is MaseerTestBase {
 
     }
 
+    function testPoke() public {
+        assertEq(pip.read(), 0);
+
+        vm.expectEmit();
+        emit MaseerPrice.Poke(30240000, block.timestamp);
+        vm.prank(pipBud);
+        pip.poke(30240000);
+
+        assertEq(pip.read(), 30240000);
+
+        // bob is not authorized to update the price
+        vm.prank(bob);
+        vm.expectRevert(abi.encodeWithSelector(MaseerImplementation.NotAuthorized.selector, bob));
+        pip.poke(1337);
+        assertEq(pip.read(), 30240000);
+    }
+
     function testPause() public {
         assertTrue(pip.paused());
 
-        vm.prank(pipAuth);
+        vm.prank(pipBud);
         pip.poke(1);
 
         // Not paused if price is anything other than 0
@@ -49,7 +66,7 @@ contract MaseerOnePriceTest is MaseerTestBase {
         // Example where price is $30.24
         // 1 CANA = 30.24 USDT
         // 30.24 * 10^6 = 30_240000
-        vm.prank(pipAuth);
+        vm.prank(pipBud);
         pip.poke(30240000);
 
         assertEq(pip.read(), 30240000);
@@ -77,12 +94,12 @@ contract MaseerOnePriceTest is MaseerTestBase {
             return;
         }
 
-        vm.prank(pipAuth);
+        vm.prank(pipBud);
         pip.poke(_price);
 
         assertEq(pip.read(), _price);
 
-        vm.prank(pipAuth);
+        vm.prank(pipBud);
         pip.poke(0);
         assertEq(pip.read(), 0);
 

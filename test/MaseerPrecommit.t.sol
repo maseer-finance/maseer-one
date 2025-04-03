@@ -83,7 +83,7 @@ contract MaseerPrecommitTest is MaseerTestBase {
         act.setHaltMint(block.timestamp);
         vm.prank(actAuth);
         act.setCapacity(type(uint256).max);
-        vm.prank(pipAuth);
+        vm.prank(pipBud);
         pip.poke(10 * 1e6); // 10 USDT per token (no fee)
 
 
@@ -169,7 +169,7 @@ contract MaseerPrecommitTest is MaseerTestBase {
         act.setHaltMint(block.timestamp);
         vm.prank(actAuth);
         act.setCapacity(type(uint256).max);
-        vm.prank(pipAuth);
+        vm.prank(pipBud);
         pip.poke(10 * 1e6); // 10 USDT per token (no fee)
 
         for (uint256 i = 0; i < n; i++) {
