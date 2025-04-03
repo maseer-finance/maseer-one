@@ -69,7 +69,7 @@ contract MaseerPrecommit {
         _safeTransfer(one, c.usr, out);
     }
 
-    function exit() external {
+    function exit() external pass {
         _safeTransfer(gem, One(one).flo(), Gem(gem).balanceOf(address(this)));
     }
 
