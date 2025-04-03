@@ -89,6 +89,12 @@ contract MaseerPrecommitTest is MaseerTestBase {
         maseerPrecommit.exec(0);
     }
 
+    function test_failPrecommitExitUnauthorizedUser() public {
+        vm.expectRevert(MaseerPrecommit.NotAuthorized.selector);
+        vm.prank(enemy);
+        maseerPrecommit.exit();
+    }
+
     function testPrecommitExec() public {
 
         // open market
