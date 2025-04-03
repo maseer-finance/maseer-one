@@ -14,16 +14,16 @@ abstract contract MaseerToken {
     uint256                                  constant internal WAD = 1e18;
 
     // EIP-2612
-    bytes32 immutable           public DOMAIN_SEPARATOR;
+    bytes32 immutable         internal INITIAL_DOMAIN_SEPARATOR;
+    uint256 immutable         internal INITIAL_CHAIN_ID;
     mapping(address => uint256) public nonces;
-    uint256 immutable         internal CHAIN_ID; // token is linked to deployment chain id. Forked chains are not supported.
 
     constructor(string memory name_, string memory symbol_) {
         name   = name_;
         symbol = symbol_;
 
-        CHAIN_ID = block.chainid;
-        DOMAIN_SEPARATOR = _domainSeparator();
+        INITIAL_CHAIN_ID = block.chainid;
+        INITIAL_DOMAIN_SEPARATOR = _computeDomainSeparator();
     }
 
     event Approval(address indexed src, address indexed usr, uint256 wad);
@@ -85,7 +85,6 @@ abstract contract MaseerToken {
         bytes32 r,
         bytes32 s
     ) public virtual {
-        if (block.chainid != CHAIN_ID) revert InvalidChain(CHAIN_ID, block.chainid);
         if (deadline < block.timestamp) revert PermitDeadlineExpired(deadline, block.timestamp);
 
         // Unchecked because the owner's nonce is uint256 which cannot realistically overflow.
@@ -94,7 +93,7 @@ abstract contract MaseerToken {
                 keccak256(
                     abi.encodePacked(
                         "\x19\x01",
-                        DOMAIN_SEPARATOR,
+                        DOMAIN_SEPARATOR(),
                         keccak256(
                             abi.encode(
                                 keccak256(
@@ -140,12 +139,16 @@ abstract contract MaseerToken {
         emit Transfer(usr, address(0), wad);
     }
 
-    function _domainSeparator() internal view returns (bytes32) {
+    function DOMAIN_SEPARATOR() public view returns (bytes32) {
+        return (block.chainid == INITIAL_CHAIN_ID) ? INITIAL_DOMAIN_SEPARATOR : _computeDomainSeparator();
+    }
+
+    function _computeDomainSeparator() internal view returns (bytes32) {
         return keccak256(abi.encode(
             keccak256("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"),
             keccak256(bytes(name)),
             keccak256(bytes("1")),
-            CHAIN_ID,
+            block.chainid,
             address(this)
         ));
     }
