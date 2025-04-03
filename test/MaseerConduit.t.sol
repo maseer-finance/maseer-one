@@ -108,7 +108,7 @@ contract MaseerConduitTest is MaseerTestBase {
         vm.prank(floAuth);
         maseerConduit.hope(alice);
 
-        vm.expectRevert(abi.encodeWithSelector(MaseerConduit.InvalidAddress.selector, carol));
+        vm.expectRevert(abi.encodeWithSelector(MaseerImplementation.NotAuthorized.selector, carol));
         vm.prank(alice);
         maseerConduit.move(USDT, carol);
     }
@@ -119,7 +119,7 @@ contract MaseerConduitTest is MaseerTestBase {
         vm.prank(floAuth);
         maseerConduit.kiss(carol);
 
-        vm.expectRevert(abi.encodeWithSelector(MaseerConduit.NotOperator.selector, alice));
+        vm.expectRevert(abi.encodeWithSelector(MaseerImplementation.NotAuthorized.selector, alice));
         vm.prank(alice);
         maseerConduit.move(USDT, carol);
     }
