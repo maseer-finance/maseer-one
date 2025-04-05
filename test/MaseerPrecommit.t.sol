@@ -136,7 +136,7 @@ contract MaseerPrecommitTest is MaseerTestBase {
 
         for (uint256 i = 0; i < n; i++) {
             address _usr = makeAddr(string(abi.encode(i)));
-            uint256 _amt = bound((uint256(block.number) + i), 1, 100000) * 1e6;
+            uint256 _amt = bound((uint256(block.number) + i), 1000, 100000) * 1e6;
             _mintUSDT(_usr, _amt);
             vm.prank(_usr);
             usdt.approve(address(maseerPrecommit), _amt);
@@ -167,7 +167,7 @@ contract MaseerPrecommitTest is MaseerTestBase {
 
         for (uint256 i = 0; i < n; i++) {
             address _usr = makeAddr(string(abi.encode(i)));
-            uint256 _amt = bound((uint256(block.number) + i), 1, 100000) * 1e6;
+            uint256 _amt = bound((uint256(block.number) + i), 1000, 100000) * 1e6;
             _mintUSDT(_usr, _amt);
             vm.prank(_usr);
             usdt.approve(address(maseerPrecommit), _amt);
