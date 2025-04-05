@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2025-03-27 16:47:08</td>
+            <td class="headerValue">2025-04-05 01:25:52</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">37</td>
@@ -79,8 +79,8 @@
 <a name="17"><span class="lineNum">      17 </span>            :     // Allocate slots 0-49</a>
 <a name="18"><span class="lineNum">      18 </span>            :     uint256[50] private __gap;</a>
 <a name="19"><span class="lineNum">      19 </span>            : </a>
-<a name="20"><span class="lineNum">      20 </span><span class="lineCov">        114 :     constructor() {</span></a>
-<a name="21"><span class="lineNum">      21 </span><span class="lineCov">        114 :         _rely(msg.sender);</span></a>
+<a name="20"><span class="lineNum">      20 </span><span class="lineCov">        120 :     constructor() {</span></a>
+<a name="21"><span class="lineNum">      21 </span><span class="lineCov">        120 :         _rely(msg.sender);</span></a>
 <a name="22"><span class="lineNum">      22 </span>            :     }</a>
 <a name="23"><span class="lineNum">      23 </span>            : </a>
 <a name="24"><span class="lineNum">      24 </span><span class="lineCov">        117 :     function mintable() external view returns (bool) {</span></a>
@@ -244,11 +244,11 @@
 <a name="182"><span class="lineNum">     182 </span>            :     }</a>
 <a name="183"><span class="lineNum">     183 </span>            : </a>
 <a name="184"><span class="lineNum">     184 </span><span class="lineCov">        114 :     function _adjustMintPrice(uint256 _price, uint256 _bps) internal pure returns (uint256) {</span></a>
-<a name="185"><span class="lineNum">     185 </span><span class="lineCov">        114 :         return (_price * (10_000 + _bps)) / 10_000; // Round up</span></a>
+<a name="185"><span class="lineNum">     185 </span><span class="lineCov">        114 :         return (_price * (10_000 + _bps)) / 10_000;</span></a>
 <a name="186"><span class="lineNum">     186 </span>            :     }</a>
 <a name="187"><span class="lineNum">     187 </span>            : </a>
 <a name="188"><span class="lineNum">     188 </span><span class="lineCov">          4 :     function _adjustBurnPrice(uint256 _price, uint256 _bps) internal pure returns (uint256) {</span></a>
-<a name="189"><span class="lineNum">     189 </span><span class="lineCov">          4 :         return (_price * 10_000) / (10_000 + _bps) + 1; // Round down</span></a>
+<a name="189"><span class="lineNum">     189 </span><span class="lineCov">          4 :         return (_price * 10_000) / (10_000 + _bps) + 1;</span></a>
 <a name="190"><span class="lineNum">     190 </span>            :     }</a>
 <a name="191"><span class="lineNum">     191 </span>            : }</a>
 <a name="192"><span class="lineNum">     192 </span>            : </a>
