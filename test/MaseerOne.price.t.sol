@@ -29,6 +29,55 @@ contract MaseerOnePriceTest is MaseerTestBase {
         assertEq(pip.read(), 30240000);
     }
 
+    function testKiss() public {
+
+        assertEq(pip.bud(alice), 0);
+        assertEq(pip.bud(bob), 0);
+
+        vm.prank(pipAuth);
+        pip.kiss(alice);
+
+        assertEq(pip.bud(alice), 1);
+        assertEq(pip.bud(bob), 0);
+
+        vm.prank(pipAuth);
+        pip.kiss(bob);
+
+        assertEq(pip.bud(alice), 1);
+        assertEq(pip.bud(bob), 1);
+
+        vm.expectRevert();
+        vm.prank(bob);
+        pip.kiss(carol);
+    }
+
+    function testDiss() public {
+
+        vm.prank(pipAuth);
+        pip.kiss(alice);
+        vm.prank(pipAuth);
+        pip.kiss(bob);
+
+        assertEq(pip.bud(alice), 1);
+        assertEq(pip.bud(bob), 1);
+
+        vm.expectRevert();
+        vm.prank(bob);
+        pip.diss(alice);
+
+        vm.prank(pipAuth);
+        pip.diss(alice);
+
+        assertEq(pip.bud(alice), 0);
+        assertEq(pip.bud(bob), 1);
+
+        vm.prank(pipAuth);
+        pip.diss(bob);
+
+        assertEq(pip.bud(alice), 0);
+        assertEq(pip.bud(bob), 0);
+    }
+
     function testPause() public {
         assertTrue(pip.paused());
 
