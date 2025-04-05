@@ -64,7 +64,7 @@ contract MaseerOneOperationsTest is MaseerTestBase {
         assertEq(usdt.balanceOf(alice),  1_000_000 * 1e6);
 
         vm.expectEmit();
-        emit MaseerOne.ContractCreated(alice, 10050000, 9950248756218905472637);
+        emit MaseerOne.ContractCreated(alice, 10050000, 9950248756218905472636);
         vm.prank(alice);
         uint256 _amt = maseerOne.mint(100_000 * 1e6);
         assertTrue(_amt > 0);
@@ -103,6 +103,46 @@ contract MaseerOneOperationsTest is MaseerTestBase {
         maseerOne.mint(0);
     }
 
+    function testMintLowPrice() public {
+        // Set the price to 0.000001 USDT
+        vm.prank(pipBud);
+        pip.poke(1);
+        vm.prank(actAuth);
+        act.setCapacity(type(uint256).max);
+
+        vm.prank(alice);
+        usdt.approve(address(maseerOne), 1_000_000 * 1e6);
+        assertEq(usdt.balanceOf(alice),  1_000_000 * 1e6);
+
+        uint256 _mintCost = maseerOne.mintcost();
+        assertEq(_mintCost, 2);
+
+        // results in 5e28 tokens minted
+        vm.expectEmit();
+        emit MaseerOne.ContractCreated(alice, _mintCost, 100_000 * 1e6 * 1e18 / _mintCost);
+        vm.prank(alice);
+        uint256 _amt = maseerOne.mint(100_000 * 1e6);
+        assertTrue(_amt > 0);
+        assertEq(maseerOne.totalSupply(), _amt);
+        assertEq(maseerOne.balanceOf(alice), _amt);
+        assertEq(usdt.balanceOf(alice), 900_000 * 1e6);
+        assertEq(maseerOne.totalPending(), 0);
+        assertEq(maseerOne.unsettled(), 100_000 * 1e6);
+
+        vm.prank(bob);
+        usdt.approve(address(maseerOne), 100_000 * 1e6);
+        assertEq(usdt.balanceOf(bob),  1_000_000 * 1e6);
+
+        vm.prank(bob);
+        _amt = maseerOne.mint(100_000 * 1e6);
+        assertTrue(_amt > 0);
+        assertEq(maseerOne.totalSupply(), _amt * 2);
+        assertEq(maseerOne.balanceOf(bob), _amt);
+        assertEq(usdt.balanceOf(bob), 900_000 * 1e6);
+        assertEq(maseerOne.totalPending(), 0);
+        assertEq(maseerOne.unsettled(), 200_000 * 1e6);
+    }
+
     function testRedeem() public {
 
         vm.prank(alice);
@@ -111,7 +151,7 @@ contract MaseerOneOperationsTest is MaseerTestBase {
         uint256 _amt = maseerOne.mint(100_000 * 1e6);
         maseerOne.settle();
         assertEq(maseerOne.totalPending(), 0);
-        assertEq(_amt, _wdiv(100_000 * 1e6, maseerOne.mintcost()));
+        assertEq(_amt, (100_000 * 1e6 * WAD) / maseerOne.mintcost());
 
         vm.expectEmit();
         emit MaseerOne.ContractRedemption(0, 99007452736, block.timestamp + maseerOne.cooldown(), alice);
@@ -130,6 +170,82 @@ contract MaseerOneOperationsTest is MaseerTestBase {
         // Put tokens back into the contract to settle the claim
         _mintUSDT(address(maseerOne), maseerOne.redemptionAmount(_id));
         assertEq(usdt.balanceOf(address(maseerOne)), maseerOne.redemptionAmount(_id));
+        assertEq(maseerOne.obligated(), 0);
+        assertEq(maseerOne.unsettled(), 0);
+    }
+
+    function testRedeemLowPrice() public {
+
+        // Set the price to 0.000001 USDT
+        vm.prank(pipBud);
+        pip.poke(1);
+        vm.prank(actAuth);
+        act.setCapacity(type(uint256).max);
+
+        vm.prank(alice);
+        usdt.approve(address(maseerOne), 1_000_000 * 1e6);
+        vm.prank(alice);
+        uint256 _amt = maseerOne.mint(100_000 * 1e6);
+        maseerOne.settle();
+        assertEq(maseerOne.totalPending(), 0);
+        assertEq(_amt, (100_000 * 1e6 * WAD) / maseerOne.mintcost());
+
+        uint256 _redeemCost = maseerOne.burncost();
+        assertEq(_redeemCost, 1);
+
+        vm.expectEmit();
+        emit MaseerOne.ContractRedemption(0, _amt / WAD, block.timestamp + maseerOne.cooldown(), alice);
+        vm.prank(alice);
+        uint256 _id = maseerOne.redeem(_amt);
+        assertTrue(_id == 0);
+        assertEq(maseerOne.totalSupply(), 0);
+        assertEq(maseerOne.balanceOf(alice), 0);
+        assertEq(usdt.balanceOf(alice), 900_000 * 1e6);
+        assertEq(maseerOne.totalPending(), maseerOne.redemptionAmount(_id));
+        assertEq(maseerOne.redemptionAddr(_id), address(alice));
+        assertEq(maseerOne.redemptionDate(_id), block.timestamp + maseerOne.cooldown());
+        assertEq(maseerOne.redemptionAmount(_id), _wmul(_amt, maseerOne.burncost()));
+        assertEq(maseerOne.obligated(), maseerOne.redemptionAmount(_id));
+
+        // Put tokens back into the contract to settle the claim
+        _mintUSDT(address(maseerOne), maseerOne.redemptionAmount(_id));
+        assertEq(usdt.balanceOf(address(maseerOne)), maseerOne.redemptionAmount(_id));
+        assertEq(maseerOne.obligated(), 0);
+        assertEq(maseerOne.unsettled(), 0);
+    }
+
+    function testMintAndRedeemZeroBPS() public {
+        vm.prank(actAuth);
+        act.setBpsin(0); // 0%
+        vm.prank(actAuth);
+        act.setBpsout(0); // 0%
+
+        vm.prank(alice);
+        usdt.approve(address(maseerOne), 1_000_000 * 1e6);
+        vm.prank(alice);
+        uint256 _amt = maseerOne.mint(100_000 * 1e6);
+
+        assertEq(maseerOne.mintcost(), maseerOne.navprice());
+        assertEq(maseerOne.burncost(), maseerOne.navprice());
+        assertEq(maseerOne.totalSupply(), _amt);
+        assertEq(maseerOne.balanceOf(alice), _amt);
+        uint256 _expectedAmt = 100_000 * 1e6 / maseerOne.mintcost() * WAD;
+        assertEq(_amt, _expectedAmt);
+
+        uint256 _expectedOut = _amt * maseerOne.burncost() / WAD;
+
+        vm.expectEmit();
+        emit MaseerOne.ContractRedemption(0, _expectedOut, block.timestamp + maseerOne.cooldown(), alice);
+        vm.prank(alice);
+        uint256 _id = maseerOne.redeem(_amt);
+        assertTrue(_id == 0);
+        assertEq(maseerOne.totalSupply(), 0);
+        assertEq(maseerOne.balanceOf(alice), 0);
+        assertEq(usdt.balanceOf(alice), 900_000 * 1e6);
+        assertEq(maseerOne.totalPending(), maseerOne.redemptionAmount(_id));
+        assertEq(maseerOne.redemptionAddr(_id), address(alice));
+        assertEq(maseerOne.redemptionDate(_id), block.timestamp + maseerOne.cooldown());
+        assertEq(maseerOne.redemptionAmount(_id), _expectedOut);
         assertEq(maseerOne.obligated(), 0);
         assertEq(maseerOne.unsettled(), 0);
     }
