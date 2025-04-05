@@ -182,11 +182,15 @@ contract MaseerGate is MaseerImplementation {
     }
 
     function _adjustMintPrice(uint256 _price, uint256 _bps) internal pure returns (uint256) {
-        return (_price * (10_000 + _bps)) / 10_000;
+        return _divup((_price * (10_000 + _bps)), 10_000);
     }
 
     function _adjustBurnPrice(uint256 _price, uint256 _bps) internal pure returns (uint256) {
-        return (_price * 10_000) / (10_000 + _bps) + 1;
+        return _divup((_price * 10_000), (10_000 + _bps));
+    }
+
+    function _divup(uint256 a, uint256 b) internal pure returns (uint256) {
+        return (a + b - 1) / b;
     }
 }
 
