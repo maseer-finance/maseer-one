@@ -143,6 +143,43 @@ contract MaseerOneOperationsTest is MaseerTestBase {
         assertEq(maseerOne.unsettled(), 200_000 * 1e6);
     }
 
+    function testFuzzMint(address usr, uint256 price, uint256 amt, uint256 bpsin) public {
+        if (!cop.pass(usr)) return;
+        price = bound(price, 1, 1e40); // Wide price range
+        bpsin = bound(bpsin, 0, 10000); // 0% to 100%
+
+        vm.prank(pipBud);
+        pip.poke(price);
+        vm.prank(actAuth);
+        act.setBpsin(bpsin);
+        vm.prank(actAuth);
+        act.setCapacity(type(uint256).max);
+
+        uint256 _mintCost = maseerOne.mintcost();
+        amt   = bound(amt, _mintCost, 1e50); // Wide amount range
+
+        uint256 _bal = usdt.balanceOf(usr);
+        _mintUSDT(usr, amt - _bal);
+
+        vm.prank(usr);
+        usdt.approve(address(maseerOne), amt);
+        assertEq(usdt.balanceOf(usr),  amt);
+
+        uint256 _expected = amt * 1e18 / _mintCost;
+
+        vm.expectEmit();
+        emit MaseerOne.ContractCreated(usr, _mintCost, _expected);
+        vm.prank(usr);
+        uint256 _amt = maseerOne.mint(amt);
+        assertTrue(_amt > 0);
+        assertEq(maseerOne.totalSupply(), _amt);
+        assertEq(maseerOne.totalSupply(), _expected);
+        assertEq(maseerOne.balanceOf(usr), _amt);
+        assertEq(usdt.balanceOf(usr), 0);
+        assertEq(maseerOne.totalPending(), 0);
+        assertEq(maseerOne.unsettled(), amt);
+    }
+
     function testRedeem() public {
 
         vm.prank(alice);
@@ -172,6 +209,52 @@ contract MaseerOneOperationsTest is MaseerTestBase {
         assertEq(usdt.balanceOf(address(maseerOne)), maseerOne.redemptionAmount(_id));
         assertEq(maseerOne.obligated(), 0);
         assertEq(maseerOne.unsettled(), 0);
+    }
+
+    function testFuzzRedeem(address usr, uint256 price, uint256 amt, uint256 bpsin) public {
+        if (!cop.pass(usr)) return;
+        price = bound(price, 1, 1e30); // Wide price range
+        bpsin = bound(bpsin, 0, 10000); // 0% to 100%
+
+        vm.prank(pipBud);
+        pip.poke(price);
+        vm.prank(actAuth);
+        act.setBpsin(bpsin);
+        vm.prank(actAuth);
+        act.setCapacity(type(uint256).max);
+
+        uint256 _burncost = maseerOne.burncost();
+        amt = bound(amt, _burncost, 1e40); // Wide amount range
+
+        console.log("amt1: %s", amt);
+        console.log("totalSupply: %s", maseerOne.totalSupply());
+
+        uint256 _preUSDT = usdt.balanceOf(usr);
+        uint256 _preONE = maseerOne.balanceOf(usr);
+        deal(address(maseerOne), usr, amt - _preONE, true);
+        assertEq(maseerOne.balanceOf(usr),  amt);
+
+        console.log("amt2: %s", amt);
+        console.log("totalSupply: %s", maseerOne.totalSupply());
+
+
+        uint256 _expected = amt * maseerOne.burncost() / WAD;
+
+        if (_expected == 0) return;
+
+        vm.expectEmit();
+        emit MaseerOne.ContractRedemption(0, _expected, block.timestamp + maseerOne.cooldown(), usr);
+        vm.prank(usr);
+        uint256 _id = maseerOne.redeem(amt);
+        assertTrue(_id == 0);
+        assertEq(maseerOne.totalSupply(), 0);
+        assertEq(maseerOne.balanceOf(usr), 0);
+        assertEq(usdt.balanceOf(usr), _preUSDT);
+        assertEq(maseerOne.totalPending(), maseerOne.redemptionAmount(_id));
+        assertEq(maseerOne.redemptionAddr(_id), address(usr));
+        assertEq(maseerOne.redemptionDate(_id), block.timestamp + maseerOne.cooldown());
+        assertEq(maseerOne.redemptionAmount(_id), _expected);
+        assertEq(maseerOne.obligated(), maseerOne.redemptionAmount(_id));
     }
 
     function testRedeemLowPrice() public {
