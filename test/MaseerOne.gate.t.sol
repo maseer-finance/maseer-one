@@ -28,8 +28,9 @@ contract MaseerOneGateTest is MaseerTestBase {
         act.setBpsout(bpsout);
 
         assertGe(maseerOne.mintcost(), maseerOne.burncost());
+        assertGe(maseerOne.mintcost(), maseerOne.navprice());
+        assertLe(maseerOne.burncost(), maseerOne.navprice());
         assertEq(maseerOne.mintcost(), act.mintcost(price));
         assertEq(maseerOne.burncost(), act.burncost(price));
-
     }
 }
