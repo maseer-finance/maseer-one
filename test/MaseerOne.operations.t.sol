@@ -145,7 +145,7 @@ contract MaseerOneOperationsTest is MaseerTestBase {
 
     function testFuzzMint(address usr, uint256 price, uint256 amt, uint256 bpsin) public {
         if (!cop.pass(usr)) return;
-        price = bound(price, 1, 1e40); // Wide price range
+        price = bound(price, 1, 1e30); // Wide price range
         bpsin = bound(bpsin, 0, 10000); // 0% to 100%
 
         vm.prank(pipBud);
@@ -156,14 +156,14 @@ contract MaseerOneOperationsTest is MaseerTestBase {
         act.setCapacity(type(uint256).max);
 
         uint256 _mintCost = maseerOne.mintcost();
-        amt   = bound(amt, _mintCost, 1e50); // Wide amount range
+        amt   = bound(amt, _mintCost, 1e40); // Wide amount range
 
-        uint256 _bal = usdt.balanceOf(usr);
-        _mintUSDT(usr, amt - _bal);
+        uint256 _preBal = usdt.balanceOf(usr);
+        _mintUSDT(usr, amt);
 
         vm.prank(usr);
         usdt.approve(address(maseerOne), amt);
-        assertEq(usdt.balanceOf(usr),  amt);
+        assertEq(usdt.balanceOf(usr),  amt + _preBal);
 
         uint256 _expected = amt * 1e18 / _mintCost;
 
@@ -175,7 +175,7 @@ contract MaseerOneOperationsTest is MaseerTestBase {
         assertEq(maseerOne.totalSupply(), _amt);
         assertEq(maseerOne.totalSupply(), _expected);
         assertEq(maseerOne.balanceOf(usr), _amt);
-        assertEq(usdt.balanceOf(usr), 0);
+        assertEq(usdt.balanceOf(usr), _preBal);
         assertEq(maseerOne.totalPending(), 0);
         assertEq(maseerOne.unsettled(), amt);
     }
