@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2025-04-05 01:25:52</td>
+            <td class="headerValue">2025-04-05 20:24:47</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">39</td>
@@ -151,7 +151,7 @@
 <a name="89"><span class="lineNum">      89 </span>            :     error NoPendingClaim();</a>
 <a name="90"><span class="lineNum">      90 </span>            :     error DustThreshold(uint256 min);</a>
 <a name="91"><span class="lineNum">      91 </span>            : </a>
-<a name="92"><span class="lineNum">      92 </span><span class="lineCov">        115 :     constructor(</span></a>
+<a name="92"><span class="lineNum">      92 </span><span class="lineCov">        136 :     constructor(</span></a>
 <a name="93"><span class="lineNum">      93 </span>            :         address gem_,</a>
 <a name="94"><span class="lineNum">      94 </span>            :         address pip_,</a>
 <a name="95"><span class="lineNum">      95 </span>            :         address act_,</a>
@@ -161,26 +161,26 @@
 <a name="99"><span class="lineNum">      99 </span>            :         string memory name_,</a>
 <a name="100"><span class="lineNum">     100 </span>            :         string memory symbol_</a>
 <a name="101"><span class="lineNum">     101 </span>            :     ) MaseerToken(name_, symbol_) {</a>
-<a name="102"><span class="lineNum">     102 </span><span class="lineCov">        115 :         gem = gem_;</span></a>
-<a name="103"><span class="lineNum">     103 </span><span class="lineCov">        115 :         pip = pip_;</span></a>
-<a name="104"><span class="lineNum">     104 </span><span class="lineCov">        115 :         act = act_;</span></a>
-<a name="105"><span class="lineNum">     105 </span><span class="lineCov">        115 :         adm = adm_;</span></a>
-<a name="106"><span class="lineNum">     106 </span><span class="lineCov">        115 :         cop = cop_;</span></a>
-<a name="107"><span class="lineNum">     107 </span><span class="lineCov">        115 :         flo = flo_;</span></a>
+<a name="102"><span class="lineNum">     102 </span><span class="lineCov">        136 :         gem = gem_;</span></a>
+<a name="103"><span class="lineNum">     103 </span><span class="lineCov">        136 :         pip = pip_;</span></a>
+<a name="104"><span class="lineNum">     104 </span><span class="lineCov">        136 :         act = act_;</span></a>
+<a name="105"><span class="lineNum">     105 </span><span class="lineCov">        136 :         adm = adm_;</span></a>
+<a name="106"><span class="lineNum">     106 </span><span class="lineCov">        136 :         cop = cop_;</span></a>
+<a name="107"><span class="lineNum">     107 </span><span class="lineCov">        136 :         flo = flo_;</span></a>
 <a name="108"><span class="lineNum">     108 </span>            :     }</a>
 <a name="109"><span class="lineNum">     109 </span>            : </a>
-<a name="110"><span class="lineNum">     110 </span><span class="lineCov">        519 :     modifier pass(address usr_) {</span></a>
-<a name="111"><span class="lineNum">     111 </span><span class="lineCov">        519 :         if (!_canPass(usr_)) revert UnauthorizedUser(usr_);</span></a>
+<a name="110"><span class="lineNum">     110 </span><span class="lineCov">        525 :     modifier pass(address usr_) {</span></a>
+<a name="111"><span class="lineNum">     111 </span><span class="lineCov">        525 :         if (!_canPass(usr_)) revert UnauthorizedUser(usr_);</span></a>
 <a name="112"><span class="lineNum">     112 </span>            :         _;</a>
 <a name="113"><span class="lineNum">     113 </span>            :     }</a>
 <a name="114"><span class="lineNum">     114 </span>            : </a>
-<a name="115"><span class="lineNum">     115 </span><span class="lineCov">        110 :     modifier mintlive() {</span></a>
-<a name="116"><span class="lineNum">     116 </span><span class="lineCov">        110 :         if (!mintable()) revert MarketClosed();</span></a>
+<a name="115"><span class="lineNum">     115 </span><span class="lineCov">        372 :     modifier mintlive() {</span></a>
+<a name="116"><span class="lineNum">     116 </span><span class="lineCov">        372 :         if (!mintable()) revert MarketClosed();</span></a>
 <a name="117"><span class="lineNum">     117 </span>            :         _;</a>
 <a name="118"><span class="lineNum">     118 </span>            :     }</a>
 <a name="119"><span class="lineNum">     119 </span>            : </a>
-<a name="120"><span class="lineNum">     120 </span><span class="lineCov">          2 :     modifier burnlive() {</span></a>
-<a name="121"><span class="lineNum">     121 </span><span class="lineCov">          2 :         if (!burnable()) revert MarketClosed();</span></a>
+<a name="120"><span class="lineNum">     120 </span><span class="lineCov">        222 :     modifier burnlive() {</span></a>
+<a name="121"><span class="lineNum">     121 </span><span class="lineCov">        222 :         if (!burnable()) revert MarketClosed();</span></a>
 <a name="122"><span class="lineNum">     122 </span>            :         _;</a>
 <a name="123"><span class="lineNum">     123 </span>            :     }</a>
 <a name="124"><span class="lineNum">     124 </span>            : </a>
@@ -189,71 +189,71 @@
 <a name="127"><span class="lineNum">     127 </span>            :         _;</a>
 <a name="128"><span class="lineNum">     128 </span>            :     }</a>
 <a name="129"><span class="lineNum">     129 </span>            : </a>
-<a name="130"><span class="lineNum">     130 </span><span class="lineCov">        110 :     function mint(uint256 amt) external mintlive pass(msg.sender) returns (uint256 _out) {</span></a>
+<a name="130"><span class="lineNum">     130 </span><span class="lineCov">        372 :     function mint(uint256 amt) external mintlive pass(msg.sender) returns (uint256 _out) {</span></a>
 <a name="131"><span class="lineNum">     131 </span>            :         // Oracle price check</a>
-<a name="132"><span class="lineNum">     132 </span><span class="lineCov">        110 :         uint256 _unit = _read();</span></a>
+<a name="132"><span class="lineNum">     132 </span><span class="lineCov">        372 :         uint256 _unit = _read();</span></a>
 <a name="133"><span class="lineNum">     133 </span>            : </a>
 <a name="134"><span class="lineNum">     134 </span>            :         // Revert if the price is zero</a>
-<a name="135"><span class="lineNum">     135 </span><span class="lineCov">        110 :         if (_unit == 0) revert InvalidPrice();</span></a>
+<a name="135"><span class="lineNum">     135 </span><span class="lineCov">        372 :         if (_unit == 0) revert InvalidPrice();</span></a>
 <a name="136"><span class="lineNum">     136 </span>            : </a>
 <a name="137"><span class="lineNum">     137 </span>            :         // Adjust the price for minting</a>
-<a name="138"><span class="lineNum">     138 </span><span class="lineCov">        110 :         _unit = _mintcost(_unit);</span></a>
+<a name="138"><span class="lineNum">     138 </span><span class="lineCov">        372 :         _unit = _mintcost(_unit);</span></a>
 <a name="139"><span class="lineNum">     139 </span>            : </a>
 <a name="140"><span class="lineNum">     140 </span>            :         // Assert minimum purchase amount of one unit to avoid dust</a>
-<a name="141"><span class="lineNum">     141 </span><span class="lineCov">        110 :         if (amt &lt; _unit) {</span></a>
+<a name="141"><span class="lineNum">     141 </span><span class="lineCov">        372 :         if (amt &lt; _unit) {</span></a>
 <a name="142"><span class="lineNum">     142 </span><span class="lineCov">          2 :             revert DustThreshold(_unit);</span></a>
 <a name="143"><span class="lineNum">     143 </span>            :         }</a>
 <a name="144"><span class="lineNum">     144 </span>            : </a>
 <a name="145"><span class="lineNum">     145 </span>            :         // Calculate the mint amount</a>
-<a name="146"><span class="lineNum">     146 </span><span class="lineCov">        108 :         _out = _wdiv(amt, _unit);</span></a>
+<a name="146"><span class="lineNum">     146 </span><span class="lineCov">        370 :         _out = _wdiv(amt, _unit);</span></a>
 <a name="147"><span class="lineNum">     147 </span>            : </a>
 <a name="148"><span class="lineNum">     148 </span>            :         // Revert if the total supply after mint exceeds the cap</a>
-<a name="149"><span class="lineNum">     149 </span><span class="lineCov">        108 :         if (totalSupply + _out &gt; _capacity()) revert ExceedsCap();</span></a>
+<a name="149"><span class="lineNum">     149 </span><span class="lineCov">        370 :         if (totalSupply + _out &gt; _capacity()) revert ExceedsCap();</span></a>
 <a name="150"><span class="lineNum">     150 </span>            : </a>
 <a name="151"><span class="lineNum">     151 </span>            :         // Transfer tokens in</a>
-<a name="152"><span class="lineNum">     152 </span><span class="lineCov">        108 :         _safeTransferFrom(gem, msg.sender, address(this), amt);</span></a>
+<a name="152"><span class="lineNum">     152 </span><span class="lineCov">        370 :         _safeTransferFrom(gem, msg.sender, address(this), amt);</span></a>
 <a name="153"><span class="lineNum">     153 </span>            : </a>
 <a name="154"><span class="lineNum">     154 </span>            :         // Mint the tokens</a>
-<a name="155"><span class="lineNum">     155 </span><span class="lineCov">        108 :         _mint(msg.sender, _out);</span></a>
+<a name="155"><span class="lineNum">     155 </span><span class="lineCov">        370 :         _mint(msg.sender, _out);</span></a>
 <a name="156"><span class="lineNum">     156 </span>            : </a>
 <a name="157"><span class="lineNum">     157 </span>            :         // Emit contract event</a>
-<a name="158"><span class="lineNum">     158 </span><span class="lineCov">        108 :         emit ContractCreated(msg.sender, _unit, _out);</span></a>
+<a name="158"><span class="lineNum">     158 </span><span class="lineCov">        370 :         emit ContractCreated(msg.sender, _unit, _out);</span></a>
 <a name="159"><span class="lineNum">     159 </span>            :     }</a>
 <a name="160"><span class="lineNum">     160 </span>            : </a>
-<a name="161"><span class="lineNum">     161 </span><span class="lineCov">          2 :     function redeem(uint256 amt) external burnlive pass(msg.sender) returns (uint256 _id) {</span></a>
+<a name="161"><span class="lineNum">     161 </span><span class="lineCov">        222 :     function redeem(uint256 amt) external burnlive pass(msg.sender) returns (uint256 _id) {</span></a>
 <a name="162"><span class="lineNum">     162 </span>            :         // Oracle price check</a>
-<a name="163"><span class="lineNum">     163 </span><span class="lineCov">          2 :         uint256 _unit = _read();</span></a>
+<a name="163"><span class="lineNum">     163 </span><span class="lineCov">        222 :         uint256 _unit = _read();</span></a>
 <a name="164"><span class="lineNum">     164 </span>            : </a>
 <a name="165"><span class="lineNum">     165 </span>            :         // Revert if the price is zero</a>
-<a name="166"><span class="lineNum">     166 </span><span class="lineCov">          2 :         if (_unit == 0) revert InvalidPrice();</span></a>
+<a name="166"><span class="lineNum">     166 </span><span class="lineCov">        222 :         if (_unit == 0) revert InvalidPrice();</span></a>
 <a name="167"><span class="lineNum">     167 </span>            : </a>
 <a name="168"><span class="lineNum">     168 </span>            :         // Adjust the price for redemption</a>
-<a name="169"><span class="lineNum">     169 </span><span class="lineCov">          2 :         _unit = _burncost(_unit);</span></a>
+<a name="169"><span class="lineNum">     169 </span><span class="lineCov">        222 :         _unit = _burncost(_unit);</span></a>
 <a name="170"><span class="lineNum">     170 </span>            : </a>
 <a name="171"><span class="lineNum">     171 </span>            :         // Calculate the redemption amount</a>
-<a name="172"><span class="lineNum">     172 </span><span class="lineCov">          2 :         uint256 _claim = _wmul(amt, _unit);</span></a>
+<a name="172"><span class="lineNum">     172 </span><span class="lineCov">        222 :         uint256 _claim = _wmul(amt, _unit);</span></a>
 <a name="173"><span class="lineNum">     173 </span>            : </a>
 <a name="174"><span class="lineNum">     174 </span>            :         // Add to the total pending redemptions</a>
-<a name="175"><span class="lineNum">     175 </span><span class="lineCov">          2 :         totalPending += _claim;</span></a>
+<a name="175"><span class="lineNum">     175 </span><span class="lineCov">        222 :         totalPending += _claim;</span></a>
 <a name="176"><span class="lineNum">     176 </span>            : </a>
 <a name="177"><span class="lineNum">     177 </span>            :         // Assign a new redemption ID</a>
-<a name="178"><span class="lineNum">     178 </span><span class="lineCov">          2 :         _id = redemptionCount++;</span></a>
+<a name="178"><span class="lineNum">     178 </span><span class="lineCov">        222 :         _id = redemptionCount++;</span></a>
 <a name="179"><span class="lineNum">     179 </span>            : </a>
 <a name="180"><span class="lineNum">     180 </span>            :         // Calculate the redemption date</a>
-<a name="181"><span class="lineNum">     181 </span><span class="lineCov">          2 :         uint96 _time = uint96(block.timestamp + _cooldown());</span></a>
+<a name="181"><span class="lineNum">     181 </span><span class="lineCov">        222 :         uint96 _time = uint96(block.timestamp + _cooldown());</span></a>
 <a name="182"><span class="lineNum">     182 </span>            : </a>
 <a name="183"><span class="lineNum">     183 </span>            :         // Store the redemption</a>
-<a name="184"><span class="lineNum">     184 </span><span class="lineCov">          2 :         redemptions[_id] = Redemption({</span></a>
+<a name="184"><span class="lineNum">     184 </span><span class="lineCov">        222 :         redemptions[_id] = Redemption({</span></a>
 <a name="185"><span class="lineNum">     185 </span>            :             amount:   _claim,</a>
 <a name="186"><span class="lineNum">     186 </span>            :             redeemer: msg.sender,</a>
 <a name="187"><span class="lineNum">     187 </span>            :             date:     _time</a>
 <a name="188"><span class="lineNum">     188 </span>            :         });</a>
 <a name="189"><span class="lineNum">     189 </span>            : </a>
 <a name="190"><span class="lineNum">     190 </span>            :         // Burn the tokens</a>
-<a name="191"><span class="lineNum">     191 </span><span class="lineCov">          2 :         _burn(msg.sender, amt);</span></a>
+<a name="191"><span class="lineNum">     191 </span><span class="lineCov">        222 :         _burn(msg.sender, amt);</span></a>
 <a name="192"><span class="lineNum">     192 </span>            : </a>
 <a name="193"><span class="lineNum">     193 </span>            :         // Emit contract event</a>
-<a name="194"><span class="lineNum">     194 </span><span class="lineCov">          2 :         emit ContractRedemption(_id, _claim, _time, msg.sender);</span></a>
+<a name="194"><span class="lineNum">     194 </span><span class="lineCov">        222 :         emit ContractRedemption(_id, _claim, _time, msg.sender);</span></a>
 <a name="195"><span class="lineNum">     195 </span>            :     }</a>
 <a name="196"><span class="lineNum">     196 </span>            : </a>
 <a name="197"><span class="lineNum">     197 </span><span class="lineCov">          1 :     function exit(uint256 id) external pass(msg.sender) returns (uint256 _out) {</span></a>
@@ -284,24 +284,24 @@
 <a name="222"><span class="lineNum">     222 </span><span class="lineCov">          1 :         emit ClaimProcessed(id, _redemption.redeemer, _out);</span></a>
 <a name="223"><span class="lineNum">     223 </span>            :     }</a>
 <a name="224"><span class="lineNum">     224 </span>            : </a>
-<a name="225"><span class="lineNum">     225 </span><span class="lineCov">          3 :     function settle() external pass(msg.sender) returns (uint256 _out) {</span></a>
+<a name="225"><span class="lineNum">     225 </span><span class="lineCov">          4 :     function settle() external pass(msg.sender) returns (uint256 _out) {</span></a>
 <a name="226"><span class="lineNum">     226 </span>            :         // Get the gem balance</a>
-<a name="227"><span class="lineNum">     227 </span><span class="lineCov">          3 :         uint256 _bal = _gemBalance();</span></a>
-<a name="228"><span class="lineNum">     228 </span><span class="lineCov">          3 :         uint256 _pnd = totalPending;</span></a>
+<a name="227"><span class="lineNum">     227 </span><span class="lineCov">          4 :         uint256 _bal = _gemBalance();</span></a>
+<a name="228"><span class="lineNum">     228 </span><span class="lineCov">          4 :         uint256 _pnd = totalPending;</span></a>
 <a name="229"><span class="lineNum">     229 </span>            : </a>
 <a name="230"><span class="lineNum">     230 </span>            :         // Return 0 if the balance is reserved for pending claims</a>
-<a name="231"><span class="lineNum">     231 </span><span class="lineCov">          3 :         if (_bal &lt;= _pnd) return 0;</span></a>
+<a name="231"><span class="lineNum">     231 </span><span class="lineCov">          4 :         if (_bal &lt;= _pnd) return 0;</span></a>
 <a name="232"><span class="lineNum">     232 </span>            : </a>
 <a name="233"><span class="lineNum">     233 </span>            :         // Calculate the balance after pending redemptions</a>
 <a name="234"><span class="lineNum">     234 </span>            :         unchecked {</a>
-<a name="235"><span class="lineNum">     235 </span><span class="lineCov">          3 :             _out = _bal - _pnd;</span></a>
+<a name="235"><span class="lineNum">     235 </span><span class="lineCov">          4 :             _out = _bal - _pnd;</span></a>
 <a name="236"><span class="lineNum">     236 </span>            :         }</a>
 <a name="237"><span class="lineNum">     237 </span>            : </a>
 <a name="238"><span class="lineNum">     238 </span>            :         // Send the remaining balance to the output conduit</a>
-<a name="239"><span class="lineNum">     239 </span><span class="lineCov">          3 :         _safeTransfer(gem, flo, _out);</span></a>
+<a name="239"><span class="lineNum">     239 </span><span class="lineCov">          4 :         _safeTransfer(gem, flo, _out);</span></a>
 <a name="240"><span class="lineNum">     240 </span>            : </a>
 <a name="241"><span class="lineNum">     241 </span>            :         // Emit settle</a>
-<a name="242"><span class="lineNum">     242 </span><span class="lineCov">          3 :         emit Settled(flo, _out);</span></a>
+<a name="242"><span class="lineNum">     242 </span><span class="lineCov">          4 :         emit Settled(flo, _out);</span></a>
 <a name="243"><span class="lineNum">     243 </span>            :     }</a>
 <a name="244"><span class="lineNum">     244 </span>            : </a>
 <a name="245"><span class="lineNum">     245 </span>            :     // Issuer functions for cross-chain bridging</a>
@@ -328,77 +328,77 @@
 <a name="266"><span class="lineNum">     266 </span>            :     // View functions</a>
 <a name="267"><span class="lineNum">     267 </span>            : </a>
 <a name="268"><span class="lineNum">     268 </span><span class="lineCov">          2 :     function mintable() public view returns (bool) {</span></a>
-<a name="269"><span class="lineNum">     269 </span><span class="lineCov">        112 :         return Act(act).mintable();</span></a>
+<a name="269"><span class="lineNum">     269 </span><span class="lineCov">        374 :         return Act(act).mintable();</span></a>
 <a name="270"><span class="lineNum">     270 </span>            :     }</a>
 <a name="271"><span class="lineNum">     271 </span>            : </a>
 <a name="272"><span class="lineNum">     272 </span><span class="lineCov">          2 :     function burnable() public view returns (bool) {</span></a>
-<a name="273"><span class="lineNum">     273 </span><span class="lineCov">          4 :         return Act(act).burnable();</span></a>
+<a name="273"><span class="lineNum">     273 </span><span class="lineCov">        224 :         return Act(act).burnable();</span></a>
 <a name="274"><span class="lineNum">     274 </span>            :     }</a>
 <a name="275"><span class="lineNum">     275 </span>            : </a>
-<a name="276"><span class="lineNum">     276 </span><span class="lineCov">       1922 :     function canPass(address usr) external view returns (bool) {</span></a>
-<a name="277"><span class="lineNum">     277 </span><span class="lineCov">       1922 :         return _canPass(usr);</span></a>
+<a name="276"><span class="lineNum">     276 </span><span class="lineCov">       1940 :     function canPass(address usr) external view returns (bool) {</span></a>
+<a name="277"><span class="lineNum">     277 </span><span class="lineCov">       1940 :         return _canPass(usr);</span></a>
 <a name="278"><span class="lineNum">     278 </span>            :     }</a>
 <a name="279"><span class="lineNum">     279 </span>            : </a>
-<a name="280"><span class="lineNum">     280 </span><span class="lineCov">          5 :     function cooldown() external view returns (uint256) {</span></a>
-<a name="281"><span class="lineNum">     281 </span><span class="lineCov">          5 :         return _cooldown();</span></a>
+<a name="280"><span class="lineNum">     280 </span><span class="lineCov">        445 :     function cooldown() external view returns (uint256) {</span></a>
+<a name="281"><span class="lineNum">     281 </span><span class="lineCov">        445 :         return _cooldown();</span></a>
 <a name="282"><span class="lineNum">     282 </span>            :     }</a>
 <a name="283"><span class="lineNum">     283 </span>            : </a>
-<a name="284"><span class="lineNum">     284 </span><span class="lineCov">          1 :     function navprice() external view returns (uint256) {</span></a>
-<a name="285"><span class="lineNum">     285 </span><span class="lineCov">          1 :         return _read();</span></a>
+<a name="284"><span class="lineNum">     284 </span><span class="lineCov">        263 :     function navprice() external view returns (uint256) {</span></a>
+<a name="285"><span class="lineNum">     285 </span><span class="lineCov">        263 :         return _read();</span></a>
 <a name="286"><span class="lineNum">     286 </span>            :     }</a>
 <a name="287"><span class="lineNum">     287 </span>            : </a>
-<a name="288"><span class="lineNum">     288 </span><span class="lineCov">          4 :     function mintcost() external view returns (uint256) {</span></a>
-<a name="289"><span class="lineNum">     289 </span><span class="lineCov">          4 :         return _mintcost(_read());</span></a>
+<a name="288"><span class="lineNum">     288 </span><span class="lineCov">        786 :     function mintcost() external view returns (uint256) {</span></a>
+<a name="289"><span class="lineNum">     289 </span><span class="lineCov">        786 :         return _mintcost(_read());</span></a>
 <a name="290"><span class="lineNum">     290 </span>            :     }</a>
 <a name="291"><span class="lineNum">     291 </span>            : </a>
-<a name="292"><span class="lineNum">     292 </span><span class="lineCov">          2 :     function burncost() external view returns (uint256) {</span></a>
-<a name="293"><span class="lineNum">     293 </span><span class="lineCov">          2 :         return _burncost(_read());</span></a>
+<a name="292"><span class="lineNum">     292 </span><span class="lineCov">       1042 :     function burncost() external view returns (uint256) {</span></a>
+<a name="293"><span class="lineNum">     293 </span><span class="lineCov">       1042 :         return _burncost(_read());</span></a>
 <a name="294"><span class="lineNum">     294 </span>            :     }</a>
 <a name="295"><span class="lineNum">     295 </span>            : </a>
 <a name="296"><span class="lineNum">     296 </span><span class="lineCov">          1 :     function capacity() external view returns (uint256) {</span></a>
 <a name="297"><span class="lineNum">     297 </span><span class="lineCov">          1 :         return _capacity();</span></a>
 <a name="298"><span class="lineNum">     298 </span>            :     }</a>
 <a name="299"><span class="lineNum">     299 </span>            : </a>
-<a name="300"><span class="lineNum">     300 </span><span class="lineCov">          2 :     function redemptionAddr(uint256 id) external view returns (address) {</span></a>
-<a name="301"><span class="lineNum">     301 </span><span class="lineCov">          2 :         return redemptions[id].redeemer;</span></a>
+<a name="300"><span class="lineNum">     300 </span><span class="lineCov">        222 :     function redemptionAddr(uint256 id) external view returns (address) {</span></a>
+<a name="301"><span class="lineNum">     301 </span><span class="lineCov">        222 :         return redemptions[id].redeemer;</span></a>
 <a name="302"><span class="lineNum">     302 </span>            :     }</a>
 <a name="303"><span class="lineNum">     303 </span>            : </a>
-<a name="304"><span class="lineNum">     304 </span><span class="lineCov">          2 :     function redemptionDate(uint256 id) external view returns (uint256) {</span></a>
-<a name="305"><span class="lineNum">     305 </span><span class="lineCov">          2 :         return redemptions[id].date;</span></a>
+<a name="304"><span class="lineNum">     304 </span><span class="lineCov">        222 :     function redemptionDate(uint256 id) external view returns (uint256) {</span></a>
+<a name="305"><span class="lineNum">     305 </span><span class="lineCov">        222 :         return redemptions[id].date;</span></a>
 <a name="306"><span class="lineNum">     306 </span>            :     }</a>
 <a name="307"><span class="lineNum">     307 </span>            : </a>
-<a name="308"><span class="lineNum">     308 </span><span class="lineCov">          6 :     function redemptionAmount(uint256 id) external view returns (uint256) {</span></a>
-<a name="309"><span class="lineNum">     309 </span><span class="lineCov">          6 :         return redemptions[id].amount;</span></a>
+<a name="308"><span class="lineNum">     308 </span><span class="lineCov">        667 :     function redemptionAmount(uint256 id) external view returns (uint256) {</span></a>
+<a name="309"><span class="lineNum">     309 </span><span class="lineCov">        667 :         return redemptions[id].amount;</span></a>
 <a name="310"><span class="lineNum">     310 </span>            :     }</a>
 <a name="311"><span class="lineNum">     311 </span>            : </a>
-<a name="312"><span class="lineNum">     312 </span><span class="lineCov">          4 :     function unsettled() external view returns (uint256) {</span></a>
-<a name="313"><span class="lineNum">     313 </span><span class="lineCov">          4 :         uint256 _bal = _gemBalance();</span></a>
-<a name="314"><span class="lineNum">     314 </span><span class="lineCov">          4 :         return (_bal &lt; totalPending) ? 0 : _bal - totalPending;</span></a>
+<a name="312"><span class="lineNum">     312 </span><span class="lineCov">        266 :     function unsettled() external view returns (uint256) {</span></a>
+<a name="313"><span class="lineNum">     313 </span><span class="lineCov">        266 :         uint256 _bal = _gemBalance();</span></a>
+<a name="314"><span class="lineNum">     314 </span><span class="lineCov">        266 :         return (_bal &lt; totalPending) ? 0 : _bal - totalPending;</span></a>
 <a name="315"><span class="lineNum">     315 </span>            :     }</a>
 <a name="316"><span class="lineNum">     316 </span>            : </a>
-<a name="317"><span class="lineNum">     317 </span><span class="lineCov">          3 :     function obligated() external view returns (uint256) {</span></a>
-<a name="318"><span class="lineNum">     318 </span><span class="lineCov">          3 :         uint256 _bal = _gemBalance();</span></a>
-<a name="319"><span class="lineNum">     319 </span><span class="lineCov">          3 :         return (_bal &gt; totalPending) ? 0 : totalPending - _bal;</span></a>
+<a name="317"><span class="lineNum">     317 </span><span class="lineCov">        224 :     function obligated() external view returns (uint256) {</span></a>
+<a name="318"><span class="lineNum">     318 </span><span class="lineCov">        224 :         uint256 _bal = _gemBalance();</span></a>
+<a name="319"><span class="lineNum">     319 </span><span class="lineCov">        224 :         return (_bal &gt; totalPending) ? 0 : totalPending - _bal;</span></a>
 <a name="320"><span class="lineNum">     320 </span>            :     }</a>
 <a name="321"><span class="lineNum">     321 </span>            : </a>
 <a name="322"><span class="lineNum">     322 </span>            :     // Token overrides for compliance</a>
 <a name="323"><span class="lineNum">     323 </span>            : </a>
-<a name="324"><span class="lineNum">     324 </span><span class="lineCov">        253 :     function approve(address usr) public override pass(msg.sender) pass(usr) returns (bool) {</span></a>
-<a name="325"><span class="lineNum">     325 </span><span class="lineCov">        253 :         return super.approve(usr);</span></a>
+<a name="324"><span class="lineNum">     324 </span><span class="lineCov">        256 :     function approve(address usr) public override pass(msg.sender) pass(usr) returns (bool) {</span></a>
+<a name="325"><span class="lineNum">     325 </span><span class="lineCov">        256 :         return super.approve(usr);</span></a>
 <a name="326"><span class="lineNum">     326 </span>            :     }</a>
 <a name="327"><span class="lineNum">     327 </span>            : </a>
-<a name="328"><span class="lineNum">     328 </span><span class="lineCov">        266 :     function approve(address usr, uint256 wad) public override pass(msg.sender) pass(usr) returns (bool) {</span></a>
-<a name="329"><span class="lineNum">     329 </span><span class="lineCov">        510 :         return super.approve(usr, wad);</span></a>
+<a name="328"><span class="lineNum">     328 </span><span class="lineCov">        269 :     function approve(address usr, uint256 wad) public override pass(msg.sender) pass(usr) returns (bool) {</span></a>
+<a name="329"><span class="lineNum">     329 </span><span class="lineCov">        516 :         return super.approve(usr, wad);</span></a>
 <a name="330"><span class="lineNum">     330 </span>            :     }</a>
 <a name="331"><span class="lineNum">     331 </span>            : </a>
-<a name="332"><span class="lineNum">     332 </span><span class="lineCov">        362 :     function transfer(address dst, uint256 wad) public override pass(msg.sender) pass(dst) returns (bool) {</span></a>
-<a name="333"><span class="lineNum">     333 </span><span class="lineCov">        356 :         if (dst == address(this)) revert TransferToContract();</span></a>
-<a name="334"><span class="lineNum">     334 </span><span class="lineCov">        355 :         return super.transfer(dst, wad);</span></a>
+<a name="332"><span class="lineNum">     332 </span><span class="lineCov">        365 :     function transfer(address dst, uint256 wad) public override pass(msg.sender) pass(dst) returns (bool) {</span></a>
+<a name="333"><span class="lineNum">     333 </span><span class="lineCov">        359 :         if (dst == address(this)) revert TransferToContract();</span></a>
+<a name="334"><span class="lineNum">     334 </span><span class="lineCov">        358 :         return super.transfer(dst, wad);</span></a>
 <a name="335"><span class="lineNum">     335 </span>            :     }</a>
 <a name="336"><span class="lineNum">     336 </span>            : </a>
-<a name="337"><span class="lineNum">     337 </span><span class="lineCov">        262 :     function transferFrom(address src, address dst, uint256 wad) public override pass(msg.sender) pass(src) pass(dst) returns (bool) {</span></a>
-<a name="338"><span class="lineNum">     338 </span><span class="lineCov">        256 :         if (dst == address(this)) revert TransferToContract();</span></a>
-<a name="339"><span class="lineNum">     339 </span><span class="lineCov">        255 :         return super.transferFrom(src, dst, wad);</span></a>
+<a name="337"><span class="lineNum">     337 </span><span class="lineCov">        265 :     function transferFrom(address src, address dst, uint256 wad) public override pass(msg.sender) pass(src) pass(dst) returns (bool) {</span></a>
+<a name="338"><span class="lineNum">     338 </span><span class="lineCov">        259 :         if (dst == address(this)) revert TransferToContract();</span></a>
+<a name="339"><span class="lineNum">     339 </span><span class="lineCov">        258 :         return super.transferFrom(src, dst, wad);</span></a>
 <a name="340"><span class="lineNum">     340 </span>            :     }</a>
 <a name="341"><span class="lineNum">     341 </span>            : </a>
 <a name="342"><span class="lineNum">     342 </span><span class="lineCov">          1 :     function permit(</span></a>
@@ -415,50 +415,50 @@
 <a name="353"><span class="lineNum">     353 </span>            : </a>
 <a name="354"><span class="lineNum">     354 </span>            :     // Internal utility functions</a>
 <a name="355"><span class="lineNum">     355 </span>            : </a>
-<a name="356"><span class="lineNum">     356 </span><span class="lineCov">       5082 :     function _canPass(address _usr) internal view returns (bool) {</span></a>
-<a name="357"><span class="lineNum">     357 </span><span class="lineCov">       5082 :         return Cop(cop).pass(_usr);</span></a>
+<a name="356"><span class="lineNum">     356 </span><span class="lineCov">       5616 :     function _canPass(address _usr) internal view returns (bool) {</span></a>
+<a name="357"><span class="lineNum">     357 </span><span class="lineCov">       5616 :         return Cop(cop).pass(_usr);</span></a>
 <a name="358"><span class="lineNum">     358 </span>            :     }</a>
 <a name="359"><span class="lineNum">     359 </span>            : </a>
-<a name="360"><span class="lineNum">     360 </span><span class="lineCov">          7 :     function _cooldown() internal view returns (uint256) {</span></a>
-<a name="361"><span class="lineNum">     361 </span><span class="lineCov">          7 :         return Act(act).cooldown();</span></a>
+<a name="360"><span class="lineNum">     360 </span><span class="lineCov">        667 :     function _cooldown() internal view returns (uint256) {</span></a>
+<a name="361"><span class="lineNum">     361 </span><span class="lineCov">        667 :         return Act(act).cooldown();</span></a>
 <a name="362"><span class="lineNum">     362 </span>            :     }</a>
 <a name="363"><span class="lineNum">     363 </span>            : </a>
-<a name="364"><span class="lineNum">     364 </span><span class="lineCov">        114 :     function _mintcost(uint256 _price) internal view returns (uint256) {</span></a>
-<a name="365"><span class="lineNum">     365 </span><span class="lineCov">        114 :         return Act(act).mintcost(_price);</span></a>
+<a name="364"><span class="lineNum">     364 </span><span class="lineCov">       1158 :     function _mintcost(uint256 _price) internal view returns (uint256) {</span></a>
+<a name="365"><span class="lineNum">     365 </span><span class="lineCov">       1158 :         return Act(act).mintcost(_price);</span></a>
 <a name="366"><span class="lineNum">     366 </span>            :     }</a>
 <a name="367"><span class="lineNum">     367 </span>            : </a>
-<a name="368"><span class="lineNum">     368 </span><span class="lineCov">          4 :     function _burncost(uint256 _price) internal view returns (uint256) {</span></a>
-<a name="369"><span class="lineNum">     369 </span><span class="lineCov">          4 :         return Act(act).burncost(_price);</span></a>
+<a name="368"><span class="lineNum">     368 </span><span class="lineCov">       1264 :     function _burncost(uint256 _price) internal view returns (uint256) {</span></a>
+<a name="369"><span class="lineNum">     369 </span><span class="lineCov">       1264 :         return Act(act).burncost(_price);</span></a>
 <a name="370"><span class="lineNum">     370 </span>            :     }</a>
 <a name="371"><span class="lineNum">     371 </span>            : </a>
-<a name="372"><span class="lineNum">     372 </span><span class="lineCov">        109 :     function _capacity() internal view returns (uint256) {</span></a>
-<a name="373"><span class="lineNum">     373 </span><span class="lineCov">        109 :         return Act(act).capacity();</span></a>
+<a name="372"><span class="lineNum">     372 </span><span class="lineCov">        371 :     function _capacity() internal view returns (uint256) {</span></a>
+<a name="373"><span class="lineNum">     373 </span><span class="lineCov">        371 :         return Act(act).capacity();</span></a>
 <a name="374"><span class="lineNum">     374 </span>            :     }</a>
 <a name="375"><span class="lineNum">     375 </span>            : </a>
-<a name="376"><span class="lineNum">     376 </span><span class="lineCov">        119 :     function _read() internal view returns (uint256) {</span></a>
-<a name="377"><span class="lineNum">     377 </span><span class="lineCov">        119 :         return Pip(pip).read();</span></a>
+<a name="376"><span class="lineNum">     376 </span><span class="lineCov">       2685 :     function _read() internal view returns (uint256) {</span></a>
+<a name="377"><span class="lineNum">     377 </span><span class="lineCov">       2685 :         return Pip(pip).read();</span></a>
 <a name="378"><span class="lineNum">     378 </span>            :     }</a>
 <a name="379"><span class="lineNum">     379 </span>            : </a>
-<a name="380"><span class="lineNum">     380 </span><span class="lineCov">         11 :     function _gemBalance() internal view returns (uint256) {</span></a>
-<a name="381"><span class="lineNum">     381 </span><span class="lineCov">         11 :         return Gem(gem).balanceOf(address(this));</span></a>
+<a name="380"><span class="lineNum">     380 </span><span class="lineCov">        495 :     function _gemBalance() internal view returns (uint256) {</span></a>
+<a name="381"><span class="lineNum">     381 </span><span class="lineCov">        495 :         return Gem(gem).balanceOf(address(this));</span></a>
 <a name="382"><span class="lineNum">     382 </span>            :     }</a>
 <a name="383"><span class="lineNum">     383 </span>            : </a>
-<a name="384"><span class="lineNum">     384 </span><span class="lineCov">          2 :     function _wmul(uint256 x, uint256 y) internal pure returns (uint256 z) {</span></a>
-<a name="385"><span class="lineNum">     385 </span><span class="lineCov">          2 :         z = ((x * y) + (WAD / 2)) / WAD;</span></a>
+<a name="384"><span class="lineNum">     384 </span><span class="lineCov">        370 :     function _wdiv(uint256 x, uint256 y) internal pure returns (uint256 z) {</span></a>
+<a name="385"><span class="lineNum">     385 </span><span class="lineCov">        370 :         z = (x * WAD) / y;</span></a>
 <a name="386"><span class="lineNum">     386 </span>            :     }</a>
 <a name="387"><span class="lineNum">     387 </span>            : </a>
-<a name="388"><span class="lineNum">     388 </span><span class="lineCov">        108 :     function _wdiv(uint256 x, uint256 y) internal pure returns (uint256 z) {</span></a>
-<a name="389"><span class="lineNum">     389 </span><span class="lineCov">        108 :         z = ((x * WAD) + (y / 2)) / y;</span></a>
+<a name="388"><span class="lineNum">     388 </span><span class="lineCov">        222 :     function _wmul(uint256 x, uint256 y) internal pure returns (uint256 z) {</span></a>
+<a name="389"><span class="lineNum">     389 </span><span class="lineCov">        222 :         z = (x * y) / WAD;</span></a>
 <a name="390"><span class="lineNum">     390 </span>            :     }</a>
 <a name="391"><span class="lineNum">     391 </span>            : </a>
-<a name="392"><span class="lineNum">     392 </span><span class="lineCov">          4 :     function _safeTransfer(address _token, address _to, uint256 _amt) internal {</span></a>
-<a name="393"><span class="lineNum">     393 </span><span class="lineCov">          4 :         (bool success, bytes memory data) = _token.call(abi.encodeWithSelector(Gem.transfer.selector, _to, _amt));</span></a>
-<a name="394"><span class="lineNum">     394 </span><span class="lineCov">          4 :         if (!success || (data.length &gt; 0 &amp;&amp; abi.decode(data, (bool)) == false)) revert TransferFailed();</span></a>
+<a name="392"><span class="lineNum">     392 </span><span class="lineCov">          5 :     function _safeTransfer(address _token, address _to, uint256 _amt) internal {</span></a>
+<a name="393"><span class="lineNum">     393 </span><span class="lineCov">          5 :         (bool success, bytes memory data) = _token.call(abi.encodeWithSelector(Gem.transfer.selector, _to, _amt));</span></a>
+<a name="394"><span class="lineNum">     394 </span><span class="lineCov">          5 :         if (!success || (data.length &gt; 0 &amp;&amp; abi.decode(data, (bool)) == false)) revert TransferFailed();</span></a>
 <a name="395"><span class="lineNum">     395 </span>            :     }</a>
 <a name="396"><span class="lineNum">     396 </span>            : </a>
-<a name="397"><span class="lineNum">     397 </span><span class="lineCov">        108 :     function _safeTransferFrom(address _token, address _from, address _to, uint256 _amt) internal {</span></a>
-<a name="398"><span class="lineNum">     398 </span><span class="lineCov">        108 :         (bool success, bytes memory data) = _token.call(abi.encodeWithSelector(Gem.transferFrom.selector, _from, _to, _amt));</span></a>
-<a name="399"><span class="lineNum">     399 </span><span class="lineCov">        108 :         if (!success || (data.length &gt; 0 &amp;&amp; abi.decode(data, (bool)) == false)) revert TransferFailed();</span></a>
+<a name="397"><span class="lineNum">     397 </span><span class="lineCov">        370 :     function _safeTransferFrom(address _token, address _from, address _to, uint256 _amt) internal {</span></a>
+<a name="398"><span class="lineNum">     398 </span><span class="lineCov">        370 :         (bool success, bytes memory data) = _token.call(abi.encodeWithSelector(Gem.transferFrom.selector, _from, _to, _amt));</span></a>
+<a name="399"><span class="lineNum">     399 </span><span class="lineCov">        370 :         if (!success || (data.length &gt; 0 &amp;&amp; abi.decode(data, (bool)) == false)) revert TransferFailed();</span></a>
 <a name="400"><span class="lineNum">     400 </span>            :     }</a>
 <a name="401"><span class="lineNum">     401 </span>            : }</a>
 </pre>
