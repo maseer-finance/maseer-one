@@ -138,9 +138,7 @@ contract MaseerOne is MaseerToken {
         _unit = _mintcost(_unit);
 
         // Assert minimum purchase amount of one unit to avoid dust
-        if (amt < _unit) {
-            revert DustThreshold(_unit);
-        }
+        if (amt < _unit) revert DustThreshold(_unit);
 
         // Calculate the mint amount
         _out = _wdiv(amt, _unit);
