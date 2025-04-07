@@ -381,12 +381,12 @@ contract MaseerOne is MaseerToken {
         return Gem(gem).balanceOf(address(this));
     }
 
-    function _wmul(uint256 x, uint256 y) internal pure returns (uint256 z) {
-        z = ((x * y) + (WAD / 2)) / WAD;
+    function _wdiv(uint256 x, uint256 y) internal pure returns (uint256 z) {
+        z = (x * WAD) / y;
     }
 
-    function _wdiv(uint256 x, uint256 y) internal pure returns (uint256 z) {
-        z = ((x * WAD) + (y / 2)) / y;
+    function _wmul(uint256 x, uint256 y) internal pure returns (uint256 z) {
+        z = (x * y) / WAD;
     }
 
     function _safeTransfer(address _token, address _to, uint256 _amt) internal {
