@@ -243,7 +243,7 @@ contract MaseerOne is MaseerToken {
         emit Settled(flo, _out);
     }
 
-    // Issuer functions for cross-chain bridging
+    // Issuer function for minting assets or bridging
     function issue(uint256 amt) external issuer pass(msg.sender) {
         _mint(msg.sender, amt);
 
