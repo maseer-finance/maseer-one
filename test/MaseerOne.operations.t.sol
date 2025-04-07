@@ -223,20 +223,12 @@ contract MaseerOneOperationsTest is MaseerTestBase {
         vm.prank(actAuth);
         act.setCapacity(type(uint256).max);
 
-        uint256 _burncost = maseerOne.burncost();
-        amt = bound(amt, _burncost, 1e40); // Wide amount range
-
-        console.log("amt1: %s", amt);
-        console.log("totalSupply: %s", maseerOne.totalSupply());
+        amt = bound(amt, 1e18, 1e40); // Wide amount range
 
         uint256 _preUSDT = usdt.balanceOf(usr);
         uint256 _preONE = maseerOne.balanceOf(usr);
         deal(address(maseerOne), usr, amt - _preONE, true);
         assertEq(maseerOne.balanceOf(usr),  amt);
-
-        console.log("amt2: %s", amt);
-        console.log("totalSupply: %s", maseerOne.totalSupply());
-
 
         uint256 _expected = amt * maseerOne.burncost() / WAD;
 
@@ -331,6 +323,23 @@ contract MaseerOneOperationsTest is MaseerTestBase {
         assertEq(maseerOne.redemptionAmount(_id), _expectedOut);
         assertEq(maseerOne.obligated(), 0);
         assertEq(maseerOne.unsettled(), 0);
+    }
+
+    function test_failRedeemDustLimit() public {
+        vm.prank(actAuth);
+        act.setBpsin(200); // 0%
+        vm.prank(actAuth);
+        act.setBpsout(200); // 0%
+        vm.prank(alice);
+        usdt.approve(address(maseerOne), 1_000_000 * 1e6);
+        vm.prank(alice);
+        maseerOne.mint(100_000 * 1e6);
+
+        uint256 _amt = WAD - 1;
+
+        vm.expectRevert(abi.encodeWithSelector(MaseerOne.DustThreshold.selector, WAD));
+        vm.prank(alice);
+        maseerOne.redeem(_amt);
     }
 
     function testExit() public {

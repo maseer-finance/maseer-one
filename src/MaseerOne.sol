@@ -159,6 +159,9 @@ contract MaseerOne is MaseerToken {
     }
 
     function redeem(uint256 amt) external burnlive pass(msg.sender) returns (uint256 _id) {
+        // Assert minimum redemption amount of one token to avoid dust
+        if (amt < WAD) revert DustThreshold(WAD);
+
         // Oracle price check
         uint256 _unit = _read();
 
