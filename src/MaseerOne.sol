@@ -104,9 +104,9 @@ contract MaseerOne is MaseerToken {
     );
     event ContractRedemption(
         uint256 indexed id,
-        uint256 indexed amount,
         uint256 indexed date,
-        address         redeemer
+        address indexed redeemer,
+        uint256         amount
     );
     event ClaimProcessed(
         uint256 indexed id,
@@ -240,7 +240,7 @@ contract MaseerOne is MaseerToken {
         _burn(msg.sender, amt);
 
         // Emit contract event
-        emit ContractRedemption(_id, _claim, _time, msg.sender);
+        emit ContractRedemption(_id, _time, msg.sender, _claim);
     }
 
     function exit(uint256 id) external pass(msg.sender) returns (uint256 _out) {

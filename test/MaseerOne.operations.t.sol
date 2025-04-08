@@ -191,7 +191,7 @@ contract MaseerOneOperationsTest is MaseerTestBase {
         assertEq(_amt, (100_000 * 1e6 * WAD) / maseerOne.mintcost());
 
         vm.expectEmit();
-        emit MaseerOne.ContractRedemption(0, 99007452736, block.timestamp + maseerOne.cooldown(), alice);
+        emit MaseerOne.ContractRedemption(0, block.timestamp + maseerOne.cooldown(), alice, 99007452736);
         vm.prank(alice);
         uint256 _id = maseerOne.redeem(_amt);
         assertTrue(_id == 0);
@@ -235,7 +235,7 @@ contract MaseerOneOperationsTest is MaseerTestBase {
         if (_expected == 0) return;
 
         vm.expectEmit();
-        emit MaseerOne.ContractRedemption(0, _expected, block.timestamp + maseerOne.cooldown(), usr);
+        emit MaseerOne.ContractRedemption(0, block.timestamp + maseerOne.cooldown(), usr, _expected);
         vm.prank(usr);
         uint256 _id = maseerOne.redeem(amt);
         assertTrue(_id == 0);
@@ -269,7 +269,7 @@ contract MaseerOneOperationsTest is MaseerTestBase {
         assertEq(_redeemCost, 1);
 
         vm.expectEmit();
-        emit MaseerOne.ContractRedemption(0, _amt / WAD, block.timestamp + maseerOne.cooldown(), alice);
+        emit MaseerOne.ContractRedemption(0, block.timestamp + maseerOne.cooldown(), alice, _amt / WAD);
         vm.prank(alice);
         uint256 _id = maseerOne.redeem(_amt);
         assertTrue(_id == 0);
@@ -310,7 +310,7 @@ contract MaseerOneOperationsTest is MaseerTestBase {
         uint256 _expectedOut = _amt * maseerOne.burncost() / WAD;
 
         vm.expectEmit();
-        emit MaseerOne.ContractRedemption(0, _expectedOut, block.timestamp + maseerOne.cooldown(), alice);
+        emit MaseerOne.ContractRedemption(0, block.timestamp + maseerOne.cooldown(), alice, _expectedOut);
         vm.prank(alice);
         uint256 _id = maseerOne.redeem(_amt);
         assertTrue(_id == 0);
