@@ -18,6 +18,7 @@ contract MaseerOneScript is Script {
 
     address public SIG_ONE = 0x6CFd1DC9DF04a7F9162eF6c9b381D42135E8B896;
     address public SIG_TWO = 0x99698A1538089f03e798FA265254d9d90F13824D;
+    address public MRKTMKR = 0xE1114C2316f34aaCe2f827671CD35B044CF4e74c;
 
     address public proxyAuth       = SIG_ONE;
     address public marketAuth      = SIG_ONE;
@@ -29,8 +30,10 @@ contract MaseerOneScript is Script {
 
     address public oracleUpdater   = SIG_TWO;
 
-    string public constant NAME = "CANA Holdings California Carbon Credits";
-    string public constant SYMBOL = "CANA";
+    address public maseerMrktMkr   = MRKTMKR;
+
+    string public constant NAME    = "CANA Holdings California Carbon Credits";
+    string public constant SYMBOL  = "CANA";
 
     bytes32 public constant ORACLE_NAME     = "CANAUSDT";
     bytes32 public constant ORACLE_DECIMALS = bytes32(uint256(6));
@@ -121,7 +124,9 @@ contract MaseerOneScript is Script {
 
         // MASEER_CONDUIT_PROXY set wards and buds
         MaseerConduit(MASEER_CONDUIT_PROXY).hope(conduitAuth);
+        MaseerConduit(MASEER_CONDUIT_PROXY).hope(maseerMrktMkr);
         MaseerConduit(MASEER_CONDUIT_PROXY).kiss(conduitOut);
+        MaseerConduit(MASEER_CONDUIT_PROXY).kiss(maseerMrktMkr);
         MaseerConduit(MASEER_CONDUIT_PROXY).kiss(address(maseerOne));
         MaseerConduit(MASEER_CONDUIT_PROXY).rely(conduitAuth);
         MaseerProxy(MASEER_CONDUIT_PROXY).relyProxy(proxyAuth);
@@ -166,6 +171,7 @@ contract MaseerOneScript is Script {
         USDT = 0xcAddB146B3f1A6A558eCD01380b81c2Faf9C8a10;
         (bool success, bytes memory data) = USDT.call(abi.encodeWithSignature("mint(address,uint256)", msg.sender, 100_000_000_000 * 1e6));
         (success, data) = USDT.call(abi.encodeWithSignature("mint(address,uint256)", SEPOLIA_AUTH, 100_000_000_000 * 1e6));
+        (success, data) = USDT.call(abi.encodeWithSignature("mint(address,uint256)", maseerMrktMkr, 100_000_000_000 * 1e6));
         data;
     }
 
