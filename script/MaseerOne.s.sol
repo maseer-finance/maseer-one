@@ -39,7 +39,7 @@ contract MaseerOneScript is Script {
     bytes32 public constant ORACLE_DECIMALS = bytes32(uint256(6));
     uint256 public          ORACLE_PRICE    = 1e6; // 1.0
 
-    uint256 public          MARKET_CAPACITY = 1_000_000e18;
+    uint256 public          MARKET_CAPACITY = 1_000_000 * 1e18;
     uint256 public          MARKET_COOLDOWN = 5 days;
     uint256 public constant MARKET_BPSIN    = 200;
     uint256 public constant MARKET_BPSOUT   = 200;
@@ -182,7 +182,7 @@ contract MaseerOneScript is Script {
         MaseerGate(MASEER_MARKET_PROXY).setOpenBurn(0);
         MaseerGate(MASEER_MARKET_PROXY).file("haltburn", type(uint256).max);
         require(MaseerGate(MASEER_MARKET_PROXY).burnable());
-        MARKET_CAPACITY = 1_000_000e18 * 1000;
+        MARKET_CAPACITY = 1_000_000_000 * 1e18;
         MaseerGate(MASEER_MARKET_PROXY).setCapacity(MARKET_CAPACITY);
         MARKET_COOLDOWN = 10 minutes;
         MaseerGate(MASEER_MARKET_PROXY).setCooldown(MARKET_COOLDOWN);
