@@ -27,7 +27,7 @@ contract MaseerPrice is MaseerImplementation{
     // Slot 1
     mapping (address => uint256) public bud;
     // Allocate slots 2-49
-    uint256[50] private __gap;
+    uint256[48] private __gap;
 
     event File(bytes32 indexed what, bytes32 data);
     event Poke(uint256 indexed price, uint256 indexed timestamp);
