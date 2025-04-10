@@ -173,16 +173,6 @@ contract MaseerOneScript is Script {
         (success, data) = USDT.call(abi.encodeWithSignature("mint(address,uint256)", SEPOLIA_AUTH, 100_000_000_000 * 1e6));
         (success, data) = USDT.call(abi.encodeWithSignature("mint(address,uint256)", maseerMrktMkr, 100_000_000_000 * 1e6));
         data;
-
-        // Additional authorizations for Sepolia testing
-        MaseerPrice(MASEER_ORACLE_PROXY).rely(SEPOLIA_AUTH);
-        MaseerPrice(MASEER_ORACLE_PROXY).kiss(SEPOLIA_AUTH);
-        MaseerGate(MASEER_MARKET_PROXY).rely(SEPOLIA_AUTH);
-        MaseerTreasury(MASEER_TREASURY_PROXY).rely(SEPOLIA_AUTH);
-        MaseerTreasury(MASEER_TREASURY_PROXY).bestow(SEPOLIA_AUTH);
-        MaseerConduit(MASEER_CONDUIT_PROXY).rely(SEPOLIA_AUTH);
-        MaseerConduit(MASEER_CONDUIT_PROXY).kiss(SEPOLIA_AUTH);
-        MaseerConduit(MASEER_CONDUIT_PROXY).hope(SEPOLIA_AUTH);
     }
 
     function setupSepoliaMarket() internal {
@@ -196,6 +186,16 @@ contract MaseerOneScript is Script {
         MaseerGate(MASEER_MARKET_PROXY).setCapacity(MARKET_CAPACITY);
         MARKET_COOLDOWN = 10 minutes;
         MaseerGate(MASEER_MARKET_PROXY).setCooldown(MARKET_COOLDOWN);
+
+        // Additional authorizations for Sepolia testing
+        MaseerPrice(MASEER_ORACLE_PROXY).rely(SEPOLIA_AUTH);
+        MaseerPrice(MASEER_ORACLE_PROXY).kiss(SEPOLIA_AUTH);
+        MaseerGate(MASEER_MARKET_PROXY).rely(SEPOLIA_AUTH);
+        MaseerTreasury(MASEER_TREASURY_PROXY).rely(SEPOLIA_AUTH);
+        MaseerTreasury(MASEER_TREASURY_PROXY).bestow(SEPOLIA_AUTH);
+        MaseerConduit(MASEER_CONDUIT_PROXY).rely(SEPOLIA_AUTH);
+        MaseerConduit(MASEER_CONDUIT_PROXY).kiss(SEPOLIA_AUTH);
+        MaseerConduit(MASEER_CONDUIT_PROXY).hope(SEPOLIA_AUTH);
     }
 
     function getChainId() internal view returns (uint256) {
