@@ -126,7 +126,7 @@ contract MaseerOne is MaseerToken {
         uint256 indexed amount
     );
 
-    error UnauthorizedUser(address usr);
+    error NotAuthorized(address usr);
     error TransferToContract();
     error TransferToZeroAddress();
     error TransferFailed();
@@ -156,7 +156,7 @@ contract MaseerOne is MaseerToken {
     }
 
     modifier pass(address usr_) {
-        if (!_canPass(usr_)) revert UnauthorizedUser(usr_);
+        if (!_canPass(usr_)) revert NotAuthorized(usr_);
         _;
     }
 
@@ -171,7 +171,7 @@ contract MaseerOne is MaseerToken {
     }
 
     modifier issuer() {
-        if (!Adm(adm).issuer(msg.sender)) revert UnauthorizedUser(msg.sender);
+        if (!Adm(adm).issuer(msg.sender)) revert NotAuthorized(msg.sender);
         _;
     }
 

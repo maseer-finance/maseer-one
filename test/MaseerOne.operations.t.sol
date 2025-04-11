@@ -502,7 +502,7 @@ contract MaseerOneOperationsTest is MaseerTestBase {
         _mintTokens(bob, 1000 * 1e18);
 
         vm.prank(alice);
-        vm.expectRevert(abi.encodeWithSelector(MaseerOne.UnauthorizedUser.selector, alice));
+        vm.expectRevert(abi.encodeWithSelector(MaseerOne.NotAuthorized.selector, alice));
         maseerOne.smelt(bob, 100 * 1e18);
     }
 

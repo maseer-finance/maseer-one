@@ -93,7 +93,7 @@ contract MaseerOneTokenTest is MaseerTestBase {
 
         // address(0) fails on the guard check
         vm.expectRevert(
-            abi.encodeWithSelector(MaseerOne.UnauthorizedUser.selector, address(0))
+            abi.encodeWithSelector(MaseerOne.NotAuthorized.selector, address(0))
         );
         vm.prank(alice);
         maseerOne.transfer(address(0), amt);
@@ -109,7 +109,7 @@ contract MaseerOneTokenTest is MaseerTestBase {
 
         // address(0) fails on the guard check
         vm.expectRevert(
-            abi.encodeWithSelector(MaseerOne.UnauthorizedUser.selector, address(0))
+            abi.encodeWithSelector(MaseerOne.NotAuthorized.selector, address(0))
         );
         vm.prank(alice);
         maseerOne.transferFrom(alice, address(0), amt);
@@ -126,7 +126,7 @@ contract MaseerOneTokenTest is MaseerTestBase {
 
         // Don't send to unauthorized user
         if (!maseerOne.canPass(to) || !maseerOne.canPass(from)) {
-            vm.expectPartialRevert(MaseerOne.UnauthorizedUser.selector);
+            vm.expectPartialRevert(MaseerOne.NotAuthorized.selector);
             vm.prank(from);
             maseerOne.transfer(to, amt);
             return;
@@ -165,11 +165,11 @@ contract MaseerOneTokenTest is MaseerTestBase {
 
         if (!maseerOne.canPass(from) || !maseerOne.canPass(to)) {
 
-            if (!maseerOne.canPass(from)) vm.expectRevert(abi.encodeWithSelector(MaseerOne.UnauthorizedUser.selector, from));
+            if (!maseerOne.canPass(from)) vm.expectRevert(abi.encodeWithSelector(MaseerOne.NotAuthorized.selector, from));
             vm.prank(from);
             maseerOne.approve(from, amt);
 
-            vm.expectPartialRevert(MaseerOne.UnauthorizedUser.selector);
+            vm.expectPartialRevert(MaseerOne.NotAuthorized.selector);
             vm.prank(to);
             maseerOne.transferFrom(from, to, amt);
             return;
@@ -250,9 +250,9 @@ contract MaseerOneTokenTest is MaseerTestBase {
 
         if (!maseerOne.canPass(from) || !maseerOne.canPass(to)) {
             if (!maseerOne.canPass(from)) {
-                vm.expectRevert(abi.encodeWithSelector(MaseerOne.UnauthorizedUser.selector, from));
+                vm.expectRevert(abi.encodeWithSelector(MaseerOne.NotAuthorized.selector, from));
             } else {
-                vm.expectRevert(abi.encodeWithSelector(MaseerOne.UnauthorizedUser.selector, to));
+                vm.expectRevert(abi.encodeWithSelector(MaseerOne.NotAuthorized.selector, to));
             }
             vm.prank(from);
             maseerOne.approve(to, amt);
