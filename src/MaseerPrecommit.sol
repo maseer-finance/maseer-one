@@ -48,10 +48,10 @@ contract MaseerPrecommit {
     error TransferFailed();
     error InsufficientAllowance();
     error InsufficientAmount();
-    error NotAuthorized();
+    error NotAuthorized(address usr);
 
     modifier pass() {
-        if (!One(one).canPass(msg.sender)) revert NotAuthorized();
+        if (!One(one).canPass(msg.sender)) revert NotAuthorized(msg.sender);
         _;
     }
 

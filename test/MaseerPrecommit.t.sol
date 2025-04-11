@@ -69,7 +69,7 @@ contract MaseerPrecommitTest is MaseerTestBase {
         vm.prank(enemy);
         usdt.approve(address(maseerPrecommit), 1000 * 1e6);
 
-        vm.expectRevert(MaseerPrecommit.NotAuthorized.selector);
+        vm.expectRevert(abi.encodeWithSelector(MaseerPrecommit.NotAuthorized.selector, enemy));
         vm.prank(enemy);
         maseerPrecommit.pact(1000 * 1e6);
     }
@@ -84,13 +84,13 @@ contract MaseerPrecommitTest is MaseerTestBase {
         vm.prank(alice);
         maseerPrecommit.pact(1000 * 1e6);
 
-        vm.expectRevert(MaseerPrecommit.NotAuthorized.selector);
+        vm.expectRevert(abi.encodeWithSelector(MaseerPrecommit.NotAuthorized.selector, enemy));
         vm.prank(enemy);
         maseerPrecommit.exec(0);
     }
 
     function test_failPrecommitExitUnauthorizedUser() public {
-        vm.expectRevert(MaseerPrecommit.NotAuthorized.selector);
+        vm.expectRevert(abi.encodeWithSelector(MaseerPrecommit.NotAuthorized.selector, enemy));
         vm.prank(enemy);
         maseerPrecommit.exit();
     }
