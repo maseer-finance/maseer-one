@@ -143,6 +143,49 @@ contract MaseerOneOperationsTest is MaseerTestBase {
         assertEq(maseerOne.unsettled(), 200_000 * 1e6);
     }
 
+    function testMintMaxBPS() public {
+        vm.prank(pipBud);
+        pip.poke(1e6);
+        vm.prank(actAuth);
+        act.setCapacity(type(uint256).max);
+        vm.prank(actAuth);
+        act.setBpsin(10000); // 100%
+
+        vm.prank(alice);
+        usdt.approve(address(maseerOne), 1_000_000 * 1e6);
+        assertEq(usdt.balanceOf(alice),  1_000_000 * 1e6);
+
+        uint256 _mintCost = maseerOne.mintcost();
+        assertEq(_mintCost, 1e6 * 2);
+
+        // results in 5e28 tokens minted
+        vm.expectEmit();
+        emit MaseerOne.ContractCreated(alice, _mintCost, 100_000 * 1e6 * 1e18 / _mintCost);
+        vm.prank(alice);
+        uint256 _amt = maseerOne.mint(100_000 * 1e6);
+        assertTrue(_amt > 0);
+        assertEq(maseerOne.mintcost(), 1e6 * 2);
+        assertEq(maseerOne.totalSupply(), _amt);
+        assertEq(maseerOne.balanceOf(alice), 100_000 * 1e18 / 2);
+        assertEq(maseerOne.balanceOf(alice), _amt);
+        assertEq(usdt.balanceOf(alice), 900_000 * 1e6);
+        assertEq(maseerOne.totalPending(), 0);
+        assertEq(maseerOne.unsettled(), 100_000 * 1e6);
+
+        vm.prank(bob);
+        usdt.approve(address(maseerOne), 100_000 * 1e6);
+        assertEq(usdt.balanceOf(bob),  1_000_000 * 1e6);
+
+        vm.prank(bob);
+        _amt = maseerOne.mint(100_000 * 1e6);
+        assertTrue(_amt > 0);
+        assertEq(maseerOne.totalSupply(), _amt * 2);
+        assertEq(maseerOne.balanceOf(bob), _amt);
+        assertEq(usdt.balanceOf(bob), 900_000 * 1e6);
+        assertEq(maseerOne.totalPending(), 0);
+        assertEq(maseerOne.unsettled(), 200_000 * 1e6);
+    }
+
     function testFuzzMint(address usr, uint256 price, uint256 amt, uint256 bpsin) public {
         if (!cop.pass(usr)) return;
         price = bound(price, 1, 1e30); // Wide price range
@@ -191,7 +234,7 @@ contract MaseerOneOperationsTest is MaseerTestBase {
         assertEq(_amt, (100_000 * 1e6 * WAD) / maseerOne.mintcost());
 
         vm.expectEmit();
-        emit MaseerOne.ContractRedemption(0, block.timestamp + maseerOne.cooldown(), alice, 99007452736);
+        emit MaseerOne.ContractRedemption(0, block.timestamp + maseerOne.cooldown(), alice, 99004975124);
         vm.prank(alice);
         uint256 _id = maseerOne.redeem(_amt);
         assertTrue(_id == 0);
@@ -325,6 +368,34 @@ contract MaseerOneOperationsTest is MaseerTestBase {
         assertEq(maseerOne.unsettled(), 0);
     }
 
+    function testRedeemMaxBPS() public {
+
+        vm.prank(alice);
+        usdt.approve(address(maseerOne), 1_000_000 * 1e6);
+        vm.prank(alice);
+        uint256 _amt = maseerOne.mint(100_000 * 1e6);
+        maseerOne.settle();
+        assertEq(maseerOne.totalPending(), 0);
+        assertEq(_amt, (100_000 * 1e6 * WAD) / maseerOne.mintcost());
+        vm.prank(actAuth);
+        act.setBpsout(10000); // 100%
+
+
+        vm.expectEmit();
+        emit MaseerOne.ContractRedemption(0, block.timestamp + maseerOne.cooldown(), alice, 0);
+        vm.prank(alice);
+        uint256 _id = maseerOne.redeem(_amt);
+        assertTrue(_id == 0);
+        assertEq(maseerOne.totalSupply(), 0);
+        assertEq(maseerOne.balanceOf(alice), 0);
+        assertEq(usdt.balanceOf(alice), 900_000 * 1e6);
+        assertEq(maseerOne.totalPending(), maseerOne.redemptionAmount(_id));
+        assertEq(maseerOne.redemptionAddr(_id), address(alice));
+        assertEq(maseerOne.redemptionDate(_id), block.timestamp + maseerOne.cooldown());
+        assertEq(maseerOne.redemptionAmount(_id), _wmul(_amt, maseerOne.burncost()));
+        assertEq(maseerOne.obligated(), maseerOne.redemptionAmount(_id));
+    }
+
     function test_failRedeemDustLimit() public {
         vm.prank(actAuth);
         act.setBpsin(200); // 0%
@@ -356,7 +427,7 @@ contract MaseerOneOperationsTest is MaseerTestBase {
         vm.warp(block.timestamp + maseerOne.cooldown() + 1);
 
         vm.expectEmit();
-        emit MaseerOne.ClaimProcessed(_id, alice, 99007452736);
+        emit MaseerOne.ClaimProcessed(_id, alice, 99004975124);
         vm.prank(alice);
         uint256 _out = maseerOne.exit(_id);
         assertTrue(_out > 0);

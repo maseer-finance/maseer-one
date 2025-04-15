@@ -63,8 +63,7 @@ contract MaseerOneGateBPSTest is MaseerTestBase {
 
         uint256 _price = 2974 * 1e4;
         assertEq(act.bpsout(), _bps);
-        // Unit - 1 bps == 29737026.297370263 Rounding up is ok
-        assertEq(act.burncost(_price), 29737027);
+        assertEq(act.burncost(_price), 29737026);
     }
 
     function testBPSInOne() public {
@@ -86,7 +85,7 @@ contract MaseerOneGateBPSTest is MaseerTestBase {
 
         uint256 _price = 1e6;
         assertEq(act.bpsout(), _bps);
-        assertEq(act.burncost(_price), 999901);
+        assertEq(act.burncost(_price), 999900);
     }
 
     function testBPSInOneLowPrice() public {
@@ -180,6 +179,6 @@ contract MaseerOneGateBPSTest is MaseerTestBase {
 
         uint256 _price = 1e70;
         assertEq(act.bpsout(), _bps);
-        assertEq(act.burncost(_price), 9999000099990000999900009999000099990000999900009999000099990000999901);
+        assertEq(act.burncost(_price), 9999000000000000000000000000000000000000000000000000000000000000000000);
     }
 }
