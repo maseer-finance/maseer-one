@@ -26,6 +26,7 @@ contract MaseerGate is MaseerImplementation {
     bytes32 internal constant _BPSOUT_SLOT      = keccak256("maseer.gate.bpsout");
     bytes32 internal constant _COOLDOWN_SLOT    = keccak256("maseer.gate.cooldown");
     bytes32 internal constant _CAPACITY_SLOT    = keccak256("maseer.gate.capacity");
+    bytes32 internal constant _TERMS_SLOT       = keccak256("maseer.gate.terms");
 
     // Allocate slots 0-49
     uint256[50] private __gap;
@@ -82,6 +83,10 @@ contract MaseerGate is MaseerImplementation {
 
     function capacity() public view returns (uint256) {
         return _uint256Slot(_CAPACITY_SLOT);
+    }
+
+    function terms() public view returns (string memory) {
+        return _stringSlot(_TERMS_SLOT);
     }
 
     function nextOpenMint() external view returns (uint256) {
@@ -148,6 +153,10 @@ contract MaseerGate is MaseerImplementation {
 
     function setCapacity(uint256 capacity_) external auth {
         _setCapacity(capacity_);
+    }
+
+    function setTerms(string calldata terms_) external auth {
+        _setVal(_TERMS_SLOT, terms_);
     }
 
     function file(bytes32 what, uint256 data) external auth {

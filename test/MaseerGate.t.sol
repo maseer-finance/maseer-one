@@ -135,4 +135,17 @@ contract MaseerOneTest is MaseerTestBase {
         maseerGate.file("invalid", 1337);
 
     }
+
+    function testSetTerms() public {
+        assertEq(maseerGate.terms(), "");
+        vm.prank(actAuth);
+        maseerGate.setTerms("test");
+        assertEq(maseerGate.terms(), "test");
+    }
+
+    function testFuzzTerms(string memory terms) public {
+        vm.prank(actAuth);
+        maseerGate.setTerms(terms);
+        assertEq(maseerGate.terms(), terms);
+    }
 }

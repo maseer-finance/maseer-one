@@ -37,6 +37,7 @@ interface Act {
     function capacity() external view returns (uint256);
     function mintcost(uint256) external view returns (uint256);
     function burncost(uint256) external view returns (uint256);
+    function terms() external view returns (string memory);
 }
 
 interface Adm {
@@ -344,6 +345,10 @@ contract MaseerOne is MaseerToken {
 
     function capacity() external view returns (uint256) {
         return _capacity();
+    }
+
+    function terms() external view returns (string memory) {
+        return Act(act).terms();
     }
 
     function redemptionAddr(uint256 id) external view returns (address) {

@@ -35,6 +35,9 @@ contract MaseerOneScript is Script {
     string public constant NAME    = "CANA Holdings California Carbon Credits";
     string public constant SYMBOL  = "CANA";
 
+    // TODO: Placeholder for terms
+    string public constant TERMS   = "bafkreid5ka7xfwxbs3sekzzcbvv4xnzzdul5tcpwswbajznpflxmhplixi";
+
     bytes32 public constant ORACLE_NAME     = "CANAUSDT";
     bytes32 public constant ORACLE_DECIMALS = bytes32(uint256(6));
     uint256 public          ORACLE_PRICE    = 1e6; // 1.0
@@ -110,6 +113,7 @@ contract MaseerOneScript is Script {
         MaseerGate(MASEER_MARKET_PROXY).setCapacity(MARKET_CAPACITY);
         MaseerGate(MASEER_MARKET_PROXY).setBpsin(MARKET_BPSIN);
         MaseerGate(MASEER_MARKET_PROXY).setBpsout(MARKET_BPSOUT);
+        MaseerGate(MASEER_MARKET_PROXY).setTerms(TERMS);
         MaseerGate(MASEER_MARKET_PROXY).rely(marketAuth);
         MaseerProxy(MASEER_MARKET_PROXY).relyProxy(proxyAuth);
 

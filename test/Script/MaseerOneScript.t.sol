@@ -61,6 +61,7 @@ contract MaseerOneScriptTest is MaseerTestBase {
         assertEq(maseerOne.mintcost(), 1_020_000);
         assertEq(maseerOne.burncost(),   980_000);
         assertEq(maseerOne.capacity(), maseerOneScript.MARKET_CAPACITY());
+        assertEq(maseerOne.terms(), maseerOneScript.TERMS());
 
 
         assertEq(maseerOne.pip(), maseerOneScript.MASEER_ORACLE_PROXY());
