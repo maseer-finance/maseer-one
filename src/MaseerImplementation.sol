@@ -21,6 +21,10 @@ abstract contract MaseerImplementation {
     error NotAuthorized(address usr);
     error UnrecognizedParam(bytes32 param);
 
+    struct StringData {
+        string val;
+    }
+
     modifier auth() {
         if (uint256(_getVal(keccak256(abi.encode(_WARD_SLOT, msg.sender)))) != 1) revert NotAuthorized(msg.sender);
         _;
@@ -71,11 +75,11 @@ abstract contract MaseerImplementation {
     }
 
     function _setVal(bytes32 slot, string memory val) internal {
-        if (bytes(val).length > 32) revert UnrecognizedParam(bytes32(bytes(val)));
-        bytes32 val_ = bytes32(bytes(val));
+        StringData storage data;
         assembly {
-            sstore(slot, val_)
+            data.slot := slot
         }
+        data.val = val;
     }
 
     function _getVal(bytes32 slot) internal view returns (bytes32 val) {
@@ -97,7 +101,11 @@ abstract contract MaseerImplementation {
     }
 
     function _stringSlot(bytes32 slot) internal view returns (string memory) {
-        return _b32toString(_getVal(slot));
+        StringData storage data;
+        assembly {
+            data.slot := slot
+        }
+        return data.val;
     }
 
     function _b32toString(bytes32 _bytes32) internal pure returns (string memory) {

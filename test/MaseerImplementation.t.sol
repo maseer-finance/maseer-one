@@ -43,4 +43,15 @@ contract MaseerImplementationTest is MaseerTestBase {
         mock.setStringVal(val);
         assertEq(mock.getStringVal(), val);
     }
+
+    function testIPFSCIDStorage() public {
+        string memory cid = "QmaajdgTSJMKYSNmM8zhzXpFSsAjj1qQY8HsJeK8cfCk3S";
+        mock.setStringVal(cid);
+        assertEq(mock.getStringVal(), cid);
+    }
+
+    function testFuzzStringVal(string memory val) public {
+        mock.setStringVal(val);
+        assertEq(mock.getStringVal(), val);
+    }
 }

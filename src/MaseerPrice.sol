@@ -69,7 +69,7 @@ contract MaseerPrice is MaseerImplementation{
 
     function file(bytes32 what, bytes32 data) external auth {
         if      (what == "price")    _poke(uint256(data));
-        else if (what == "name")     _setVal(_NAME_SLOT, data);
+        else if (what == "name")     _setVal(_NAME_SLOT, _b32toString(data));
         else if (what == "decimals" && uint256(data) <= 18) _setVal(_DECIMALS_SLOT, data);
         else    revert UnrecognizedParam(data);
         emit    File(what, data);
