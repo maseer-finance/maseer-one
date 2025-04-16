@@ -20,6 +20,13 @@ contract MaseerOneScript is Script {
     address public SIG_TWO = 0x99698A1538089f03e798FA265254d9d90F13824D;
     address public MRKTMKR = 0xE1114C2316f34aaCe2f827671CD35B044CF4e74c;
 
+    address public OPRATR1 = 0x6F67b49D236b099209fD195dE5e04E908D2f185b;
+    address public OPRATR2 = 0xe76e368a81F7dCE637c0A14dc8883Ad6C429CCad;
+    address public OPRATR3 = 0x11B9bE3139aF548dC21e50495B471f1FF02FB83E;
+    address public OPRATR4 = 0x7d31969424c47dD5b70dB1C482af1e4710FDc70e;
+    address public OPRATR5 = 0x0D35938D133dCca71773Cc750FFabE2c40A003f1;
+    address public OFFRAMP = 0x631Ed7600543EE5d87378508233fdE667c0CC6E6;
+
     address public proxyAuth       = SIG_ONE;
     address public marketAuth      = SIG_ONE;
     address public oracleAuth      = SIG_ONE;
@@ -129,7 +136,13 @@ contract MaseerOneScript is Script {
         // MASEER_CONDUIT_PROXY set wards and buds
         MaseerConduit(MASEER_CONDUIT_PROXY).hope(conduitAuth);
         MaseerConduit(MASEER_CONDUIT_PROXY).hope(maseerMrktMkr);
+        MaseerConduit(MASEER_CONDUIT_PROXY).hope(OPRATR1);
+        MaseerConduit(MASEER_CONDUIT_PROXY).hope(OPRATR2);
+        MaseerConduit(MASEER_CONDUIT_PROXY).hope(OPRATR3);
+        MaseerConduit(MASEER_CONDUIT_PROXY).hope(OPRATR4);
+        MaseerConduit(MASEER_CONDUIT_PROXY).hope(OPRATR5);
         MaseerConduit(MASEER_CONDUIT_PROXY).kiss(conduitOut);
+        MaseerConduit(MASEER_CONDUIT_PROXY).kiss(OFFRAMP);
         MaseerConduit(MASEER_CONDUIT_PROXY).kiss(maseerMrktMkr);
         MaseerConduit(MASEER_CONDUIT_PROXY).kiss(address(maseerOne));
         MaseerConduit(MASEER_CONDUIT_PROXY).rely(conduitAuth);
