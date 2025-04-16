@@ -189,6 +189,11 @@ contract MaseerOneScript is Script {
         (bool success, bytes memory data) = USDT.call(abi.encodeWithSignature("mint(address,uint256)", msg.sender, 100_000_000_000 * 1e6));
         (success, data) = USDT.call(abi.encodeWithSignature("mint(address,uint256)", SEPOLIA_AUTH, 100_000_000_000 * 1e6));
         (success, data) = USDT.call(abi.encodeWithSignature("mint(address,uint256)", maseerMrktMkr, 100_000_000_000 * 1e6));
+        (success, data) = USDT.call(abi.encodeWithSignature("mint(address,uint256)", OPRATR1, 100_000_000_000 * 1e6));
+        (success, data) = USDT.call(abi.encodeWithSignature("mint(address,uint256)", OPRATR2, 100_000_000_000 * 1e6));
+        (success, data) = USDT.call(abi.encodeWithSignature("mint(address,uint256)", OPRATR3, 100_000_000_000 * 1e6));
+        (success, data) = USDT.call(abi.encodeWithSignature("mint(address,uint256)", OPRATR4, 100_000_000_000 * 1e6));
+        (success, data) = USDT.call(abi.encodeWithSignature("mint(address,uint256)", OPRATR5, 100_000_000_000 * 1e6));
         data;
     }
 
