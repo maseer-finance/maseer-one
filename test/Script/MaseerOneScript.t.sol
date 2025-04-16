@@ -63,7 +63,6 @@ contract MaseerOneScriptTest is MaseerTestBase {
         assertEq(maseerOne.capacity(), maseerOneScript.MARKET_CAPACITY());
         assertEq(maseerOne.terms(), maseerOneScript.TERMS());
 
-
         assertEq(maseerOne.pip(), maseerOneScript.MASEER_ORACLE_PROXY());
         assertEq(MaseerProxy(maseerOne.pip()).impl(), maseerOneScript.MASEER_ORACLE_IMPLEMENTATION());
         assertEq(MaseerPrice(maseerOne.pip()).name(), _bytes32toString(maseerOneScript.ORACLE_NAME()));
@@ -89,7 +88,16 @@ contract MaseerOneScriptTest is MaseerTestBase {
         assertEq(MaseerProxy(maseerOne.flo()).impl(), maseerOneScript.MASEER_CONDUIT_IMPLEMENTATION());
         assertEq(MaseerConduit(maseerOne.flo()).wards(maseerOneScript.conduitAuth()), 1);
         assertEq(MaseerConduit(maseerOne.flo()).can(maseerOneScript.conduitAuth()), 1);
+        assertEq(MaseerConduit(maseerOne.flo()).can(maseerOneScript.maseerMrktMkr()), 1);
+        assertEq(MaseerConduit(maseerOne.flo()).can(maseerOneScript.OPRATR1()), 1);
+        assertEq(MaseerConduit(maseerOne.flo()).can(maseerOneScript.OPRATR2()), 1);
+        assertEq(MaseerConduit(maseerOne.flo()).can(maseerOneScript.OPRATR3()), 1);
+        assertEq(MaseerConduit(maseerOne.flo()).can(maseerOneScript.OPRATR4()), 1);
+        assertEq(MaseerConduit(maseerOne.flo()).can(maseerOneScript.OPRATR5()), 1);
         assertEq(MaseerConduit(maseerOne.flo()).bud(maseerOneScript.conduitOut()), 1);
+        assertEq(MaseerConduit(maseerOne.flo()).bud(maseerOneScript.OFFRAMP()), 1);
+        assertEq(MaseerConduit(maseerOne.flo()).bud(maseerOneScript.maseerMrktMkr()), 1);
+        assertEq(MaseerConduit(maseerOne.flo()).bud(address(maseerOne)), 1);
         assertEq(MaseerProxy(maseerOne.flo()).wardsProxy(maseerOneScript.proxyAuth()), 1);
 
         assertEq(maseerOne.adm(), maseerOneScript.MASEER_TREASURY_PROXY());
