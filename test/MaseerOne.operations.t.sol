@@ -439,6 +439,31 @@ contract MaseerOneOperationsTest is MaseerTestBase {
         assertEq(usdt.balanceOf(alice), 900_000 * 1e6 + _out);
     }
 
+    function testRedeemOne() public {
+        vm.prank(alice);
+        usdt.approve(address(maseerOne), 1_000_000 * 1e6);
+        vm.prank(alice);
+        maseerOne.mint(100_000 * 1e6);
+        vm.prank(alice);
+        uint256 _id = maseerOne.redeem(1e18); // min redemption
+
+        uint256 _exitTime = block.timestamp + maseerOne.cooldown();
+
+        vm.warp(block.timestamp + maseerOne.cooldown() + 1);
+
+        vm.expectEmit();
+        emit MaseerOne.ClaimProcessed(_id, alice, 9950000);
+        vm.prank(alice);
+        uint256 _out = maseerOne.exit(_id);
+        assertTrue(_out > 0);
+        assertEq(maseerOne.redemptionAmount(_id), 0);
+        assertEq(maseerOne.redemptionAddr(_id), address(alice));
+        assertEq(maseerOne.redemptionDate(_id), _exitTime);
+        assertEq(maseerOne.obligated(), 0);
+        assertEq(maseerOne.unsettled(), usdt.balanceOf(address(maseerOne)));
+        assertEq(usdt.balanceOf(alice), 900_000 * 1e6 + _out);
+    }
+
     function testSettle() public {
 
         vm.prank(alice);
