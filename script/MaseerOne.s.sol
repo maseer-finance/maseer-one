@@ -50,7 +50,7 @@ contract MaseerOneScript is Script {
     uint256 public          ORACLE_PRICE    = 1e6; // 1.0
 
     uint256 public          MARKET_CAPACITY = 1_000_000 * 1e18;
-    uint256 public          MARKET_COOLDOWN = 5 days;
+    uint256 public          MARKET_COOLDOWN = 7 days;
     uint256 public constant MARKET_BPSIN    = 200;
     uint256 public constant MARKET_BPSOUT   = 200;
 
