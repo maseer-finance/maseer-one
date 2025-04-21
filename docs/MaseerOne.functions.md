@@ -1,0 +1,46 @@
+### Readable Functions (Pure/View)
+- **DOMAIN_SEPARATOR()**: `bytes32`
+- **act()**: `address`
+- **adm()**: `address`
+- **allowance(address , address )**: `uint256`
+- **balanceOf(address )**: `uint256`
+- **burnable()**: `bool`
+- **burncost()**: `uint256`
+- **canPass(address usr)**: `bool`
+- **capacity()**: `uint256`
+- **cooldown()**: `uint256`
+- **cop()**: `address`
+- **decimals()**: `uint8`
+- **flo()**: `address`
+- **gem()**: `address`
+- **mintable()**: `bool`
+- **mintcost()**: `uint256`
+- **name()**: `string`
+- **navprice()**: `uint256`
+- **nonces(address )**: `uint256`
+- **obligated()**: `uint256`
+- **pip()**: `address`
+- **redemptionAddr(uint256 id)**: `address`
+- **redemptionAmount(uint256 id)**: `uint256`
+- **redemptionCount()**: `uint256`
+- **redemptionDate(uint256 id)**: `uint256`
+- **redemptions(uint256 )**: `uint256, address, uint96`
+- **symbol()**: `string`
+- **terms()**: `string`
+- **totalPending()**: `uint256`
+- **totalSupply()**: `uint256`
+- **unsettled()**: `uint256`
+
+### Writable Functions (Non-Pure/Non-View)
+- **approve(address usr, uint256 wad)**: `bool`
+- **approve(address usr)**: `bool`
+- **exit(uint256 id)**: `uint256`
+- **issue(uint256 amt)**: ``
+- **mint(uint256 amt)**: `uint256`
+- **permit(address owner, address spender, uint256 value, uint256 deadline, uint8 v, bytes32 r, bytes32 s)**: ``
+- **redeem(uint256 amt)**: `uint256`
+- **settle()**: `uint256`
+- **smelt(uint256 amt)**: ``
+- **smelt(address usr, uint256 amt)**: ``
+- **transfer(address dst, uint256 wad)**: `bool`
+- **transferFrom(address src, address dst, uint256 wad)**: `bool`

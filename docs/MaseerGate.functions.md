@@ -1,0 +1,34 @@
+### Readable Functions (Pure/View)
+- **bpsin()**: `uint256`
+- **bpsout()**: `uint256`
+- **burnable()**: `bool`
+- **burncost(uint256 _price)**: `uint256`
+- **capacity()**: `uint256`
+- **cooldown()**: `uint256`
+- **haltBurn()**: `uint256`
+- **haltMint()**: `uint256`
+- **mintable()**: `bool`
+- **mintcost(uint256 _price)**: `uint256`
+- **nextHaltBurn()**: `uint256`
+- **nextHaltMint()**: `uint256`
+- **nextOpenBurn()**: `uint256`
+- **nextOpenMint()**: `uint256`
+- **openBurn()**: `uint256`
+- **openMint()**: `uint256`
+- **terms()**: `string`
+- **wards(address usr)**: `uint256`
+
+### Writable Functions (Non-Pure/Non-View)
+- **deny(address usr)**: ``
+- **file(bytes32 what, uint256 data)**: ``
+- **pauseMarket()**: ``
+- **rely(address usr)**: ``
+- **setBpsin(uint256 bpsin_)**: ``
+- **setBpsout(uint256 bpsout_)**: ``
+- **setCapacity(uint256 capacity_)**: ``
+- **setCooldown(uint256 cool_)**: ``
+- **setHaltBurn(uint256 halt_)**: ``
+- **setHaltMint(uint256 halt_)**: ``
+- **setOpenBurn(uint256 open_)**: ``
+- **setOpenMint(uint256 open_)**: ``
+- **setTerms(string terms_)**: ``
