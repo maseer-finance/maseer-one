@@ -8,7 +8,7 @@ gen-report :; forge coverage --fork-url=${ETH_RPC_URL} --report lcov && genhtml 
 clean      :; forge clean
 
 # Deployment
-dry-run         :; forge script script/MaseerOne.s.sol --rpc-url ${ETH_RPC_URL} -vvvv --keystore ${ETH_KEYSTORE}
-deploy          :; forge script script/MaseerOne.s.sol --verify --broadcast --rpc-url ${ETH_RPC_URL} -vvvv --keystore ${ETH_KEYSTORE}
-dry-run-sepolia :; forge script --chain sepolia script/MaseerOne.s.sol --rpc-url ${SEPOLIA_RPC_URL} -vvvv --keystore ${ETH_KEYSTORE}
-deploy-sepolia  :; forge script --chain sepolia script/MaseerOne.s.sol --verify --broadcast --rpc-url ${SEPOLIA_RPC_URL} -vvvv --keystore ${ETH_KEYSTORE}
+dry-run         :; make build && forge script script/MaseerOne.s.sol --rpc-url ${ETH_RPC_URL} -vvvv --keystore ${ETH_KEYSTORE}
+deploy          :; make build && forge script script/MaseerOne.s.sol --verify --broadcast --rpc-url ${ETH_RPC_URL} -vvvv --keystore ${ETH_KEYSTORE}
+dry-run-sepolia :; make build && forge script --chain sepolia script/MaseerOne.s.sol --rpc-url ${SEPOLIA_RPC_URL} -vvvv --keystore ${ETH_KEYSTORE}
+deploy-sepolia  :; make build && forge script --chain sepolia script/MaseerOne.s.sol --verify --broadcast --rpc-url ${SEPOLIA_RPC_URL} -vvvv --keystore ${ETH_KEYSTORE}
