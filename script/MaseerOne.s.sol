@@ -43,7 +43,7 @@ contract MaseerOneScript is Script {
     string public constant SYMBOL  = "CANA";
 
     // TODO: Placeholder for terms
-    string public constant TERMS   = "bafkreihdda4ulbql6ojd4mt57hl4dmlz72zpgbfjnd3z4lmmvjltlruipa";
+    string public constant TERMS   = "bafkreic7qstcrnw3y5vcqamotyedxebmzepy7dibd3x73a4n7o6kbzek64";
 
     bytes32 public constant ORACLE_NAME     = "CANAUSDT";
     bytes32 public constant ORACLE_DECIMALS = bytes32(uint256(6));
