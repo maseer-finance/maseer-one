@@ -6,3 +6,9 @@ gas        :; ./scripts/forge_test.sh --v=$(v) --mt=$(mt) --mc=$(mc) gas-report
 coverage   :; forge coverage --fork-url=${ETH_RPC_URL}
 gen-report :; forge coverage --fork-url=${ETH_RPC_URL} --report lcov && genhtml lcov.info --output-directory docs/coverage-report
 clean      :; forge clean
+
+# Deployment
+dry-run         :; forge script script/MaseerOne.s.sol --rpc-url ${ETH_RPC_URL} -vvvv --keystore ${ETH_KEYSTORE}
+deploy          :; forge script script/MaseerOne.s.sol --verify --broadcast --rpc-url ${ETH_RPC_URL} -vvvv --keystore ${ETH_KEYSTORE}
+dry-run-sepolia :; forge script --chain sepolia script/MaseerOne.s.sol --rpc-url ${SEPOLIA_RPC_URL} -vvvv --keystore ${ETH_KEYSTORE}
+deploy-sepolia  :; forge script --chain sepolia script/MaseerOne.s.sol --verify --broadcast --rpc-url ${SEPOLIA_RPC_URL} -vvvv --keystore ${ETH_KEYSTORE}
