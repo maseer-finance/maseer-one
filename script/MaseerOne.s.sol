@@ -16,15 +16,17 @@ import {MockUSDT} from "../test/Mocks/MockUSDT.sol";
 contract MaseerOneScript is Script {
     MaseerOne public maseerOne;
 
-    address public SIG_ONE = 0x6CFd1DC9DF04a7F9162eF6c9b381D42135E8B896;
-    address public SIG_TWO = 0x99698A1538089f03e798FA265254d9d90F13824D;
-    address public MRKTMKR = 0xE1114C2316f34aaCe2f827671CD35B044CF4e74c;
+    address public SIG_ONE = 0xb56F413dbCe352cfd71f221029CFC84580133F66;
+    address public SIG_TWO = 0xcF4f4eB6715e7C3d2Ef6cec3dFB9215cE865826b;
+    address public MRKTMKR = 0xb324284a938807b40c713C159D6DF2Cc25014167;
 
+    address public OPRATR0 = 0xbe14E22875012b51e1CdcDf9FA91722516CbAa7D;
     address public OPRATR1 = 0x6F67b49D236b099209fD195dE5e04E908D2f185b;
-    address public OPRATR2 = 0xe76e368a81F7dCE637c0A14dc8883Ad6C429CCad;
+    address public OPRATR2 = 0x8E1C0e01F4E29e97275fc466Ac79670f64496E9b;
     address public OPRATR3 = 0x11B9bE3139aF548dC21e50495B471f1FF02FB83E;
-    address public OPRATR4 = 0x7d31969424c47dD5b70dB1C482af1e4710FDc70e;
+    address public OPRATR4 = 0x7cC0Fc315378ac88E276E8290021B33016896064;
     address public OPRATR5 = 0x0D35938D133dCca71773Cc750FFabE2c40A003f1;
+    address public OPRATR6 = 0xccADea5cC24204995a98dAA056C37bD5207fd0C5;
     address public OFFRAMP = 0x631Ed7600543EE5d87378508233fdE667c0CC6E6;
 
     address public proxyAuth       = SIG_ONE;
@@ -136,11 +138,13 @@ contract MaseerOneScript is Script {
         // MASEER_CONDUIT_PROXY set wards and buds
         MaseerConduit(MASEER_CONDUIT_PROXY).hope(conduitAuth);
         MaseerConduit(MASEER_CONDUIT_PROXY).hope(maseerMrktMkr);
+        MaseerConduit(MASEER_CONDUIT_PROXY).hope(OPRATR0);
         MaseerConduit(MASEER_CONDUIT_PROXY).hope(OPRATR1);
         MaseerConduit(MASEER_CONDUIT_PROXY).hope(OPRATR2);
         MaseerConduit(MASEER_CONDUIT_PROXY).hope(OPRATR3);
         MaseerConduit(MASEER_CONDUIT_PROXY).hope(OPRATR4);
         MaseerConduit(MASEER_CONDUIT_PROXY).hope(OPRATR5);
+        MaseerConduit(MASEER_CONDUIT_PROXY).hope(OPRATR6);
         MaseerConduit(MASEER_CONDUIT_PROXY).kiss(conduitOut);
         MaseerConduit(MASEER_CONDUIT_PROXY).kiss(OFFRAMP);
         MaseerConduit(MASEER_CONDUIT_PROXY).kiss(maseerMrktMkr);
