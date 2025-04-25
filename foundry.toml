@@ -5,8 +5,8 @@ libs = ["lib"]
 build_info = true
 sizes = true
 optimizer = true
-optimizer_runs = 20_000
-solc-version = "0.8.28"
+optimizer_runs = 21_000
+solc-version = "0.8.29"
 gas_limit = "18446744073709551615" # u64::MAX
 
 [rpc_endpoints]
