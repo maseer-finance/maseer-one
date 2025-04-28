@@ -10,9 +10,7 @@
 | adm | 0xb9a83116abd6bf3476fc5819deeb91f63cafdca2 |
 | cop | 0xb946b4c20522d23cccae926aceef6fc302f56609 |
 | flo | 0x9e0924075bb6696e70f638336ee36e3bd9a130c7 |
-|:--------------|:-----------------|
 | Detailed | |
-|:--------------|:-----------------|
 | MaseerPriceImplementation | 0x8d259b827728f126920b60745f2c3fd4e220782d |
 | MaseerPriceProxy | 0x7267dc183d5259ac33fd80322e62fc052efdad66 |
 | MaseerGateImplementation | 0xa5cb218db3c128adfb326b262232ce58396ee63a |
