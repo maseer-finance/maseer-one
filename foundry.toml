@@ -6,7 +6,7 @@ build_info = true
 sizes = true
 optimizer = true
 optimizer_runs = 21_000
-solc-version = "0.8.29"
+solc-version = "0.8.30"
 gas_limit = "18446744073709551615" # u64::MAX
 
 [rpc_endpoints]
