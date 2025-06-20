@@ -145,4 +145,18 @@ contract MaseerOneProxyTest is MaseerTestBase {
         assertEq(MaseerGate(address(_testProxy)).wards(bob), 1);
 
     }
+
+    function testSwapImplementation() public {
+        MaseerGate _testGate = new MaseerGate();
+        MaseerProxy _testProxy = new MaseerProxy(address(_testGate));
+
+        assertEq(_testProxy.impl(), address(_testGate));
+
+        MaseerGate _newGate = new MaseerGate();
+        _testProxy.file(address(_newGate));
+        assertEq(_testProxy.impl(), address(_newGate));
+
+        MaseerGate(address(_testProxy)).setOpenMint(block.timestamp);
+        assertEq(MaseerGate(address(_testProxy)).openMint(), block.timestamp);
+    }
 }
