@@ -16,9 +16,10 @@ import {MockUSDT} from "../test/Mocks/MockUSDT.sol";
 contract MaseerOneScript is Script {
     MaseerOne public maseerOne;
 
-    address public SIG_ONE = 0xb56F413dbCe352cfd71f221029CFC84580133F66;
-    address public SIG_TWO = 0xcF4f4eB6715e7C3d2Ef6cec3dFB9215cE865826b;
-    address public MRKTMKR = 0xb324284a938807b40c713C159D6DF2Cc25014167;
+    address public SIG_ONE   = 0xb56F413dbCe352cfd71f221029CFC84580133F66;
+    address public SIG_TWO   = 0xcF4f4eB6715e7C3d2Ef6cec3dFB9215cE865826b;
+    address public SIG_THREE = 0x517F95f34685f553E56cAea726880410C1EEA569;
+    address public MRKTMKR   = 0xb324284a938807b40c713C159D6DF2Cc25014167;
 
     address public OPRATR0 = 0xbe14E22875012b51e1CdcDf9FA91722516CbAa7D;
     address public OPRATR1 = 0x6F67b49D236b099209fD195dE5e04E908D2f185b;
@@ -39,19 +40,20 @@ contract MaseerOneScript is Script {
 
     address public oracleUpdater   = SIG_TWO;
 
+    address public maseerOps       = SIG_THREE;
+
     address public maseerMrktMkr   = MRKTMKR;
 
     string public constant NAME    = "CANA Holdings California Carbon Credits";
     string public constant SYMBOL  = "CANA";
 
-    // TODO: Placeholder for terms
     string public constant TERMS   = "bafkreic7qstcrnw3y5vcqamotyedxebmzepy7dibd3x73a4n7o6kbzek64";
 
     bytes32 public constant ORACLE_NAME     = "CANAUSDT";
     bytes32 public constant ORACLE_DECIMALS = bytes32(uint256(6));
     uint256 public          ORACLE_PRICE    = 1e6; // 1.0
 
-    uint256 public          MARKET_CAPACITY = 1_000_000 * 1e18;
+    uint256 public          MARKET_CAPACITY = 50_000 * 1e18;
     uint256 public          MARKET_COOLDOWN = 7 days;
     uint256 public constant MARKET_BPSIN    = 200;
     uint256 public constant MARKET_BPSOUT   = 200;
@@ -108,7 +110,6 @@ contract MaseerOneScript is Script {
 
         MASEER_PRECOMMIT = address(new MaseerPrecommit(address(maseerOne)));
 
-        // TODO: Configure Authorizations on proxies
         // MASEER_ORACLE_PROXY set wards and initial config
         MaseerPrice(MASEER_ORACLE_PROXY).file("name", ORACLE_NAME);
         MaseerPrice(MASEER_ORACLE_PROXY).file("decimals", ORACLE_DECIMALS);
@@ -145,9 +146,11 @@ contract MaseerOneScript is Script {
         MaseerConduit(MASEER_CONDUIT_PROXY).hope(OPRATR4);
         MaseerConduit(MASEER_CONDUIT_PROXY).hope(OPRATR5);
         MaseerConduit(MASEER_CONDUIT_PROXY).hope(OPRATR6);
+        MaseerConduit(MASEER_CONDUIT_PROXY).hope(maseerOps);
         MaseerConduit(MASEER_CONDUIT_PROXY).kiss(conduitOut);
         MaseerConduit(MASEER_CONDUIT_PROXY).kiss(OFFRAMP);
         MaseerConduit(MASEER_CONDUIT_PROXY).kiss(maseerMrktMkr);
+        MaseerConduit(MASEER_CONDUIT_PROXY).kiss(maseerOps);
         MaseerConduit(MASEER_CONDUIT_PROXY).kiss(address(maseerOne));
         MaseerConduit(MASEER_CONDUIT_PROXY).rely(conduitAuth);
         MaseerProxy(MASEER_CONDUIT_PROXY).relyProxy(proxyAuth);
