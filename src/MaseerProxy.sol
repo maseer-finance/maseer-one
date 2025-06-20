@@ -23,8 +23,12 @@ contract MaseerProxy {
     function wardsProxy(address usr) external view returns (uint256) {
         return _getAuth(usr);
     }
-    function relyProxy(address usr) external proxyAuth { _setAuth(usr, 1); }
-    function denyProxy(address usr) external proxyAuth { _setAuth(usr, 0); }
+    function relyProxy(address usr) external proxyAuth { _setAuth(usr, 1); emit RelyProxy(usr); }
+    function denyProxy(address usr) external proxyAuth { _setAuth(usr, 0); emit DenyProxy(usr); }
+
+    event RelyProxy(address indexed usr);
+    event DenyProxy(address indexed usr);
+    event Implementation(address indexed impl);
 
     error NotAuthorized();
     error NoImplementation();
@@ -65,10 +69,12 @@ contract MaseerProxy {
 
     function _setImpl(address _impl) internal {
         if (_impl == address(0)) revert NoImplementation();
+        if (_impl.code.length == 0) revert NoImplementation();
         bytes32 _slot = _IMPL_SLOT;
         assembly {
             sstore(_slot, _impl)
         }
+        emit Implementation(_impl);
     }
 
     function _getImpl() internal view returns (address) {

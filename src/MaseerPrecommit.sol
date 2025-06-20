@@ -45,6 +45,21 @@ contract MaseerPrecommit {
         uint256 amt;
     }
 
+    event Pact(
+        address indexed usr,
+        uint256 indexed amt,
+        uint256 indexed idx
+    );
+    event Exec(
+        address indexed usr,
+        uint256 indexed amt,
+        uint256 indexed idx
+    );
+    event Exit(
+        address indexed usr,
+        uint256 indexed amt
+    );
+
     error TransferFailed();
     error InsufficientAllowance();
     error InsufficientAmount();
@@ -70,6 +85,7 @@ contract MaseerPrecommit {
             usr: msg.sender,
             amt: _amt
         });
+        emit Pact(msg.sender, _amt, deals - 1);
     }
 
     function exec(uint256 _idx) external pass {
@@ -80,10 +96,14 @@ contract MaseerPrecommit {
         _safeTransferFrom(gem, c.usr, address(this), c.amt);
         uint256 out = One(one).mint(c.amt);
         _safeTransfer(one, c.usr, out);
+        emit Exec(c.usr, out, _idx);
     }
 
     function exit() external pass {
-        _safeTransfer(gem, One(one).flo(), Gem(gem).balanceOf(address(this)));
+        address _flo = One(one).flo();
+        uint256 _bal = Gem(gem).balanceOf(address(this));
+        _safeTransfer(gem, _flo, _bal);
+        emit Exit(_flo, _bal);
     }
 
     function amt(uint256 _idx) external view returns (uint256) {

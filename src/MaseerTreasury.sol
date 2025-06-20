@@ -23,12 +23,17 @@ contract MaseerTreasury is MaseerImplementation {
 
     bytes32 internal constant _ISSUER_SLOT   = keccak256("maseer.treasury.issuer");
 
+    event Bestow(address indexed usr);
+    event Depose(address indexed usr);
+
     function bestow(address usr) external auth {
         _setIssuer(usr, 1);
+        emit Bestow(usr);
     }
 
     function depose(address usr) external auth {
         _setIssuer(usr, 0);
+        emit Depose(usr);
     }
 
     function issuer(address usr) external view returns (bool) {

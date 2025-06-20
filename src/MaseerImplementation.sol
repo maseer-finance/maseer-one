@@ -18,6 +18,9 @@ abstract contract MaseerImplementation {
 
     bytes32 internal constant _WARD_SLOT = keccak256("maseer.wards");
 
+    event Rely(address indexed usr);
+    event Deny(address indexed usr);
+
     error NotAuthorized(address usr);
     error UnrecognizedParam(bytes32 param);
 
@@ -32,10 +35,12 @@ abstract contract MaseerImplementation {
 
     function rely(address usr) external auth {
         _rely(usr);
+        emit Rely(usr);
     }
 
     function deny(address usr) external auth {
         _deny(usr);
+        emit Deny(usr);
     }
 
     function wards(address usr) external view returns (uint256) {

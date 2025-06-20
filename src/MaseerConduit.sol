@@ -48,6 +48,10 @@ contract MaseerConduit is MaseerImplementation {
         _;
     }
 
+    event Hope(address indexed usr);
+    event Nope(address indexed usr);
+    event Kiss(address indexed usr);
+    event Diss(address indexed usr);
     event Move(
         address indexed token,
         address indexed to,

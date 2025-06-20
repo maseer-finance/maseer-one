@@ -31,6 +31,16 @@ contract MaseerGate is MaseerImplementation {
     // Allocate slots 0-49
     uint256[50] private __gap;
 
+    event OpenMint(uint256 open);
+    event HaltMint(uint256 halt);
+    event OpenBurn(uint256 open);
+    event HaltBurn(uint256 halt);
+    event Bpsin(uint256 bpsin);
+    event Bpsout(uint256 bpsout);
+    event Cooldown(uint256 cooldown);
+    event Capacity(uint256 capacity);
+    event Terms(string terms);
+
     constructor() {
         _rely(msg.sender);
     }
@@ -173,34 +183,42 @@ contract MaseerGate is MaseerImplementation {
 
     function _setOpenMint(uint256 open_) internal {
         _setVal(_OPEN_MINT_SLOT, bytes32(open_));
+        emit OpenMint(open_);
     }
 
     function _setHaltMint(uint256 halt_) internal {
         _setVal(_HALT_MINT_SLOT, bytes32(halt_));
+        emit HaltMint(halt_);
     }
 
     function _setOpenBurn(uint256 open_) internal {
         _setVal(_OPEN_BURN_SLOT, bytes32(open_));
+        emit OpenBurn(open_);
     }
 
     function _setHaltBurn(uint256 halt_) internal {
         _setVal(_HALT_BURN_SLOT, bytes32(halt_));
+        emit HaltBurn(halt_);
     }
 
     function _setBpsin(uint256 bpsin_) internal {
         _setVal(_BPSIN_SLOT, bytes32(bpsin_));
+        emit Bpsin(bpsin_);
     }
 
     function _setBpsout(uint256 bpsout_) internal {
         _setVal(_BPSOUT_SLOT, bytes32(bpsout_));
+        emit Bpsout(bpsout_);
     }
 
     function _setCooldown(uint256 cool_) internal {
         _setVal(_COOLDOWN_SLOT, bytes32(cool_));
+        emit Cooldown(cool_);
     }
 
     function _setCapacity(uint256 cap_) internal {
         _setVal(_CAPACITY_SLOT, bytes32(cap_));
+        emit Capacity(cap_);
     }
 
     function _adjustMintPrice(uint256 _price, uint256 _bps) internal pure returns (uint256) {
