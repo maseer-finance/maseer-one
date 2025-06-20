@@ -4,24 +4,24 @@
 
 | Contract Name | Contract Address |
 |:--------------|:-----------------|
-| MaseerOne | 0x1a88e0a996c0c024e8b14f88b28a1e20863307ab |
-| pip | 0x7267dc183d5259ac33fd80322e62fc052efdad66 |
-| act | 0xd5b61ee60e89c4c068bc8f9628d0a36d8ed1e08c |
-| adm | 0xb9a83116abd6bf3476fc5819deeb91f63cafdca2 |
-| cop | 0xb946b4c20522d23cccae926aceef6fc302f56609 |
-| flo | 0x9e0924075bb6696e70f638336ee36e3bd9a130c7 |
+| MaseerOne | 0x01995a697752266d8e748738aaa3f06464b8350b |
+| pip | 0xE7c5c484A61Cc93A638F67906a9900d94b40FDA7 |
+| act | 0x3a0DE7A4678CA9341a63Ffe78041385EdA65B128 |
+| adm | 0x00d2dc03B8207b2D261Bda5D149Dd7FcF3bdF8d7 |
+| cop | 0x456e0074853cd23a3cDeA3A1Bb85575eD9b1a718 |
+| flo | 0x12C8091a719125Bf08875635c3Ed738510C56141 |
 | Detailed | |
-| MaseerPriceImplementation | 0x8d259b827728f126920b60745f2c3fd4e220782d |
-| MaseerPriceProxy | 0x7267dc183d5259ac33fd80322e62fc052efdad66 |
-| MaseerGateImplementation | 0xa5cb218db3c128adfb326b262232ce58396ee63a |
-| MaseerGateProxy | 0xd5b61ee60e89c4c068bc8f9628d0a36d8ed1e08c |
-| MaseerTreasuryImplementation | 0x5ac573bd64022e88452421786f536b7084286faa |
-| MaseerTreasuryProxy | 0xb9a83116abd6bf3476fc5819deeb91f63cafdca2 |
-| MaseerGuardImplementation | 0x0853b0570df010b8da89915782533fba0a1185a0 |
-| MaseerGuardProxy | 0xb946b4c20522d23cccae926aceef6fc302f56609 |
-| MaseerConduitImplementation | 0xb10d74543e0eb81dcc1d8e76da6c524b68dd4c80 |
-| MaseerConduitProxy | 0x9e0924075bb6696e70f638336ee36e3bd9a130c7 |
-| MaseerPrecommit | 0x1fa926b0f325bd4930e4fd0d7d291c7dcc1fdb67 |
+| MaseerPriceImplementation | 0xFD984da1fDd27103701fff1aA27CCBe361EC5344 |
+| MaseerPriceProxy | 0xE7c5c484A61Cc93A638F67906a9900d94b40FDA7 |
+| MaseerGateImplementation | 0x0A4C31CE6Fcca5948f4aBE6a7dF350A88993e249 |
+| MaseerGateProxy | 0x3a0DE7A4678CA9341a63Ffe78041385EdA65B128 |
+| MaseerTreasuryImplementation | 0x1c571c63D256cDC225bfFDc1d6602f3554F027AE |
+| MaseerTreasuryProxy | 0x00d2dc03B8207b2D261Bda5D149Dd7FcF3bdF8d7 |
+| MaseerGuardImplementation | 0x2848D47ae98bc9d862caAb91C1F236cef112dCCf |
+| MaseerGuardProxy | 0x456e0074853cd23a3cDeA3A1Bb85575eD9b1a718 |
+| MaseerConduitImplementation | 0x78FA7018cc9C48Ad732e49A491032eF47018d5fD |
+| MaseerConduitProxy | 0x12C8091a719125Bf08875635c3Ed738510C56141 |
+| MaseerPrecommit | 0x0f6f65fd822d3713c20e146ff66e4d83b050c31d |
 
 
 ## Contract Descriptions
