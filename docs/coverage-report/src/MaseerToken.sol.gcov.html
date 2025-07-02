@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2025-04-21 19:17:53</td>
+            <td class="headerValue">2025-07-02 11:27:30</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">9</td>
@@ -93,12 +93,12 @@
 <a name="31"><span class="lineNum">      31 </span>            :     uint256 immutable         internal INITIAL_CHAIN_ID;</a>
 <a name="32"><span class="lineNum">      32 </span>            :     mapping(address =&gt; uint256) public nonces;</a>
 <a name="33"><span class="lineNum">      33 </span>            : </a>
-<a name="34"><span class="lineNum">      34 </span><span class="lineCov">        144 :     constructor(string memory name_, string memory symbol_) {</span></a>
-<a name="35"><span class="lineNum">      35 </span><span class="lineCov">        144 :         name   = name_;</span></a>
-<a name="36"><span class="lineNum">      36 </span><span class="lineCov">        144 :         symbol = symbol_;</span></a>
+<a name="34"><span class="lineNum">      34 </span><span class="lineCov">        146 :     constructor(string memory name_, string memory symbol_) {</span></a>
+<a name="35"><span class="lineNum">      35 </span><span class="lineCov">        146 :         name   = name_;</span></a>
+<a name="36"><span class="lineNum">      36 </span><span class="lineCov">        146 :         symbol = symbol_;</span></a>
 <a name="37"><span class="lineNum">      37 </span>            : </a>
-<a name="38"><span class="lineNum">      38 </span><span class="lineCov">        144 :         INITIAL_CHAIN_ID = block.chainid;</span></a>
-<a name="39"><span class="lineNum">      39 </span><span class="lineCov">        144 :         INITIAL_DOMAIN_SEPARATOR = _computeDomainSeparator();</span></a>
+<a name="38"><span class="lineNum">      38 </span><span class="lineCov">        146 :         INITIAL_CHAIN_ID = block.chainid;</span></a>
+<a name="39"><span class="lineNum">      39 </span><span class="lineCov">        146 :         INITIAL_DOMAIN_SEPARATOR = _computeDomainSeparator();</span></a>
 <a name="40"><span class="lineNum">      40 </span>            :     }</a>
 <a name="41"><span class="lineNum">      41 </span>            : </a>
 <a name="42"><span class="lineNum">      42 </span>            :     event Approval(address indexed src, address indexed usr, uint256 wad);</a>
@@ -108,8 +108,8 @@
 <a name="46"><span class="lineNum">      46 </span>            :     error PermitDeadlineExpired(uint256 deadline, uint256 actual);</a>
 <a name="47"><span class="lineNum">      47 </span>            :     error InvalidSigner(address recovered, address expected);</a>
 <a name="48"><span class="lineNum">      48 </span>            : </a>
-<a name="49"><span class="lineNum">      49 </span><span class="lineCov">        252 :     function approve(address usr) public virtual returns (bool) {</span></a>
-<a name="50"><span class="lineNum">      50 </span><span class="lineCov">        252 :         return approve(usr, type(uint256).max);</span></a>
+<a name="49"><span class="lineNum">      49 </span><span class="lineCov">        251 :     function approve(address usr) public virtual returns (bool) {</span></a>
+<a name="50"><span class="lineNum">      50 </span><span class="lineCov">        251 :         return approve(usr, type(uint256).max);</span></a>
 <a name="51"><span class="lineNum">      51 </span>            :     }</a>
 <a name="52"><span class="lineNum">      52 </span>            : </a>
 <a name="53"><span class="lineNum">      53 </span><span class="lineCov">        508 :     function approve(address usr, uint256 wad) public virtual returns (bool) {</span></a>
@@ -120,35 +120,35 @@
 <a name="58"><span class="lineNum">      58 </span><span class="lineCov">        508 :         return true;</span></a>
 <a name="59"><span class="lineNum">      59 </span>            :     }</a>
 <a name="60"><span class="lineNum">      60 </span>            : </a>
-<a name="61"><span class="lineNum">      61 </span><span class="lineCov">        354 :     function transfer(address dst, uint256 wad) public virtual returns (bool) {</span></a>
-<a name="62"><span class="lineNum">      62 </span><span class="lineCov">        354 :         balanceOf[msg.sender] -= wad;</span></a>
+<a name="61"><span class="lineNum">      61 </span><span class="lineCov">        353 :     function transfer(address dst, uint256 wad) public virtual returns (bool) {</span></a>
+<a name="62"><span class="lineNum">      62 </span><span class="lineCov">        353 :         balanceOf[msg.sender] -= wad;</span></a>
 <a name="63"><span class="lineNum">      63 </span>            : </a>
 <a name="64"><span class="lineNum">      64 </span>            :         // Cannot overflow because balance</a>
 <a name="65"><span class="lineNum">      65 </span>            :         //   can't exceed totalSupply</a>
 <a name="66"><span class="lineNum">      66 </span>            :         unchecked {</a>
-<a name="67"><span class="lineNum">      67 </span><span class="lineCov">        354 :             balanceOf[dst] += wad;</span></a>
+<a name="67"><span class="lineNum">      67 </span><span class="lineCov">        353 :             balanceOf[dst] += wad;</span></a>
 <a name="68"><span class="lineNum">      68 </span>            :         }</a>
 <a name="69"><span class="lineNum">      69 </span>            : </a>
-<a name="70"><span class="lineNum">      70 </span><span class="lineCov">        354 :         emit Transfer(msg.sender, dst, wad);</span></a>
+<a name="70"><span class="lineNum">      70 </span><span class="lineCov">        353 :         emit Transfer(msg.sender, dst, wad);</span></a>
 <a name="71"><span class="lineNum">      71 </span>            : </a>
-<a name="72"><span class="lineNum">      72 </span><span class="lineCov">        354 :         return true;</span></a>
+<a name="72"><span class="lineNum">      72 </span><span class="lineCov">        353 :         return true;</span></a>
 <a name="73"><span class="lineNum">      73 </span>            :     }</a>
 <a name="74"><span class="lineNum">      74 </span>            : </a>
-<a name="75"><span class="lineNum">      75 </span><span class="lineCov">        254 :     function transferFrom(address src, address dst, uint256 wad)</span></a>
+<a name="75"><span class="lineNum">      75 </span><span class="lineCov">        253 :     function transferFrom(address src, address dst, uint256 wad)</span></a>
 <a name="76"><span class="lineNum">      76 </span>            :         public virtual</a>
 <a name="77"><span class="lineNum">      77 </span>            :         returns (bool)</a>
 <a name="78"><span class="lineNum">      78 </span>            :     {</a>
-<a name="79"><span class="lineNum">      79 </span><span class="lineCov">        254 :         uint256 _allowance = allowance[src][msg.sender];</span></a>
-<a name="80"><span class="lineNum">      80 </span><span class="lineCov">        254 :         if (_allowance != type(uint256).max) {</span></a>
-<a name="81"><span class="lineNum">      81 </span><span class="lineCov">        253 :             allowance[src][msg.sender] = _allowance - wad;</span></a>
+<a name="79"><span class="lineNum">      79 </span><span class="lineCov">        253 :         uint256 _allowance = allowance[src][msg.sender];</span></a>
+<a name="80"><span class="lineNum">      80 </span><span class="lineCov">        253 :         if (_allowance != type(uint256).max) {</span></a>
+<a name="81"><span class="lineNum">      81 </span><span class="lineCov">        252 :             allowance[src][msg.sender] = _allowance - wad;</span></a>
 <a name="82"><span class="lineNum">      82 </span>            :         }</a>
 <a name="83"><span class="lineNum">      83 </span>            : </a>
-<a name="84"><span class="lineNum">      84 </span><span class="lineCov">        253 :         balanceOf[src] -= wad;</span></a>
-<a name="85"><span class="lineNum">      85 </span><span class="lineCov">        253 :         balanceOf[dst] += wad;</span></a>
+<a name="84"><span class="lineNum">      84 </span><span class="lineCov">        252 :         balanceOf[src] -= wad;</span></a>
+<a name="85"><span class="lineNum">      85 </span><span class="lineCov">        252 :         balanceOf[dst] += wad;</span></a>
 <a name="86"><span class="lineNum">      86 </span>            : </a>
-<a name="87"><span class="lineNum">      87 </span><span class="lineCov">        253 :         emit Transfer(src, dst, wad);</span></a>
+<a name="87"><span class="lineNum">      87 </span><span class="lineCov">        252 :         emit Transfer(src, dst, wad);</span></a>
 <a name="88"><span class="lineNum">      88 </span>            : </a>
-<a name="89"><span class="lineNum">      89 </span><span class="lineCov">        253 :         return true;</span></a>
+<a name="89"><span class="lineNum">      89 </span><span class="lineCov">        252 :         return true;</span></a>
 <a name="90"><span class="lineNum">      90 </span>            :     }</a>
 <a name="91"><span class="lineNum">      91 </span>            : </a>
 <a name="92"><span class="lineNum">      92 </span><span class="lineCov">          1 :     function permit(</span></a>
@@ -196,30 +196,30 @@
 <a name="134"><span class="lineNum">     134 </span><span class="lineCov">          1 :         emit Approval(owner, spender, value);</span></a>
 <a name="135"><span class="lineNum">     135 </span>            :     }</a>
 <a name="136"><span class="lineNum">     136 </span>            : </a>
-<a name="137"><span class="lineNum">     137 </span><span class="lineCov">        373 :     function _mint(address usr, uint256 wad) internal {</span></a>
-<a name="138"><span class="lineNum">     138 </span><span class="lineCov">        373 :         totalSupply += wad;</span></a>
+<a name="137"><span class="lineNum">     137 </span><span class="lineCov">        375 :     function _mint(address usr, uint256 wad) internal {</span></a>
+<a name="138"><span class="lineNum">     138 </span><span class="lineCov">        375 :         totalSupply += wad;</span></a>
 <a name="139"><span class="lineNum">     139 </span>            :         // Cannot overflow</a>
 <a name="140"><span class="lineNum">     140 </span>            :         unchecked {</a>
-<a name="141"><span class="lineNum">     141 </span><span class="lineCov">        373 :             balanceOf[usr] += wad;</span></a>
+<a name="141"><span class="lineNum">     141 </span><span class="lineCov">        375 :             balanceOf[usr] += wad;</span></a>
 <a name="142"><span class="lineNum">     142 </span>            :         }</a>
-<a name="143"><span class="lineNum">     143 </span><span class="lineCov">        373 :         emit Transfer(address(0), usr, wad);</span></a>
+<a name="143"><span class="lineNum">     143 </span><span class="lineCov">        375 :         emit Transfer(address(0), usr, wad);</span></a>
 <a name="144"><span class="lineNum">     144 </span>            :     }</a>
 <a name="145"><span class="lineNum">     145 </span>            : </a>
-<a name="146"><span class="lineNum">     146 </span><span class="lineCov">        265 :     function _burn(address usr, uint256 wad) internal {</span></a>
-<a name="147"><span class="lineNum">     147 </span><span class="lineCov">        265 :         balanceOf[usr] -= wad;</span></a>
+<a name="146"><span class="lineNum">     146 </span><span class="lineCov">        267 :     function _burn(address usr, uint256 wad) internal {</span></a>
+<a name="147"><span class="lineNum">     147 </span><span class="lineCov">        267 :         balanceOf[usr] -= wad;</span></a>
 <a name="148"><span class="lineNum">     148 </span>            :         // Cannot overflow</a>
 <a name="149"><span class="lineNum">     149 </span>            :         unchecked {</a>
-<a name="150"><span class="lineNum">     150 </span><span class="lineCov">        265 :             totalSupply -= wad;</span></a>
+<a name="150"><span class="lineNum">     150 </span><span class="lineCov">        267 :             totalSupply -= wad;</span></a>
 <a name="151"><span class="lineNum">     151 </span>            :         }</a>
-<a name="152"><span class="lineNum">     152 </span><span class="lineCov">        265 :         emit Transfer(usr, address(0), wad);</span></a>
+<a name="152"><span class="lineNum">     152 </span><span class="lineCov">        267 :         emit Transfer(usr, address(0), wad);</span></a>
 <a name="153"><span class="lineNum">     153 </span>            :     }</a>
 <a name="154"><span class="lineNum">     154 </span>            : </a>
 <a name="155"><span class="lineNum">     155 </span><span class="lineCov">          2 :     function DOMAIN_SEPARATOR() public view returns (bytes32) {</span></a>
 <a name="156"><span class="lineNum">     156 </span><span class="lineCov">          3 :         return (block.chainid == INITIAL_CHAIN_ID) ? INITIAL_DOMAIN_SEPARATOR : _computeDomainSeparator();</span></a>
 <a name="157"><span class="lineNum">     157 </span>            :     }</a>
 <a name="158"><span class="lineNum">     158 </span>            : </a>
-<a name="159"><span class="lineNum">     159 </span><span class="lineCov">        144 :     function _computeDomainSeparator() internal view returns (bytes32) {</span></a>
-<a name="160"><span class="lineNum">     160 </span><span class="lineCov">        144 :         return keccak256(abi.encode(</span></a>
+<a name="159"><span class="lineNum">     159 </span><span class="lineCov">        146 :     function _computeDomainSeparator() internal view returns (bytes32) {</span></a>
+<a name="160"><span class="lineNum">     160 </span><span class="lineCov">        146 :         return keccak256(abi.encode(</span></a>
 <a name="161"><span class="lineNum">     161 </span>            :             keccak256(&quot;EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)&quot;),</a>
 <a name="162"><span class="lineNum">     162 </span>            :             keccak256(bytes(name)),</a>
 <a name="163"><span class="lineNum">     163 </span>            :             keccak256(bytes(&quot;1&quot;)),</a>

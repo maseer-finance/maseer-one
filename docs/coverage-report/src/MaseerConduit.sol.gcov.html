@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2025-04-21 19:17:53</td>
+            <td class="headerValue">2025-07-02 11:27:30</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">10</td>
@@ -97,51 +97,55 @@
 <a name="35"><span class="lineNum">      35 </span>            :     error ZeroAddress();</a>
 <a name="36"><span class="lineNum">      36 </span>            :     error TransferFailed();</a>
 <a name="37"><span class="lineNum">      37 </span>            : </a>
-<a name="38"><span class="lineNum">      38 </span><span class="lineCov">         21 :     function hope(address usr) external auth { can[usr] = 1; }</span></a>
+<a name="38"><span class="lineNum">      38 </span><span class="lineCov">         28 :     function hope(address usr) external auth { can[usr] = 1; }</span></a>
 <a name="39"><span class="lineNum">      39 </span><span class="lineCov">          2 :     function nope(address usr) external auth { can[usr] = 0; }</span></a>
 <a name="40"><span class="lineNum">      40 </span><span class="lineCov">          8 :     modifier operator() {</span></a>
 <a name="41"><span class="lineNum">      41 </span><span class="lineCov">          8 :         if (can[msg.sender] != 1) revert NotAuthorized(msg.sender);</span></a>
 <a name="42"><span class="lineNum">      42 </span>            :         _;</a>
 <a name="43"><span class="lineNum">      43 </span>            :     }</a>
-<a name="44"><span class="lineNum">      44 </span><span class="lineCov">         15 :     function kiss(address usr) external auth { bud[usr] = 1; }</span></a>
+<a name="44"><span class="lineNum">      44 </span><span class="lineCov">         18 :     function kiss(address usr) external auth { bud[usr] = 1; }</span></a>
 <a name="45"><span class="lineNum">      45 </span><span class="lineCov">          2 :     function diss(address usr) external auth { bud[usr] = 0; }</span></a>
 <a name="46"><span class="lineNum">      46 </span><span class="lineCov">          7 :     modifier buds(address usr) {</span></a>
 <a name="47"><span class="lineNum">      47 </span><span class="lineCov">          7 :         if (bud[usr] != 1) revert NotAuthorized(usr);</span></a>
 <a name="48"><span class="lineNum">      48 </span>            :         _;</a>
 <a name="49"><span class="lineNum">      49 </span>            :     }</a>
 <a name="50"><span class="lineNum">      50 </span>            : </a>
-<a name="51"><span class="lineNum">      51 </span>            :     event Move(</a>
-<a name="52"><span class="lineNum">      52 </span>            :         address indexed token,</a>
-<a name="53"><span class="lineNum">      53 </span>            :         address indexed to,</a>
-<a name="54"><span class="lineNum">      54 </span>            :         uint256 indexed amount</a>
-<a name="55"><span class="lineNum">      55 </span>            :     );</a>
-<a name="56"><span class="lineNum">      56 </span>            : </a>
-<a name="57"><span class="lineNum">      57 </span><span class="lineCov">        145 :     constructor() {</span></a>
-<a name="58"><span class="lineNum">      58 </span><span class="lineCov">        145 :         _rely(msg.sender);</span></a>
-<a name="59"><span class="lineNum">      59 </span>            :     }</a>
+<a name="51"><span class="lineNum">      51 </span>            :     event Hope(address indexed usr);</a>
+<a name="52"><span class="lineNum">      52 </span>            :     event Nope(address indexed usr);</a>
+<a name="53"><span class="lineNum">      53 </span>            :     event Kiss(address indexed usr);</a>
+<a name="54"><span class="lineNum">      54 </span>            :     event Diss(address indexed usr);</a>
+<a name="55"><span class="lineNum">      55 </span>            :     event Move(</a>
+<a name="56"><span class="lineNum">      56 </span>            :         address indexed token,</a>
+<a name="57"><span class="lineNum">      57 </span>            :         address indexed to,</a>
+<a name="58"><span class="lineNum">      58 </span>            :         uint256 indexed amount</a>
+<a name="59"><span class="lineNum">      59 </span>            :     );</a>
 <a name="60"><span class="lineNum">      60 </span>            : </a>
-<a name="61"><span class="lineNum">      61 </span><span class="lineCov">          8 :     function move(address _token, address _to) external operator buds(_to) returns (uint256 _amt) {</span></a>
-<a name="62"><span class="lineNum">      62 </span><span class="lineCov">          6 :         if (_token == address(0)) revert ZeroAddress();</span></a>
-<a name="63"><span class="lineNum">      63 </span><span class="lineCov">          5 :         _amt = Gem(_token).balanceOf(address(this));</span></a>
-<a name="64"><span class="lineNum">      64 </span><span class="lineCov">          5 :         _move(_token, _to, _amt);</span></a>
-<a name="65"><span class="lineNum">      65 </span>            :     }</a>
-<a name="66"><span class="lineNum">      66 </span>            : </a>
-<a name="67"><span class="lineNum">      67 </span><span class="lineCov">          2 :     function move(address _token, address _to, uint256 _amt) external operator buds(_to) returns (uint256) {</span></a>
-<a name="68"><span class="lineNum">      68 </span><span class="lineCov">          2 :         if (_token == address(0)) revert ZeroAddress();</span></a>
-<a name="69"><span class="lineNum">      69 </span><span class="lineCov">          1 :         _move(_token, _to, _amt);</span></a>
-<a name="70"><span class="lineNum">      70 </span><span class="lineCov">          1 :         return _amt;</span></a>
-<a name="71"><span class="lineNum">      71 </span>            :     }</a>
-<a name="72"><span class="lineNum">      72 </span>            : </a>
-<a name="73"><span class="lineNum">      73 </span><span class="lineCov">          6 :     function _move(address _token, address _to, uint256 _amt) internal {</span></a>
-<a name="74"><span class="lineNum">      74 </span><span class="lineCov">          6 :         _safeTransfer(_token, _to, _amt);</span></a>
-<a name="75"><span class="lineNum">      75 </span><span class="lineCov">          6 :         emit Move(_token, _to, _amt);</span></a>
-<a name="76"><span class="lineNum">      76 </span>            :     }</a>
-<a name="77"><span class="lineNum">      77 </span>            : </a>
-<a name="78"><span class="lineNum">      78 </span><span class="lineCov">          6 :     function _safeTransfer(address _token, address _to, uint256 _amt) internal {</span></a>
-<a name="79"><span class="lineNum">      79 </span><span class="lineCov">          6 :         (bool success, bytes memory data) = _token.call(abi.encodeWithSelector(Gem.transfer.selector, _to, _amt));</span></a>
-<a name="80"><span class="lineNum">      80 </span><span class="lineCov">          6 :         if (!success || (data.length &gt; 0 &amp;&amp; abi.decode(data, (bool)) == false)) revert TransferFailed();</span></a>
-<a name="81"><span class="lineNum">      81 </span>            :     }</a>
-<a name="82"><span class="lineNum">      82 </span>            : }</a>
+<a name="61"><span class="lineNum">      61 </span><span class="lineCov">        147 :     constructor() {</span></a>
+<a name="62"><span class="lineNum">      62 </span><span class="lineCov">        147 :         _rely(msg.sender);</span></a>
+<a name="63"><span class="lineNum">      63 </span>            :     }</a>
+<a name="64"><span class="lineNum">      64 </span>            : </a>
+<a name="65"><span class="lineNum">      65 </span><span class="lineCov">          8 :     function move(address _token, address _to) external operator buds(_to) returns (uint256 _amt) {</span></a>
+<a name="66"><span class="lineNum">      66 </span><span class="lineCov">          6 :         if (_token == address(0)) revert ZeroAddress();</span></a>
+<a name="67"><span class="lineNum">      67 </span><span class="lineCov">          5 :         _amt = Gem(_token).balanceOf(address(this));</span></a>
+<a name="68"><span class="lineNum">      68 </span><span class="lineCov">          5 :         _move(_token, _to, _amt);</span></a>
+<a name="69"><span class="lineNum">      69 </span>            :     }</a>
+<a name="70"><span class="lineNum">      70 </span>            : </a>
+<a name="71"><span class="lineNum">      71 </span><span class="lineCov">          3 :     function move(address _token, address _to, uint256 _amt) external operator buds(_to) returns (uint256) {</span></a>
+<a name="72"><span class="lineNum">      72 </span><span class="lineCov">          3 :         if (_token == address(0)) revert ZeroAddress();</span></a>
+<a name="73"><span class="lineNum">      73 </span><span class="lineCov">          2 :         _move(_token, _to, _amt);</span></a>
+<a name="74"><span class="lineNum">      74 </span><span class="lineCov">          2 :         return _amt;</span></a>
+<a name="75"><span class="lineNum">      75 </span>            :     }</a>
+<a name="76"><span class="lineNum">      76 </span>            : </a>
+<a name="77"><span class="lineNum">      77 </span><span class="lineCov">          7 :     function _move(address _token, address _to, uint256 _amt) internal {</span></a>
+<a name="78"><span class="lineNum">      78 </span><span class="lineCov">          7 :         _safeTransfer(_token, _to, _amt);</span></a>
+<a name="79"><span class="lineNum">      79 </span><span class="lineCov">          7 :         emit Move(_token, _to, _amt);</span></a>
+<a name="80"><span class="lineNum">      80 </span>            :     }</a>
+<a name="81"><span class="lineNum">      81 </span>            : </a>
+<a name="82"><span class="lineNum">      82 </span><span class="lineCov">          7 :     function _safeTransfer(address _token, address _to, uint256 _amt) internal {</span></a>
+<a name="83"><span class="lineNum">      83 </span><span class="lineCov">          7 :         (bool success, bytes memory data) = _token.call(abi.encodeWithSelector(Gem.transfer.selector, _to, _amt));</span></a>
+<a name="84"><span class="lineNum">      84 </span><span class="lineCov">          7 :         if (!success || (data.length &gt; 0 &amp;&amp; abi.decode(data, (bool)) == false)) revert TransferFailed();</span></a>
+<a name="85"><span class="lineNum">      85 </span>            :     }</a>
+<a name="86"><span class="lineNum">      86 </span>            : }</a>
 </pre>
       </td>
     </tr>
