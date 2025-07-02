@@ -78,11 +78,16 @@ contract MaseerOneScript is Script {
 
     address public MASEER_PRECOMMIT;
 
+    address public DEPLOYER;
+
     // Sepolia
     address public SEPOLIA_AUTH = 0xB05502bf20342331F42A7B80Aa4bAB3F8cA86C0F;
 
     function run() public {
         vm.startBroadcast();
+
+        DEPLOYER = tx.origin;
+        console.log("Deployer address: ", DEPLOYER);
 
         if (getChainId() == 11155111) useSepoliaConfig();
 
@@ -159,16 +164,16 @@ contract MaseerOneScript is Script {
         if (getChainId() == 11155111) setupSepoliaMarket();
 
         // Disable deployer auths
-        MaseerPrice(MASEER_ORACLE_PROXY).deny(msg.sender);
-        MaseerProxy(MASEER_ORACLE_PROXY).denyProxy(msg.sender);
-        MaseerGate(MASEER_MARKET_PROXY).deny(msg.sender);
-        MaseerProxy(MASEER_MARKET_PROXY).denyProxy(msg.sender);
-        MaseerTreasury(MASEER_TREASURY_PROXY).deny(msg.sender);
-        MaseerProxy(MASEER_TREASURY_PROXY).denyProxy(msg.sender);
-        MaseerGuard(MASEER_COMPLIANCE_PROXY).deny(msg.sender);
-        MaseerProxy(MASEER_COMPLIANCE_PROXY).denyProxy(msg.sender);
-        MaseerConduit(MASEER_CONDUIT_PROXY).deny(msg.sender);
-        MaseerProxy(MASEER_CONDUIT_PROXY).denyProxy(msg.sender);
+        MaseerPrice(MASEER_ORACLE_PROXY).deny(DEPLOYER);
+        MaseerProxy(MASEER_ORACLE_PROXY).denyProxy(DEPLOYER);
+        MaseerGate(MASEER_MARKET_PROXY).deny(DEPLOYER);
+        MaseerProxy(MASEER_MARKET_PROXY).denyProxy(DEPLOYER);
+        MaseerTreasury(MASEER_TREASURY_PROXY).deny(DEPLOYER);
+        MaseerProxy(MASEER_TREASURY_PROXY).denyProxy(DEPLOYER);
+        MaseerGuard(MASEER_COMPLIANCE_PROXY).deny(DEPLOYER);
+        MaseerProxy(MASEER_COMPLIANCE_PROXY).denyProxy(DEPLOYER);
+        MaseerConduit(MASEER_CONDUIT_PROXY).deny(DEPLOYER);
+        MaseerProxy(MASEER_CONDUIT_PROXY).denyProxy(DEPLOYER);
 
         vm.stopBroadcast();
 
@@ -193,7 +198,7 @@ contract MaseerOneScript is Script {
 
     function useSepoliaConfig() internal {
         USDT = 0xcAddB146B3f1A6A558eCD01380b81c2Faf9C8a10;
-        (bool success, bytes memory data) = USDT.call(abi.encodeWithSignature("mint(address,uint256)", msg.sender, 100_000_000_000 * 1e6));
+        (bool success, bytes memory data) = USDT.call(abi.encodeWithSignature("mint(address,uint256)", DEPLOYER, 100_000_000_000 * 1e6));
         (success, data) = USDT.call(abi.encodeWithSignature("mint(address,uint256)", SEPOLIA_AUTH, 100_000_000_000 * 1e6));
         (success, data) = USDT.call(abi.encodeWithSignature("mint(address,uint256)", maseerMrktMkr, 100_000_000_000 * 1e6));
         (success, data) = USDT.call(abi.encodeWithSignature("mint(address,uint256)", OPRATR1, 100_000_000_000 * 1e6));
