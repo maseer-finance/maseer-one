@@ -29,11 +29,13 @@ contract MaseerPrice is MaseerImplementation{
     // Allocate slots 2-49
     uint256[48] private __gap;
 
+    event Kiss(address indexed usr);
+    event Diss(address indexed usr);
     event File(bytes32 indexed what, bytes32 data);
     event Poke(uint256 indexed price, uint256 indexed timestamp);
 
-    function kiss(address usr) external auth { bud[usr] = 1; }
-    function diss(address usr) external auth { bud[usr] = 0; }
+    function kiss(address usr) external auth { bud[usr] = 1; emit Kiss(usr); }
+    function diss(address usr) external auth { bud[usr] = 0; emit Diss(usr); }
     modifier buds() {
         if (bud[msg.sender] != 1) revert NotAuthorized(msg.sender);
         _;
