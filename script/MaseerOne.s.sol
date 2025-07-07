@@ -47,7 +47,7 @@ contract MaseerOneScript is Script {
     string public constant NAME    = "CANA Holdings California Carbon Credits";
     string public constant SYMBOL  = "CANA";
 
-    string public constant TERMS   = "bafkreic7qstcrnw3y5vcqamotyedxebmzepy7dibd3x73a4n7o6kbzek64";
+    string public constant TERMS   = "bafkreigcwp3xyyp7epcbxfrqirk2snfkxj35kzb52pwqq7k2zdd375crge";
 
     bytes32 public constant ORACLE_NAME     = "CANAUSDT";
     bytes32 public constant ORACLE_DECIMALS = bytes32(uint256(6));
