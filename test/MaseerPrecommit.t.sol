@@ -266,9 +266,6 @@ contract MaseerPrecommitTest is MaseerTestBase {
     }
 
     function test_failPrecommitNotAuthVoid() public {
-        vm.prank(issuer);
-        adm.bestow(address(maseerPrecommit));
-
         _mintUSDT(alice, 100_000 * 1e6);
 
         vm.prank(alice);
@@ -282,11 +279,11 @@ contract MaseerPrecommitTest is MaseerTestBase {
         assertEq(maseerPrecommit.usr(0), alice);
         assertEq(maseerPrecommit.amt(0), 1000 * 1e6);
 
-
+        vm.expectRevert(abi.encodeWithSelector(MaseerPrecommit.NotAuthorized.selector, address(this)));
         maseerPrecommit.void(0);
 
         assertEq(maseerPrecommit.deals(), 1);
         assertEq(maseerPrecommit.usr(0), alice);
-        assertEq(maseerPrecommit.amt(0), 0);
+        assertEq(maseerPrecommit.amt(0), 1000 * 1e6);
     }
 }
