@@ -220,4 +220,69 @@ contract MaseerPrecommitTest is MaseerTestBase {
         assertEq(usdt.balanceOf(address(maseerOne.flo())), 1000 * 1e6);
 
     }
+
+    function testPrecommitUsrVoid() public {
+        _mintUSDT(alice, 100_000 * 1e6);
+
+        vm.prank(alice);
+        usdt.approve(address(maseerPrecommit), 1000 * 1e6);
+
+        // alice approves maseerPrecommit to spend 1000 USDT
+        vm.prank(alice);
+        maseerPrecommit.pact(1000 * 1e6);
+
+        assertEq(maseerPrecommit.deals(), 1);
+        assertEq(maseerPrecommit.usr(0), alice);
+        assertEq(maseerPrecommit.amt(0), 1000 * 1e6);
+
+        vm.prank(alice);
+        maseerPrecommit.void(0);
+
+        assertEq(maseerPrecommit.deals(), 1);
+        assertEq(maseerPrecommit.usr(0), alice);
+        assertEq(maseerPrecommit.amt(0), 0);
+    }
+
+    function testPrecommitIssuerVoid() public {
+        _mintUSDT(alice, 100_000 * 1e6);
+
+        vm.prank(alice);
+        usdt.approve(address(maseerPrecommit), 1000 * 1e6);
+
+        // alice approves maseerPrecommit to spend 1000 USDT
+        vm.prank(alice);
+        maseerPrecommit.pact(1000 * 1e6);
+
+        assertEq(maseerPrecommit.deals(), 1);
+        assertEq(maseerPrecommit.usr(0), alice);
+        assertEq(maseerPrecommit.amt(0), 1000 * 1e6);
+
+        vm.prank(issuer);
+        maseerPrecommit.void(0);
+
+        assertEq(maseerPrecommit.deals(), 1);
+        assertEq(maseerPrecommit.usr(0), alice);
+        assertEq(maseerPrecommit.amt(0), 0);
+    }
+
+        function testPrecommitIssuerVoid() public {
+        _mintUSDT(alice, 100_000 * 1e6);
+
+        vm.prank(alice);
+        usdt.approve(address(maseerPrecommit), 1000 * 1e6);
+
+        // alice approves maseerPrecommit to spend 1000 USDT
+        vm.prank(alice);
+        maseerPrecommit.pact(1000 * 1e6);
+
+        assertEq(maseerPrecommit.deals(), 1);
+        assertEq(maseerPrecommit.usr(0), alice);
+        assertEq(maseerPrecommit.amt(0), 1000 * 1e6);
+
+        maseerPrecommit.void(0);
+
+        assertEq(maseerPrecommit.deals(), 1);
+        assertEq(maseerPrecommit.usr(0), alice);
+        assertEq(maseerPrecommit.amt(0), 0);
+    }
 }

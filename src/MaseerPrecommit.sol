@@ -29,6 +29,11 @@ interface One {
     function mint(uint256 wad) external returns (uint256);
     function mintcost() external view returns (uint256);
     function canPass(address usr) external view returns (bool);
+    function adm() external view returns (address);
+}
+
+interface Adm {
+    function issuer(address usr) external view returns (bool);
 }
 
 contract MaseerPrecommit {
@@ -58,6 +63,11 @@ contract MaseerPrecommit {
     event Exit(
         address indexed usr,
         uint256 indexed amt
+    );
+    event Void(
+        address indexed guy,
+        uint256 indexed idx,
+        address indexed usr
     );
 
     error TransferFailed();
@@ -104,6 +114,13 @@ contract MaseerPrecommit {
         uint256 _bal = Gem(gem).balanceOf(address(this));
         _safeTransfer(gem, _flo, _bal);
         emit Exit(_flo, _bal);
+    }
+
+    function void(uint256 _idx) external {
+        Deal memory c = deal[_idx];
+        if (c.usr != msg.sender && !Adm(One(one).adm()).issuer(msg.sender)) revert NotAuthorized(msg.sender);
+        deal[_idx].amt = 0;
+        emit Void(msg.sender, _idx, c.usr);
     }
 
     function amt(uint256 _idx) external view returns (uint256) {
