@@ -220,4 +220,76 @@ contract MaseerPrecommitTest is MaseerTestBase {
         assertEq(usdt.balanceOf(address(maseerOne.flo())), 1000 * 1e6);
 
     }
+
+    function testPrecommitUsrVoid() public {
+        _mintUSDT(alice, 100_000 * 1e6);
+
+        vm.prank(alice);
+        usdt.approve(address(maseerPrecommit), 1000 * 1e6);
+
+        // alice approves maseerPrecommit to spend 1000 USDT
+        vm.prank(alice);
+        maseerPrecommit.pact(1000 * 1e6);
+
+        assertEq(maseerPrecommit.deals(), 1);
+        assertEq(maseerPrecommit.usr(0), alice);
+        assertEq(maseerPrecommit.amt(0), 1000 * 1e6);
+
+        assertEq(MaseerGate(maseerOne.adm()).wards(alice), 0);
+
+        vm.prank(alice);
+        maseerPrecommit.void(0);
+
+        assertEq(maseerPrecommit.deals(), 1);
+        assertEq(maseerPrecommit.usr(0), alice);
+        assertEq(maseerPrecommit.amt(0), 0);
+    }
+
+    function testPrecommitAdmWardVoid() public {
+        _mintUSDT(alice, 100_000 * 1e6);
+
+        vm.prank(alice);
+        usdt.approve(address(maseerPrecommit), 1000 * 1e6);
+
+        // alice approves maseerPrecommit to spend 1000 USDT
+        vm.prank(alice);
+        maseerPrecommit.pact(1000 * 1e6);
+
+        assertEq(maseerPrecommit.deals(), 1);
+        assertEq(maseerPrecommit.usr(0), alice);
+        assertEq(maseerPrecommit.amt(0), 1000 * 1e6);
+
+        assertEq(MaseerGate(maseerOne.adm()).wards(admAuth), 1);
+
+        vm.prank(admAuth);
+        maseerPrecommit.void(0);
+
+        assertEq(maseerPrecommit.deals(), 1);
+        assertEq(maseerPrecommit.usr(0), alice);
+        assertEq(maseerPrecommit.amt(0), 0);
+    }
+
+    function test_failPrecommitNotAuthVoid() public {
+        _mintUSDT(alice, 100_000 * 1e6);
+
+        vm.prank(alice);
+        usdt.approve(address(maseerPrecommit), 1000 * 1e6);
+
+        // alice approves maseerPrecommit to spend 1000 USDT
+        vm.prank(alice);
+        maseerPrecommit.pact(1000 * 1e6);
+
+        assertEq(maseerPrecommit.deals(), 1);
+        assertEq(maseerPrecommit.usr(0), alice);
+        assertEq(maseerPrecommit.amt(0), 1000 * 1e6);
+
+        assertEq(MaseerGate(maseerOne.adm()).wards(address(this)), 0);
+
+        vm.expectRevert(abi.encodeWithSelector(MaseerPrecommit.NotAuthorized.selector, address(this)));
+        maseerPrecommit.void(0);
+
+        assertEq(maseerPrecommit.deals(), 1);
+        assertEq(maseerPrecommit.usr(0), alice);
+        assertEq(maseerPrecommit.amt(0), 1000 * 1e6);
+    }
 }
