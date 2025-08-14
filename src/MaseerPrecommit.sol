@@ -33,7 +33,7 @@ interface One {
 }
 
 interface Adm {
-    function issuer(address usr) external view returns (bool);
+    function wards(address usr) external view returns (uint256);
 }
 
 contract MaseerPrecommit {
@@ -118,7 +118,7 @@ contract MaseerPrecommit {
 
     function void(uint256 _idx) external {
         Deal memory c = deal[_idx];
-        if (c.usr != msg.sender && !Adm(One(one).adm()).issuer(msg.sender)) revert NotAuthorized(msg.sender);
+        if (c.usr != msg.sender && Adm(One(one).adm()).wards(msg.sender) != 1) revert NotAuthorized(msg.sender);
         deal[_idx].amt = 0;
         emit Void(msg.sender, _idx, c.usr);
     }

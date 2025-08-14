@@ -235,6 +235,8 @@ contract MaseerPrecommitTest is MaseerTestBase {
         assertEq(maseerPrecommit.usr(0), alice);
         assertEq(maseerPrecommit.amt(0), 1000 * 1e6);
 
+        assertEq(MaseerGate(maseerOne.adm()).wards(alice), 0);
+
         vm.prank(alice);
         maseerPrecommit.void(0);
 
@@ -243,7 +245,7 @@ contract MaseerPrecommitTest is MaseerTestBase {
         assertEq(maseerPrecommit.amt(0), 0);
     }
 
-    function testPrecommitIssuerVoid() public {
+    function testPrecommitAdmWardVoid() public {
         _mintUSDT(alice, 100_000 * 1e6);
 
         vm.prank(alice);
@@ -257,7 +259,9 @@ contract MaseerPrecommitTest is MaseerTestBase {
         assertEq(maseerPrecommit.usr(0), alice);
         assertEq(maseerPrecommit.amt(0), 1000 * 1e6);
 
-        vm.prank(issuer);
+        assertEq(MaseerGate(maseerOne.adm()).wards(admAuth), 1);
+
+        vm.prank(admAuth);
         maseerPrecommit.void(0);
 
         assertEq(maseerPrecommit.deals(), 1);
@@ -278,6 +282,8 @@ contract MaseerPrecommitTest is MaseerTestBase {
         assertEq(maseerPrecommit.deals(), 1);
         assertEq(maseerPrecommit.usr(0), alice);
         assertEq(maseerPrecommit.amt(0), 1000 * 1e6);
+
+        assertEq(MaseerGate(maseerOne.adm()).wards(address(this)), 0);
 
         vm.expectRevert(abi.encodeWithSelector(MaseerPrecommit.NotAuthorized.selector, address(this)));
         maseerPrecommit.void(0);
