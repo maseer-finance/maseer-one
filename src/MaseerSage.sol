@@ -27,46 +27,45 @@ interface One {
 contract MaseerSage {
 
     uint256 public constant  WAD = 1e18;
-
     address public immutable ONE;
 
     constructor(address _one) {
-      ONE = _one;
+        ONE = _one;
     }
 
     function gap() public view returns (uint256) {
-      return One(ONE).capacity() - One(ONE).totalSupply();
+        return One(ONE).capacity() - One(ONE).totalSupply();
     }
 
     function usdtGap() public view returns (uint256) {
-      uint256 mintPrice = One(ONE).mintcost();
-      return _wmul(gap(), mintPrice);
+        uint256 mintPrice = One(ONE).mintcost();
+        return _wmul(gap(), mintPrice);
     }
 
     function peekMint(uint256 _amt) public view returns (uint256) {
-      if (
-        !One(ONE).mintable()     ||  // Minting is not open
-        One(ONE).navprice() == 0     // Price is zero
-      ) return 0;
+        if (
+            !One(ONE).mintable()     ||  // Minting is not open
+            One(ONE).navprice() == 0     // Price is zero
+        ) return 0;
 
-      uint256 unit = One(ONE).mintcost();
-      if (
-        _amt < unit               || // Dust threshold
-        _amt > _wmul(gap(), unit)    // USDT gap
-      ) return 0;
-      
-      return _wdiv(_amt, unit);
+        uint256 unit = One(ONE).mintcost();
+        if (
+            _amt < unit               || // Dust threshold
+           _amt > _wmul(gap(), unit)    // USDT gap
+        ) return 0;
+        
+        return _wdiv(_amt, unit);
     }
 
     function peekRedeem(uint256 _amt) public view returns (uint256) {
-      if (
-        !One(ONE).burnable() ||  // Burning is not open
-        _amt < WAD               // Dust threshold
-      ) return 0;
+        if (
+            !One(ONE).burnable() ||  // Burning is not open
+            _amt < WAD               // Dust threshold
+        ) return 0;
 
-      uint256 unit = One(ONE).burncost();
+        uint256 unit = One(ONE).burncost();
 
-      return _wmul(_amt, unit);
+        return _wmul(_amt, unit);
     }
 
     function _wdiv(uint256 x, uint256 y) internal pure returns (uint256 z) {
