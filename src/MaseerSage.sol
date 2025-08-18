@@ -51,7 +51,7 @@ contract MaseerSage {
         uint256 unit = One(ONE).mintcost();
         if (
             _amt < unit               || // Dust threshold
-           _amt > _wmul(gap(), unit)    // USDT gap
+           _amt > _wmul(gap(), unit)     // USDT gap
         ) return 0;
         
         return _wdiv(_amt, unit);
