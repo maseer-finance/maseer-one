@@ -42,6 +42,50 @@ contract MaseerSageTest is MaseerTestBase {
         assertEq(maseerSage.ONE(), maseerOneAddr);
     }
 
+    function testUsdtToCanaNav() public view {
+        assertEq(maseerSage.usdtToCanaNav(100 * 1e6), 10 * 1e18);
+    }
+
+    function testCanaToUsdtNav() public view {
+        assertEq(maseerSage.canaToUsdtNav(100 * 1e18), 1000 * 1e6);
+    }
+
+    function testUsdtToCanaZeroPrice() public {
+        vm.prank(pipBud);
+        pip.poke(0);
+
+        assertEq(maseerSage.usdtToCanaNav(100 * 1e6), 0);
+    }
+
+    function testCanaToUsdtZeroPrice() public {
+        vm.prank(pipBud);
+        pip.poke(0);
+
+        assertEq(maseerSage.canaToUsdtNav(100 * 1e18), 0);
+    }
+
+    function testUsdtToCanaMint() public view {
+        uint256 expectedCana = _wdiv(100 * 1e6, maseerOne.mintcost());
+        // There is a slightly different implementation of `_wdiv` in the test
+        // versus what is used in the Sage and One contracts.
+        assertApproxEqAbs(maseerSage.usdtToCanaMint(100 * 1e6), expectedCana, 1);
+    }
+
+    function testCanaToUsdtMint() public view {
+        uint256 expectedUsdt = _wmul(100 * 1e18, maseerOne.mintcost());
+        assertEq(maseerSage.canaToUsdtMint(100 * 1e18), expectedUsdt);
+    }
+
+    function testUsdtToCanaBurn() public view {
+        uint256 expectedCana = _wdiv(100 * 1e6, maseerOne.burncost());
+        assertEq(maseerSage.usdtToCanaBurn(100 * 1e6), expectedCana);
+    }
+
+    function testCanaToUsdtBurn() public view {
+        uint256 expectedUsdt = _wmul(100 * 1e18, maseerOne.burncost());
+        assertEq(maseerSage.canaToUsdtBurn(100 * 1e18), expectedUsdt);
+    }
+
     function testGap() public view {
         assertEq(maseerSage.gap(), maseerOne.capacity() - maseerOne.totalSupply());
     }

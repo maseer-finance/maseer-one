@@ -14,6 +14,7 @@
 // limitations under the License.
 pragma solidity ^0.8.28;
 
+
 interface One {
     function capacity() external view returns (uint256);
     function totalSupply() external view returns (uint256);
@@ -33,13 +34,45 @@ contract MaseerSage {
         ONE = _one;
     }
 
+    function usdtToCanaNav(uint256 _amt) public view returns (uint256) {
+        uint256 price = One(ONE).navprice();
+        if (price == 0) return 0;
+        return _usdtToCana(_amt, price);
+    }
+
+    function canaToUsdtNav(uint256 _amt) public view returns (uint256) {
+        uint256 price = One(ONE).navprice();
+        return _canaToUsdt(_amt, price);
+    }
+
+    function usdtToCanaMint(uint256 _amt) public view returns (uint256) {
+        uint256 price = One(ONE).mintcost();
+        if (price == 0) return 0;
+        return _usdtToCana(_amt, price);
+    }
+
+    function canaToUsdtMint(uint256 _amt) public view returns (uint256) {
+        uint256 price = One(ONE).mintcost();
+        return _canaToUsdt(_amt, price);
+    }
+
+    function usdtToCanaBurn(uint256 _amt) public view returns (uint256) {
+        uint256 price = One(ONE).burncost();
+        if (price == 0) return 0;
+        return _usdtToCana(_amt, price);
+    }
+
+    function canaToUsdtBurn(uint256 _amt) public view returns (uint256) {
+        uint256 price = One(ONE).burncost();
+        return _canaToUsdt(_amt, price);
+    }
+
     function gap() public view returns (uint256) {
         return One(ONE).capacity() - One(ONE).totalSupply();
     }
 
     function usdtGap() public view returns (uint256) {
-        uint256 mintPrice = One(ONE).mintcost();
-        return _wmul(gap(), mintPrice);
+        return canaToUsdtMint(gap());
     }
 
     function peekMint(uint256 _amt) public view returns (uint256) {
@@ -54,7 +87,7 @@ contract MaseerSage {
            _amt > _wmul(gap(), unit)     // USDT gap
         ) return 0;
         
-        return _wdiv(_amt, unit);
+        return _usdtToCana(_amt, unit);
     }
 
     function peekRedeem(uint256 _amt) public view returns (uint256) {
@@ -65,7 +98,15 @@ contract MaseerSage {
 
         uint256 unit = One(ONE).burncost();
 
-        return _wmul(_amt, unit);
+        return _canaToUsdt(_amt, unit);
+    }
+
+    function _usdtToCana(uint256 _amt, uint256 _price) internal pure returns (uint256) {
+        return _wdiv(_amt, _price);
+    }
+    
+    function _canaToUsdt(uint256 _amt, uint256 _price) internal pure returns (uint256) {
+        return _wmul(_amt, _price);
     }
 
     function _wdiv(uint256 x, uint256 y) internal pure returns (uint256 z) {
