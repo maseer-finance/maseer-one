@@ -16,7 +16,6 @@ contract MaseerOnetGBPScript is Script {
 
     address public SIG_ONE   = 0xb56F413dbCe352cfd71f221029CFC84580133F66; // set signatory 1
 
-    address public OFFRAMP = address(0); // TODO: set offramp
 
     address public proxyAuth       = SIG_ONE;
     address public marketAuth      = SIG_ONE;
@@ -66,6 +65,11 @@ contract MaseerOnetGBPScript is Script {
         DEPLOYER = tx.origin;
         console.log("Deployer address: ", DEPLOYER);
 
+        // Pre-calculate MaseerOne address using deployer nonce.
+        // 8 deployments precede MaseerOne (4 implementations + 4 proxies).
+        uint64 nonce = vm.getNonce(DEPLOYER);
+        address predictedMaseerOne = vm.computeCreateAddress(DEPLOYER, nonce + 8);
+
         MASEER_ORACLE_IMPLEMENTATION = address(new MaseerPrice());
         MASEER_ORACLE_PROXY = address(new MaseerProxy(MASEER_ORACLE_IMPLEMENTATION));
         MASEER_MARKET_IMPLEMENTATION = address(new MaseerGate());
@@ -81,10 +85,11 @@ contract MaseerOnetGBPScript is Script {
             MASEER_MARKET_PROXY,
             MASEER_TREASURY_PROXY,
             MASEER_COMPLIANCE_PROXY,
-            address(0), // TODO: No conduit — exit back to MaseerOne
+            predictedMaseerOne, // Exit back to MaseerOne (no conduit)
             NAME,
             SYMBOL
         );
+        require(address(maseerOne) == predictedMaseerOne, "MaseerOne address prediction mismatch");
 
         // MASEER_ORACLE_PROXY set wards and initial config
         MaseerPrice(MASEER_ORACLE_PROXY).file("name", ORACLE_NAME);
@@ -109,7 +114,7 @@ contract MaseerOnetGBPScript is Script {
         MaseerProxy(MASEER_TREASURY_PROXY).relyProxy(proxyAuth);
 
         // MASEER_COMPLIANCE_PROXY set wards
-        MaseerGuard(MASEER_COMPLIANCE_PROXY).rely(complianceAuth);
+        MaseerGuardOZ(MASEER_COMPLIANCE_PROXY).rely(complianceAuth);
         MaseerProxy(MASEER_COMPLIANCE_PROXY).relyProxy(proxyAuth);
 
         // Disable deployer auths
@@ -119,7 +124,7 @@ contract MaseerOnetGBPScript is Script {
         MaseerProxy(MASEER_MARKET_PROXY).denyProxy(DEPLOYER);
         MaseerTreasury(MASEER_TREASURY_PROXY).deny(DEPLOYER);
         MaseerProxy(MASEER_TREASURY_PROXY).denyProxy(DEPLOYER);
-        MaseerGuard(MASEER_COMPLIANCE_PROXY).deny(DEPLOYER);
+        MaseerGuardOZ(MASEER_COMPLIANCE_PROXY).deny(DEPLOYER);
         MaseerProxy(MASEER_COMPLIANCE_PROXY).denyProxy(DEPLOYER);
         vm.stopBroadcast();
 
