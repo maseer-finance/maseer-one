@@ -104,6 +104,10 @@ contract MaseerOnetGBPScript is Script {
         MaseerGate(MASEER_MARKET_PROXY).setBpsin(MARKET_BPSIN);
         MaseerGate(MASEER_MARKET_PROXY).setBpsout(MARKET_BPSOUT);
         MaseerGate(MASEER_MARKET_PROXY).setTerms(TERMS);
+        MaseerGate(MASEER_MARKET_PROXY).setOpenMint(0);
+        MaseerGate(MASEER_MARKET_PROXY).file("haltmint", type(uint256).max);
+        MaseerGate(MASEER_MARKET_PROXY).setOpenBurn(0);
+        MaseerGate(MASEER_MARKET_PROXY).file("haltburn", type(uint256).max);
         MaseerGate(MASEER_MARKET_PROXY).rely(marketAuth);
         MaseerProxy(MASEER_MARKET_PROXY).relyProxy(proxyAuth);
 
