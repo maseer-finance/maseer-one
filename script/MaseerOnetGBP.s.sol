@@ -16,11 +16,10 @@ contract MaseerOnetGBPScript is Script {
 
     address public SIG_ONE   = 0xb56F413dbCe352cfd71f221029CFC84580133F66; // set signatory 1
 
-
     address public proxyAuth       = SIG_ONE;
     address public marketAuth      = SIG_ONE;
     address public oracleAuth      = SIG_ONE;
-    address public treasuryAuth    = SIG_ONE;
+    // address public treasuryAuth    = SIG_ONE;  // No external mint/burn controls
     address public complianceAuth  = SIG_ONE;
     address public oracleUpdater   = SIG_ONE;
 
@@ -109,8 +108,6 @@ contract MaseerOnetGBPScript is Script {
         MaseerProxy(MASEER_MARKET_PROXY).relyProxy(proxyAuth);
 
         // MASEER_TREASURY_PROXY set issuer
-        MaseerTreasury(MASEER_TREASURY_PROXY).rely(treasuryAuth);
-        MaseerTreasury(MASEER_TREASURY_PROXY).bestow(treasuryAuth);
         MaseerProxy(MASEER_TREASURY_PROXY).relyProxy(proxyAuth);
 
         // MASEER_COMPLIANCE_PROXY set wards
