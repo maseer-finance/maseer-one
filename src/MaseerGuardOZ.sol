@@ -32,7 +32,7 @@ contract MaseerGuardOZ is MaseerImplementation {
     }
 
     /**
-     * @dev         Checks whether a given user address is not blacklisted.
+     * @dev         Checks whether a given user address is not banned.
      * @param  usr  The address of the user to check.
      * @return bool Returns `true` if the user can pass, otherwise `false`.
      */
