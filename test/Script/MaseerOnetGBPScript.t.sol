@@ -61,8 +61,8 @@ contract MaseerOnetGBPScriptTest is Test {
         // flo points to MaseerOne itself (no conduit)
         assertEq(maseerOne.flo(), address(maseerOne));
 
-        assertEq(maseerOne.mintable(), false);
-        assertEq(maseerOne.burnable(), false);
+        assertEq(maseerOne.mintable(), true);
+        assertEq(maseerOne.burnable(), true);
         assertEq(maseerOne.cooldown(), script.MARKET_COOLDOWN());
         assertEq(maseerOne.capacity(), script.MARKET_CAPACITY());
         assertEq(maseerOne.terms(), script.TERMS());

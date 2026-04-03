@@ -35,14 +35,14 @@ contract MaseerConduit is MaseerImplementation {
     error ZeroAddress();
     error TransferFailed();
 
-    function hope(address usr) external auth { can[usr] = 1; }
-    function nope(address usr) external auth { can[usr] = 0; }
+    function hope(address usr) external auth { can[usr] = 1; emit Hope(usr);}
+    function nope(address usr) external auth { can[usr] = 0; emit Nope(usr);}
     modifier operator() {
         if (can[msg.sender] != 1) revert NotAuthorized(msg.sender);
         _;
     }
-    function kiss(address usr) external auth { bud[usr] = 1; }
-    function diss(address usr) external auth { bud[usr] = 0; }
+    function kiss(address usr) external auth { bud[usr] = 1; emit Kiss(usr); }
+    function diss(address usr) external auth { bud[usr] = 0; emit Diss(usr); }
     modifier buds(address usr) {
         if (bud[usr] != 1) revert NotAuthorized(usr);
         _;
