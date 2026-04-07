@@ -141,18 +141,23 @@ contract MaseerOnetGBPIntegrationTest is Test {
         // Settle first so tGBP goes to self
         maseerOne.settle();
 
+        uint256 aliceBalBefore = tgbp.balanceOf(alice);
+        uint256 contractBalBefore = tgbp.balanceOf(address(maseerOne));
+        uint256 expectedClaim = _wmul(minted, maseerOne.burncost());
+        uint256 expectedResidual = contractBalBefore - expectedClaim;
+
         vm.prank(alice);
         uint256 id = maseerOne.redeem(minted);
 
         assertEq(id, 0);
         assertEq(maseerOne.totalSupply(), 0);
         assertEq(maseerOne.balanceOf(alice), 0);
-        assertEq(maseerOne.totalPending(), maseerOne.redemptionAmount(id));
+        assertEq(maseerOne.totalPending(), 0);
         assertEq(maseerOne.redemptionAddr(id), alice);
         assertEq(maseerOne.redemptionDate(id), block.timestamp + maseerOne.cooldown());
-
-        uint256 expectedClaim = _wmul(minted, maseerOne.burncost());
-        assertEq(maseerOne.redemptionAmount(id), expectedClaim);
+        assertEq(maseerOne.redemptionAmount(id), 0);
+        assertEq(tgbp.balanceOf(address(maseerOne)), expectedResidual);
+        assertEq(tgbp.balanceOf(alice), aliceBalBefore + expectedClaim);
     }
 
     function testRedeemFailDust() public {
@@ -168,7 +173,7 @@ contract MaseerOnetGBPIntegrationTest is Test {
 
     // ---- Exit ----
 
-    function testExit() public {
+    function testExitAfterAtomicRedeem() public {
         uint256 mintAmt = 100_000 * WAD;
 
         vm.prank(alice);
@@ -176,25 +181,31 @@ contract MaseerOnetGBPIntegrationTest is Test {
         vm.prank(alice);
         uint256 minted = maseerOne.mint(mintAmt);
 
+        uint256 expectedClaim = _wmul(minted, maseerOne.burncost());
+
         vm.prank(alice);
         uint256 id = maseerOne.redeem(minted);
+        uint256 aliceBalAfterRedeem = tgbp.balanceOf(alice);
 
         // Warp past cooldown
         vm.warp(block.timestamp + maseerOne.cooldown() + 1);
 
-        uint256 aliceBalBefore = tgbp.balanceOf(alice);
-
         vm.prank(alice);
         uint256 out = maseerOne.exit(id);
 
-        assertTrue(out > 0);
+        assertEq(out, 0);
         assertEq(maseerOne.redemptionAmount(id), 0);
         assertEq(maseerOne.obligated(), 0);
-        assertEq(tgbp.balanceOf(alice), aliceBalBefore + out);
+        assertEq(aliceBalAfterRedeem, 1_000_000 * WAD - mintAmt + expectedClaim);
+        assertEq(tgbp.balanceOf(alice), aliceBalAfterRedeem);
     }
 
     function testExitFailBeforeCooldown() public {
         uint256 mintAmt = 100_000 * WAD;
+
+        address actProxy = maseerOne.act();
+        vm.prank(sigOne);
+        MaseerGate(actProxy).setCooldown(1 days);
 
         vm.prank(alice);
         tgbp.approve(address(maseerOne), mintAmt);
@@ -301,13 +312,16 @@ contract MaseerOnetGBPIntegrationTest is Test {
         assertEq(tgbp.balanceOf(address(maseerOne)), mintAmt);
 
         // Redeem
+        uint256 expectedClaim = _wmul(minted, maseerOne.burncost());
+        uint256 aliceBeforeRedeem = tgbp.balanceOf(alice);
+
         vm.prank(alice);
         uint256 id = maseerOne.redeem(minted);
         assertEq(maseerOne.balanceOf(alice), 0);
         assertEq(maseerOne.totalSupply(), 0);
-
-        uint256 claimAmt = maseerOne.redemptionAmount(id);
-        assertTrue(claimAmt > 0);
+        assertEq(maseerOne.redemptionAmount(id), 0);
+        assertEq(maseerOne.totalPending(), 0);
+        assertEq(tgbp.balanceOf(alice), aliceBeforeRedeem + expectedClaim);
 
         // Warp past cooldown and exit
         vm.warp(block.timestamp + maseerOne.cooldown() + 1);
@@ -316,8 +330,8 @@ contract MaseerOnetGBPIntegrationTest is Test {
         vm.prank(alice);
         uint256 out = maseerOne.exit(id);
 
-        assertEq(out, claimAmt);
-        assertEq(tgbp.balanceOf(alice), aliceBefore + claimAmt);
+        assertEq(out, 0);
+        assertEq(tgbp.balanceOf(alice), aliceBefore);
         assertEq(maseerOne.redemptionAmount(id), 0);
         assertEq(maseerOne.totalPending(), 0);
         assertEq(maseerOne.obligated(), 0);
@@ -337,6 +351,11 @@ contract MaseerOnetGBPIntegrationTest is Test {
         vm.prank(bob);
         uint256 mintedB = maseerOne.mint(mintAmt);
 
+        uint256 expectedA = _wmul(mintedA, maseerOne.burncost());
+        uint256 expectedB = _wmul(mintedB, maseerOne.burncost());
+        uint256 aliceBeforeRedeem = tgbp.balanceOf(alice);
+        uint256 bobBeforeRedeem = tgbp.balanceOf(bob);
+
         // Both redeem
         vm.prank(alice);
         uint256 idA = maseerOne.redeem(mintedA);
@@ -346,6 +365,11 @@ contract MaseerOnetGBPIntegrationTest is Test {
         assertEq(idA, 0);
         assertEq(idB, 1);
         assertEq(maseerOne.totalSupply(), 0);
+        assertEq(maseerOne.redemptionAmount(idA), 0);
+        assertEq(maseerOne.redemptionAmount(idB), 0);
+        assertEq(maseerOne.totalPending(), 0);
+        assertEq(tgbp.balanceOf(alice), aliceBeforeRedeem + expectedA);
+        assertEq(tgbp.balanceOf(bob), bobBeforeRedeem + expectedB);
 
         // Warp and exit
         vm.warp(block.timestamp + maseerOne.cooldown() + 1);
@@ -355,8 +379,8 @@ contract MaseerOnetGBPIntegrationTest is Test {
         vm.prank(bob);
         uint256 outB = maseerOne.exit(idB);
 
-        assertTrue(outA > 0);
-        assertTrue(outB > 0);
+        assertEq(outA, 0);
+        assertEq(outB, 0);
         assertEq(outA, outB);
         assertEq(maseerOne.totalPending(), 0);
     }
