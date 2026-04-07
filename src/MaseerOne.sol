@@ -240,11 +240,16 @@ contract MaseerOne is MaseerToken {
         // Burn the tokens
         _burn(msg.sender, amt);
 
+        // If the cooldown is zero, allow immediate exit
+        if (_time == block.timestamp) {
+            exit(_id);
+        }
+
         // Emit contract event
         emit ContractRedemption(_id, _time, msg.sender, _claim);
     }
 
-    function exit(uint256 id) external pass(msg.sender) returns (uint256 _out) {
+    function exit(uint256 id) public pass(msg.sender) returns (uint256 _out) {
         Redemption storage _redemption = redemptions[id];
 
         uint256 _time = _redemption.date;
