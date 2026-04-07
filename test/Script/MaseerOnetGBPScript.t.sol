@@ -23,7 +23,7 @@ contract MaseerOnetGBPScriptTest is Test {
 
     function testConstants() public view {
         assertEq(script.NAME(), "Wrapped Staked tGBP");
-        assertEq(script.SYMBOL(), "tGBP");
+        assertEq(script.SYMBOL(), "wstGBP");
         assertEq(script.TGBP(), 0x27f6c8289550fCE67f6B50BeD1F519966aFE5287);
     }
 
