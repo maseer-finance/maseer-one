@@ -10,7 +10,6 @@ import {MaseerGuardOZ} from "../src/MaseerGuardOZ.sol";
 import {MaseerProxy} from "../src/MaseerProxy.sol";
 
 
-
 contract MaseerOnetGBPScript is Script {
     MaseerOne public maseerOne;
 
@@ -19,12 +18,12 @@ contract MaseerOnetGBPScript is Script {
     address public proxyAuth       = SIG_ONE;
     address public marketAuth      = SIG_ONE;
     address public oracleAuth      = SIG_ONE;
-    // address public treasuryAuth    = SIG_ONE;  // No external mint/burn controls
+    // address public treasuryAuth = SIG_ONE;  // No external mint/burn controls
     address public complianceAuth  = SIG_ONE;
     address public oracleUpdater   = SIG_ONE;
 
     string public constant NAME    = "Wrapped Staked tGBP";  // set token name
-    string public constant SYMBOL  = "tGBP";
+    string public constant SYMBOL  = "wstGBP";
 
     string public constant TERMS   = "";      // set IPFS CID for terms
 
@@ -32,9 +31,14 @@ contract MaseerOnetGBPScript is Script {
     bytes32 public constant ORACLE_DECIMALS = bytes32(uint256(18));
     uint256 public          ORACLE_PRICE    = 1 * 10**18; // set initial oracle price
 
+    // Market parameters
+    //   Capacity bounded by tGBP supply
     uint256 public          MARKET_CAPACITY = type(uint256).max;   // set market capacity
-    uint256 public          MARKET_COOLDOWN = 7 days;              // set initial cooldown period
+    //   No cooldown. Funds are liquid and can be exited immediately
+    uint256 public          MARKET_COOLDOWN = 0     ;              // set initial cooldown period
+    //   No fees for minting
     uint256 public constant MARKET_BPSIN    = 0;                   // set mint fee bps
+    //   Set burn fee to 0.25% to cover gas and oracle costs on exit
     uint256 public constant MARKET_BPSOUT   = 25;                  // set burn fee bps
 
     // Mainnet
