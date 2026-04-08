@@ -390,11 +390,13 @@ contract MaseerOne is MaseerToken {
 
     function transfer(address dst, uint256 wad) public override pass(msg.sender) pass(dst) returns (bool) {
         if (dst == address(this)) revert TransferToContract();
+        if (dst == address(0)) revert TransferToZeroAddress();
         return super.transfer(dst, wad);
     }
 
     function transferFrom(address src, address dst, uint256 wad) public override pass(msg.sender) pass(src) pass(dst) returns (bool) {
         if (dst == address(this)) revert TransferToContract();
+        if (dst == address(0)) revert TransferToZeroAddress();
         return super.transferFrom(src, dst, wad);
     }
 
