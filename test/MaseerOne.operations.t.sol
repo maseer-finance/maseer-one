@@ -269,9 +269,9 @@ contract MaseerOneOperationsTest is MaseerTestBase {
         uint256 _expectedResidual = _contractBefore - _expectedOut;
 
         vm.expectEmit();
-        emit MaseerOne.ClaimProcessed(0, alice, _expectedOut);
-        vm.expectEmit();
         emit MaseerOne.ContractRedemption(0, block.timestamp, alice, _expectedOut);
+        vm.expectEmit();
+        emit MaseerOne.ClaimProcessed(0, alice, _expectedOut);
         vm.prank(alice);
         uint256 _id = maseerOne.redeem(_amt);
 
