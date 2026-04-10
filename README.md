@@ -123,6 +123,26 @@ For deployments without an external conduit, `flo` can point to the MaseerOne co
 | MaseerConduitProxy | 0x12C8091a719125Bf08875635c3Ed738510C56141 |
 | MaseerPrecommit | 0x0f6f65fd822d3713c20e146ff66e4d83b050c31d |
 
+### Wren Staked tGBP (wstGBP) — Mainnet
+
+| Contract Name | Contract Address |
+|:--------------|:-----------------|
+| MaseerOne | 0x57c3571f10767e49c9d7b60feb6c67804783b7ae |
+| pip | 0x6a79dce61a12aa4b75449e0b03746260765d07df |
+| act | 0xb59cb4d3075a8ce5013c78e8bd7ada3fd1300f7f |
+| adm | 0xa8f5be8457d6ed5c659647fa8d107c3f2086626a |
+| cop | 0x794cf5948444b14105587455ebe96caace036d52 |
+| flo | 0x57c3571f10767e49c9d7b60feb6c67804783b7ae |
+| Detailed | |
+| MaseerPriceImplementation | 0x44bfeb1110ba6091034dbaab450ef1e7469ff072 |
+| MaseerPriceProxy | 0x6a79dce61a12aa4b75449e0b03746260765d07df |
+| MaseerGateImplementation | 0x635dbb7841c27c74b6bdbf1bed548aae2c6c9d77 |
+| MaseerGateProxy | 0xb59cb4d3075a8ce5013c78e8bd7ada3fd1300f7f |
+| MaseerTreasuryImplementation | 0x192575eeb42644a8014eb545c69f5125e2437a56 |
+| MaseerTreasuryProxy | 0xa8f5be8457d6ed5c659647fa8d107c3f2086626a |
+| MaseerGuardOZImplementation | 0x3bb8ebb11816e1c20c3db57e2e7e5b421b159255 |
+| MaseerGuardOZProxy | 0x794cf5948444b14105587455ebe96caace036d52 |
+
 ### CANA Holdings California Carbon Credits — Sepolia
 
 | Contract Name | Contract Address |
