@@ -18,7 +18,7 @@ contract MaseerOnetGBPScript is Script {
     address public proxyAuth       = SIG_ONE;
     address public marketAuth      = SIG_ONE;
     address public oracleAuth      = SIG_ONE;
-    // address public treasuryAuth = SIG_ONE;  // No external mint/burn controls
+    address public treasuryAuth    = SIG_ONE;
     address public complianceAuth  = SIG_ONE;
     address public oracleUpdater   = SIG_ONE;
 
@@ -88,7 +88,7 @@ contract MaseerOnetGBPScript is Script {
             MASEER_MARKET_PROXY,
             MASEER_TREASURY_PROXY,
             MASEER_COMPLIANCE_PROXY,
-            predictedMaseerOne, // Exit back to MaseerOne (no conduit)
+            predictedMaseerOne, // Settle back to MaseerOne (no conduit)
             NAME,
             SYMBOL
         );
@@ -108,14 +108,16 @@ contract MaseerOnetGBPScript is Script {
         MaseerGate(MASEER_MARKET_PROXY).setBpsin(MARKET_BPSIN);
         MaseerGate(MASEER_MARKET_PROXY).setBpsout(MARKET_BPSOUT);
         MaseerGate(MASEER_MARKET_PROXY).setTerms(TERMS);
-        MaseerGate(MASEER_MARKET_PROXY).setOpenMint(0);
+        MaseerGate(MASEER_MARKET_PROXY).setOpenMint(block.timestamp);
         MaseerGate(MASEER_MARKET_PROXY).file("haltmint", type(uint256).max);
-        MaseerGate(MASEER_MARKET_PROXY).setOpenBurn(0);
+        MaseerGate(MASEER_MARKET_PROXY).setOpenBurn(block.timestamp);
         MaseerGate(MASEER_MARKET_PROXY).file("haltburn", type(uint256).max);
         MaseerGate(MASEER_MARKET_PROXY).rely(marketAuth);
         MaseerProxy(MASEER_MARKET_PROXY).relyProxy(proxyAuth);
 
         // MASEER_TREASURY_PROXY set issuer
+        MaseerTreasury(MASEER_TREASURY_PROXY).rely(treasuryAuth);
+        MaseerTreasury(MASEER_TREASURY_PROXY).bestow(treasuryAuth);
         MaseerProxy(MASEER_TREASURY_PROXY).relyProxy(proxyAuth);
 
         // MASEER_COMPLIANCE_PROXY set wards
