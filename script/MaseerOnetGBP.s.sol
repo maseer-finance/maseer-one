@@ -13,7 +13,7 @@ import {MaseerProxy} from "../src/MaseerProxy.sol";
 contract MaseerOnetGBPScript is Script {
     MaseerOne public maseerOne;
 
-    address public SIG_ONE   = 0xb56F413dbCe352cfd71f221029CFC84580133F66; // set signatory 1
+    address public SIG_ONE   = 0xa73c94969dE90Edb159D29922C42fF24beDFA085; // set signatory 1
 
     address public proxyAuth       = SIG_ONE;
     address public marketAuth      = SIG_ONE;
@@ -22,7 +22,7 @@ contract MaseerOnetGBPScript is Script {
     address public complianceAuth  = SIG_ONE;
     address public oracleUpdater   = SIG_ONE;
 
-    string public constant NAME    = "Wrapped Staked tGBP";  // set token name
+    string public constant NAME    = "Wren Staked tGBP";  // set token name
     string public constant SYMBOL  = "wstGBP";
 
     string public constant TERMS   = "";      // set IPFS CID for terms
