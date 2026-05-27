@@ -2,11 +2,22 @@
 pragma solidity ^0.8.28;
 
 import "./MaseerTestBase.t.sol";
+import {MaseerProxy} from "../src/MaseerProxy.sol";
+import {MockCop} from "./Mocks/MockCop.sol";
 
 contract MaseerOneTokenTest is MaseerTestBase {
 
+    event Approval(address indexed src, address indexed usr, uint256 wad);
+    event Transfer(address indexed src, address indexed dst, uint256 wad);
+
     function setUp() public {
 
+    }
+
+    function _useMockCompliance() internal {
+        address newCopImpl = address(new MockCop());
+        vm.prank(proxyAuth);
+        MaseerProxy(copProxy).file(newCopImpl);
     }
 
     function testTransferUnit() public {
@@ -89,12 +100,10 @@ contract MaseerOneTokenTest is MaseerTestBase {
     function testTransferToZeroAddressFail() public {
         uint256 amt = 1000 * 1e18;
 
+        _useMockCompliance();
         _mintTokens(alice, amt);
 
-        // address(0) fails on the guard check
-        vm.expectRevert(
-            abi.encodeWithSelector(MaseerOne.NotAuthorized.selector, address(0))
-        );
+        vm.expectRevert(MaseerOne.TransferToZeroAddress.selector);
         vm.prank(alice);
         maseerOne.transfer(address(0), amt);
     }
@@ -102,15 +111,13 @@ contract MaseerOneTokenTest is MaseerTestBase {
     function testTransferFromToZeroAddressFail() public {
         uint256 amt = 1000 * 1e18;
 
+        _useMockCompliance();
         _mintTokens(alice, amt);
 
         vm.prank(alice);
         maseerOne.approve(alice, amt);
 
-        // address(0) fails on the guard check
-        vm.expectRevert(
-            abi.encodeWithSelector(MaseerOne.NotAuthorized.selector, address(0))
-        );
+        vm.expectRevert(MaseerOne.TransferToZeroAddress.selector);
         vm.prank(alice);
         maseerOne.transferFrom(alice, address(0), amt);
     }
@@ -272,5 +279,56 @@ contract MaseerOneTokenTest is MaseerTestBase {
 
     }
 
-    // TODO: General ERC20 tests
+    function testApproveReturnsTrueAndEmitsApproval() public {
+        uint256 amt = 1000 * 1e18;
+
+        _useMockCompliance();
+
+        vm.expectEmit();
+        emit Approval(alice, bob, amt);
+
+        vm.prank(alice);
+        bool ok = maseerOne.approve(bob, amt);
+
+        assertTrue(ok);
+        assertEq(maseerOne.allowance(alice, bob), amt);
+    }
+
+    function testTransferReturnsTrueAndEmitsTransfer() public {
+        uint256 amt = 1000 * 1e18;
+
+        _useMockCompliance();
+        _mintTokens(alice, amt);
+
+        vm.expectEmit();
+        emit Transfer(alice, bob, amt);
+
+        vm.prank(alice);
+        bool ok = maseerOne.transfer(bob, amt);
+
+        assertTrue(ok);
+        assertEq(maseerOne.balanceOf(alice), 0);
+        assertEq(maseerOne.balanceOf(bob), amt);
+    }
+
+    function testTransferFromReturnsTrueAndDoesNotDecreaseMaxAllowance() public {
+        uint256 amt = 1000 * 1e18;
+
+        _useMockCompliance();
+        _mintTokens(alice, amt);
+
+        vm.prank(alice);
+        maseerOne.approve(bob);
+
+        vm.expectEmit();
+        emit Transfer(alice, carol, amt);
+
+        vm.prank(bob);
+        bool ok = maseerOne.transferFrom(alice, carol, amt);
+
+        assertTrue(ok);
+        assertEq(maseerOne.balanceOf(alice), 0);
+        assertEq(maseerOne.balanceOf(carol), amt);
+        assertEq(maseerOne.allowance(alice, bob), type(uint256).max);
+    }
 }
