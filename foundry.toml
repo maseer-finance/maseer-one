@@ -9,12 +9,6 @@ optimizer_runs = 21_000
 solc_version = "0.8.34"
 gas_limit = "18446744073709551615" # u64::MAX
 
-# CI profile (FOUNDRY_PROFILE=ci). Inherits everything from default and
-# throttles outgoing fork RPC requests so the provider does not return HTTP 429
-# on the cold (uncached) run. Foundry's default is 330.
-[profile.ci]
-compute_units_per_second = 100
-
 [rpc_endpoints]
 mainnet = "${ETH_RPC_URL}"
 

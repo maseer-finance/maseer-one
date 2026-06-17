@@ -49,6 +49,13 @@ if [ -n "$ETH_FORK_BLOCK" ]; then
   fbstr="--fork-block-number $ETH_FORK_BLOCK"
 fi
 
+# Throttle cold fork-cache runs in CI to stay within the RPC provider's rate
+# limit. Foundry exposes this as a CLI option rather than a config setting.
+custr=""
+if [ "$FOUNDRY_PROFILE" = "ci" ]; then
+  custr="--compute-units-per-second 100"
+fi
+
 if [ -n "$gas_report_set" ]; then
     test_args="--gas-report"
 fi
@@ -58,4 +65,4 @@ test_data="v: ${vstr:-"default"}, mc: ${mc:-"all"}, mt: ${mt:-"all"}"
 
 echo "$test_data"
 
-forge test --fork-url ${ETH_RPC_URL} $fbstr $mtstr $nmcstr $vstr $mcstr $test_args
+forge test --fork-url ${ETH_RPC_URL} $fbstr $custr $mtstr $nmcstr $vstr $mcstr $test_args
