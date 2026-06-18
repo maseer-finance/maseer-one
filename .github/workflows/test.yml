@@ -19,6 +19,10 @@ jobs:
     env:
       ETH_RPC_URL: ${{ secrets.ETH_RPC_URL }}
       MAINNET_FORK_RPC_URL: ${{ secrets.MAINNET_FORK_RPC_URL }}
+      # Pin the fork to a fixed mainnet block so Foundry's RPC cache is reusable.
+      # The suite only depends on USDT (a long-lived contract), so any recent
+      # block works; bump this when you want fresher state.
+      ETH_FORK_BLOCK: "25340000"
     steps:
       - uses: actions/checkout@v4
         with:
@@ -27,11 +31,19 @@ jobs:
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
         with:
-          version: nightly
+          version: stable
 
       - name: Show Forge version
         run: |
           forge --version
+
+      # Persist Foundry's fork RPC cache across runs. Keyed on the pinned block,
+      # so warm runs replay state from disk and make almost no RPC calls.
+      - name: Cache fork RPC state
+        uses: actions/cache@v4
+        with:
+          path: ~/.foundry/cache/rpc
+          key: foundry-rpc-${{ env.ETH_FORK_BLOCK }}
 
       - name: Run Forge build
         run: |
@@ -44,3 +56,4 @@ jobs:
         id: test
         env:
           ETH_RPC_URL: ${{ secrets.ETH_RPC_URL }}
+          ETH_FORK_BLOCK: ${{ env.ETH_FORK_BLOCK }}
