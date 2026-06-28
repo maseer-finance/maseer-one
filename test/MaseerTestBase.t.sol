@@ -201,10 +201,10 @@ contract MaseerTestBase is Test {
     }
 
     function _wmul(uint256 x, uint256 y) internal pure returns (uint256 z) {
-        z = ((x * y) + (WAD / 2)) / WAD;
+        z = (x * y) / WAD;
     }
 
     function _wdiv(uint256 x, uint256 y) internal pure returns (uint256 z) {
-        z = ((x * WAD) + (y / 2)) / y;
+        z = (x * WAD) / y;
     }
 }
