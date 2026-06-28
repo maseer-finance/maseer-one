@@ -63,6 +63,11 @@ contract MaseerOnetGBPIntegrationTest is Test {
         assertEq(maseerOne.burncost(), expectedBurncost);
     }
 
+    function testFixedPointHelperMatchesProductionFloorMath() public pure {
+        // Production MaseerOne floors redeem claims; this catches the old half-up test helper.
+        assertEq(_wmul(1, WAD / 2), 0);
+    }
+
     function testFloIsSelf() public view {
         assertEq(maseerOne.flo(), address(maseerOne));
     }
@@ -409,6 +414,6 @@ contract MaseerOnetGBPIntegrationTest is Test {
     // ---- Helpers ----
 
     function _wmul(uint256 x, uint256 y) internal pure returns (uint256 z) {
-        z = ((x * y) + (WAD / 2)) / WAD;
+        z = (x * y) / WAD;
     }
 }
